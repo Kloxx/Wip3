@@ -1,0 +1,652 @@
+# depslib dependency file v1.0
+1411926811 source:g:\prototypes\wip3\cube.cpp
+	"Cube.h"
+
+1411912917 g:\prototypes\wip3\cube.h
+	<GL/glew.h>
+	<GL3/gl3.h>
+	<glm/glm.hpp>
+	<glm/gtx/transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	"Shader.h"
+	"Texture.h"
+
+1353425104 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\gl\glew.h
+	<stddef.h>
+	<inttypes.h>
+	<stdint.h>
+	<inttypes.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\glm.hpp
+	"core/_fixes.hpp"
+	<cmath>
+	<climits>
+	<cfloat>
+	<limits>
+	<cstdio>
+	"core/setup.hpp"
+	"./core/_detail.hpp"
+	"./core/_vectorize.hpp"
+	"./core/type.hpp"
+	"./core/func_trigonometric.hpp"
+	"./core/func_exponential.hpp"
+	"./core/func_common.hpp"
+	"./core/func_packing.hpp"
+	"./core/func_geometric.hpp"
+	"./core/func_matrix.hpp"
+	"./core/func_vector_relational.hpp"
+	"./core/func_integer.hpp"
+	"./core/func_noise.hpp"
+	"./core/_swizzle.hpp"
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\_fixes.hpp
+	<cmath>
+
+1368219027 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\setup.hpp
+	<intrin.h>
+	<immintrin.h>
+	<immintrin.h>
+	<smmintrin.h>
+	<pmmintrin.h>
+	<emmintrin.h>
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\_detail.hpp
+	"setup.hpp"
+	<cassert>
+	<cstdint>
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\_vectorize.hpp
+
+1368219027 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type.hpp
+	"type_half.hpp"
+	"type_float.hpp"
+	"type_int.hpp"
+	"type_gentype.hpp"
+	"type_vec1.hpp"
+	"type_vec2.hpp"
+	"type_vec3.hpp"
+	"type_vec4.hpp"
+	"type_mat2x2.hpp"
+	"type_mat2x3.hpp"
+	"type_mat2x4.hpp"
+	"type_mat3x2.hpp"
+	"type_mat3x3.hpp"
+	"type_mat3x4.hpp"
+	"type_mat4x2.hpp"
+	"type_mat4x3.hpp"
+	"type_mat4x4.hpp"
+
+1368219027 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_half.hpp
+	<cstdlib>
+	"type_half.inl"
+
+1368219027 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_half.inl
+	"_detail.hpp"
+
+1368219027 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_float.hpp
+	"type_half.hpp"
+	"setup.hpp"
+
+1368219027 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_int.hpp
+	"setup.hpp"
+	"_detail.hpp"
+
+1368219027 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_gentype.hpp
+	"type_size.hpp"
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_size.hpp
+	<cstdlib>
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_vec1.hpp
+	"type_vec.hpp"
+	"type_float.hpp"
+	"type_int.hpp"
+	"type_size.hpp"
+	"_swizzle.hpp"
+	"type_vec1.inl"
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_vec.hpp
+	"type_gentype.hpp"
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\_swizzle.hpp
+	"_swizzle_func.hpp"
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\_swizzle_func.hpp
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_vec1.inl
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_vec2.hpp
+	"type_vec.hpp"
+	"type_float.hpp"
+	"type_int.hpp"
+	"type_size.hpp"
+	"_swizzle.hpp"
+	"type_vec2.inl"
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_vec2.inl
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_vec3.hpp
+	"type_vec.hpp"
+	"type_float.hpp"
+	"type_int.hpp"
+	"type_size.hpp"
+	"_swizzle.hpp"
+	"type_vec3.inl"
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_vec3.inl
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_vec4.hpp
+	"type_vec.hpp"
+	"type_float.hpp"
+	"type_int.hpp"
+	"type_size.hpp"
+	"_swizzle.hpp"
+	"type_vec4.inl"
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_vec4.inl
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat2x2.hpp
+	"type_mat.hpp"
+	"type_mat2x2.inl"
+
+1368219027 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat.hpp
+	"type_gentype.hpp"
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat2x2.inl
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat2x3.hpp
+	"type_mat.hpp"
+	"type_mat2x3.inl"
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat2x3.inl
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat2x4.hpp
+	"type_mat.hpp"
+	"type_mat2x4.inl"
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat2x4.inl
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat3x2.hpp
+	"type_mat.hpp"
+	"type_mat3x2.inl"
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat3x2.inl
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat3x3.hpp
+	"type_mat.hpp"
+	"type_mat3x3.inl"
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat3x3.inl
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat3x4.hpp
+	"type_mat.hpp"
+	"type_mat3x4.inl"
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat3x4.inl
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat4x2.hpp
+	"type_mat.hpp"
+	"type_mat4x2.inl"
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat4x2.inl
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat4x3.hpp
+	"type_mat.hpp"
+	"type_mat4x3.inl"
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat4x3.inl
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat4x4.hpp
+	"type_mat.hpp"
+	"type_mat4x4.inl"
+
+1368219028 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\type_mat4x4.inl
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_trigonometric.hpp
+	"func_trigonometric.inl"
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_trigonometric.inl
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_exponential.hpp
+	"func_exponential.inl"
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_exponential.inl
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_common.hpp
+	"_fixes.hpp"
+	"func_common.inl"
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_common.inl
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_packing.hpp
+	"func_packing.inl"
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_packing.inl
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_geometric.hpp
+	"func_geometric.inl"
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_geometric.inl
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_matrix.hpp
+	"func_matrix.inl"
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_matrix.inl
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_vector_relational.hpp
+	"_detail.hpp"
+	"func_vector_relational.inl"
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_vector_relational.inl
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_integer.hpp
+	"func_integer.inl"
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_integer.inl
+	<intrin.h>
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_noise.hpp
+	"func_noise.inl"
+
+1368219026 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\core\func_noise.inl
+
+1368219035 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtx\transform.hpp
+	"../glm.hpp"
+	"../gtc/matrix_transform.hpp"
+	"transform.inl"
+
+1368219030 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtc\matrix_transform.hpp
+	"../glm.hpp"
+	"matrix_transform.inl"
+
+1368219030 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtc\matrix_transform.inl
+
+1368219035 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtx\transform.inl
+
+1368219030 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtc\type_ptr.hpp
+	"../glm.hpp"
+	"../gtc/half_float.hpp"
+	"../gtc/quaternion.hpp"
+	<cstring>
+	"type_ptr.inl"
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtc\half_float.hpp
+	"../glm.hpp"
+	"half_float.inl"
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtc\half_float.inl
+
+1368219030 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtc\quaternion.hpp
+	"../glm.hpp"
+	"../gtc/half_float.hpp"
+	"../gtc/constants.hpp"
+	"quaternion.inl"
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtc\constants.hpp
+	"../glm.hpp"
+	"../gtc/half_float.hpp"
+	"constants.inl"
+
+1368219029 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtc\constants.inl
+
+1368219030 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtc\quaternion.inl
+	<limits>
+
+1368219030 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtc\type_ptr.inl
+
+1360750546 g:\prototypes\wip3\shader.h
+	<GL/glew.h>
+	<OpenGL/gl3.h>
+	<GL3/gl3.h>
+	<iostream>
+	<string>
+	<fstream>
+
+1411821045 g:\prototypes\wip3\texture.h
+	<GL/glew.h>
+	<GL3/gl3.h>
+	<SDL2/SDL.h>
+	<SDL2/SDL_image.h>
+	<iostream>
+	<string>
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_assert.h"
+	"SDL_atomic.h"
+	"SDL_audio.h"
+	"SDL_clipboard.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_hints.h"
+	"SDL_loadso.h"
+	"SDL_log.h"
+	"SDL_messagebox.h"
+	"SDL_mutex.h"
+	"SDL_power.h"
+	"SDL_render.h"
+	"SDL_rwops.h"
+	"SDL_system.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_version.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_stdinc.h
+	"SDL_config.h"
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<stddef.h>
+	<stdarg.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<memory.h>
+	<string.h>
+	<strings.h>
+	<inttypes.h>
+	<stdint.h>
+	<ctype.h>
+	<math.h>
+	<iconv.h>
+	"begin_code.h"
+	<alloca.h>
+	<malloc.h>
+	<malloc.h>
+	<malloc.h>
+	<stdlib.h>
+	"close_code.h"
+
+1353412716 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_config.h
+	"SDL_platform.h"
+	<stdarg.h>
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_platform.h
+	"AvailabilityMacros.h"
+	"TargetConditionals.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\begin_code.h
+
+1353412716 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\close_code.h
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_assert.h
+	"SDL_config.h"
+	"begin_code.h"
+	<signal.h>
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_atomic.h
+	"SDL_stdinc.h"
+	"SDL_platform.h"
+	"begin_code.h"
+	<intrin.h>
+	<libkern/OSAtomic.h>
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_endian.h
+	"SDL_stdinc.h"
+	<endian.h>
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_mutex.h"
+	"begin_code.h"
+	<process.h>
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_clipboard.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_cpuinfo.h
+	"SDL_stdinc.h"
+	<intrin.h>
+	<intrin.h>
+	<altivec.h>
+	<mmintrin.h>
+	<mm3dnow.h>
+	<xmmintrin.h>
+	<emmintrin.h>
+	"begin_code.h"
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_quit.h"
+	"SDL_gesture.h"
+	"SDL_touch.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_video.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_surface.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_pixels.h
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_rect.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_pixels.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_surface.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_blendmode.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_blendmode.h
+	"begin_code.h"
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keycode.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_keycode.h
+	"SDL_stdinc.h"
+	"SDL_scancode.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_scancode.h
+	"SDL_stdinc.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_gesture.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"SDL_touch.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_touch.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_hints.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_log.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_messagebox.h
+	"SDL_stdinc.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_power.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_render.h
+	"SDL_stdinc.h"
+	"SDL_rect.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_system.h
+	"SDL_stdinc.h"
+	"SDL_video.h"
+	"SDL_keyboard.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1353428305 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_image.h
+	"SDL.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1411651387 source:g:\prototypes\wip3\input.cpp
+	"Input.h"
+
+1411568633 g:\prototypes\wip3\input.h
+	<SDL2/SDL.h>
+
+1412028042 source:g:\prototypes\wip3\main.cpp
+	"SceneOpenGL.h"
+
+1412028017 source:g:\prototypes\wip3\sceneopengl.cpp
+	"SceneOpenGL.h"
+
+1412028017 g:\prototypes\wip3\sceneopengl.h
+	<GL/glew.h>
+	<GL3/gl3.h>
+	<glm/glm.hpp>
+	<glm/gtx/transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<SDL2/SDL.h>
+	<iostream>
+	"Shader.h"
+	<string>
+	"Cube.h"
+	"Input.h"
+	"Texture.h"
+	"Camera.h"
+
+1411739552 source:g:\prototypes\wip3\shader.cpp
+	"Shader.h"
+
+1411823258 source:g:\prototypes\wip3\texture.cpp
+	"Texture.h"
+
+1411962718 source:g:\prototypes\wip3\camera.cpp
+	"Camera.h"
+
+1411962270 g:\prototypes\wip3\camera.h
+	<glm/glm.hpp>
+	<glm/gtx/transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	"Input.h"
+
