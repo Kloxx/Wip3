@@ -7,20 +7,20 @@ Cube::Cube(float taille, std::string const vertexShader, std::string const fragm
     m_shader.charger();
 
     // Temporary vertex
-    taille /= 2;
+    //taille /= 2;
     float vertexTmp[] =
-    {-taille,-taille,-taille,  taille,-taille,-taille,  taille, taille,-taille,
-     -taille,-taille,-taille, -taille, taille,-taille,  taille, taille,-taille,
-      taille,-taille, taille,  taille,-taille,-taille,  taille, taille,-taille,
-      taille,-taille, taille,  taille, taille, taille,  taille, taille,-taille,
-     -taille,-taille, taille,  taille,-taille, taille,  taille,-taille,-taille,
-     -taille,-taille, taille, -taille,-taille,-taille,  taille,-taille,-taille,
-     -taille,-taille, taille,  taille,-taille, taille,  taille, taille, taille,
-     -taille,-taille, taille, -taille, taille, taille,  taille, taille, taille,
-     -taille,-taille,-taille, -taille,-taille, taille, -taille, taille, taille,
-     -taille,-taille,-taille, -taille, taille,-taille, -taille, taille, taille,
-     -taille, taille, taille,  taille, taille, taille,  taille, taille,-taille,
-     -taille, taille, taille, -taille, taille,-taille,  taille, taille,-taille};
+    {0.0,0.0,0.0,        taille,0.0,0.0,        taille,taille,0.0,
+     0.0,0.0,0.0,        0.0,taille,0.0,        taille,taille,0.0,
+     taille,0.0,taille,  taille,0.0,0.0,        taille,taille,0.0,
+     taille,0.0,taille,  taille,taille,         taille,taille,taille,0.0,
+     0.0,0.0,1.5*taille, taille,0.0,taille,     taille,0.0,0.0,
+     0.0,0.0,1.5*taille, 0.0,0.0,0.0,           taille,0.0,0.0,
+     0.0,0.0,1.5*taille, taille,0.0,taille,     taille,taille,taille,
+     0.0,0.0,1.5*taille, 0.0,taille,taille,     taille,taille,taille,
+     0.0,0.0,0.0,        0.0,0.0,1.5*taille,    0.0,taille,taille,
+     0.0,0.0,0.0,        0.0,taille,0.0,        0.0,taille,taille,
+     0.0,taille,taille,  taille,taille,taille,  taille,taille,0.0,
+     0.0,taille,taille,  0.0,taille,0.0,        taille,taille,0.0};
 
     float colorsTmp[] =
     {1.0,0.0,0.0, 1.0,0.0,0.0, 1.0,0.0,0.0,

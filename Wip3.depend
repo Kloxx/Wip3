@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1411926811 source:g:\prototypes\wip3\cube.cpp
+1412126447 source:g:\prototypes\wip3\cube.cpp
 	"Cube.h"
 
 1411912917 g:\prototypes\wip3\cube.h
@@ -617,10 +617,10 @@
 1412028042 source:g:\prototypes\wip3\main.cpp
 	"SceneOpenGL.h"
 
-1412028017 source:g:\prototypes\wip3\sceneopengl.cpp
+1412133146 source:g:\prototypes\wip3\sceneopengl.cpp
 	"SceneOpenGL.h"
 
-1412028017 g:\prototypes\wip3\sceneopengl.h
+1412132985 g:\prototypes\wip3\sceneopengl.h
 	<GL/glew.h>
 	<GL3/gl3.h>
 	<glm/glm.hpp>
@@ -634,6 +634,7 @@
 	"Input.h"
 	"Texture.h"
 	"Camera.h"
+	"Ship.h"
 
 1411739552 source:g:\prototypes\wip3\shader.cpp
 	"Shader.h"
@@ -649,4 +650,31 @@
 	<glm/gtx/transform.hpp>
 	<glm/gtc/type_ptr.hpp>
 	"Input.h"
+
+1412116574 source:g:\prototypes\wip3\physics.cpp
+	"Physics.h"
+
+1412116574 g:\prototypes\wip3\physics.h
+
+1412122524 source:g:\prototypes\wip3\objloader.cpp
+	"objloader.h"
+
+1412122524 g:\prototypes\wip3\objloader.h
+	<vector>
+	<glm/glm.hpp>
+	<glm/gtx/transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<iostream>
+
+1412132969 g:\prototypes\wip3\ship.h
+	<GL/glew.h>
+	<GL3/gl3.h>
+	<glm/glm.hpp>
+	<glm/gtx/transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	"Shader.h"
+	"Texture.h"
+
+1412133377 source:g:\prototypes\wip3\ship.cpp
+	"Ship.h"
 
