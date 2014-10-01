@@ -23,6 +23,7 @@
 #include "Input.h"
 #include "Texture.h"
 #include "Camera.h"
+#include "Ship.h"
 
 class SceneOpenGL
 {

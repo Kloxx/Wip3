@@ -92,7 +92,7 @@ void SceneOpenGL::mainLoop()
     modelview = mat4(1.0);
     modelview = lookAt(vec3(3,3,3), vec3(0,0,0), vec3(0,1,0));
 
-    Box box(2.0, "Shaders/texture.vert", "Shaders/texture.frag", "Textures/metal029.jpg");
+    Ship ship("Shaders/texture.vert", "Shaders/texture.frag", "Models/ship.png");
     CameraDoom camera(vec3(0,1.5,0), vec3(1,0,0), vec3(0,1,0), 1, 5);
 
     m_input.afficherPtr(false);
@@ -115,7 +115,9 @@ void SceneOpenGL::mainLoop()
         modelviewSave = modelview;
 
         // Render
-        box.afficher(projection, modelview);
+        modelview = scale(modelview, vec3(0.5,0.5,0.5));
+        ship.afficher(projection, modelview);
+        modelview = modelviewSave;
 
         // Actualization
         SDL_GL_SwapWindow(m_window);
