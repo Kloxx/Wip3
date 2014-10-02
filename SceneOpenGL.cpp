@@ -81,7 +81,7 @@ void SceneOpenGL::mainLoop()
 {
     using namespace glm;
 
-    unsigned int frameRate(1000/40);
+    unsigned int frameRate(1000/60);
     Uint32 startLoop(0), elapsed(0);
 
     mat4 projection;
@@ -90,13 +90,13 @@ void SceneOpenGL::mainLoop()
 
     projection = perspective(70.0, (double) m_windowWidth/m_windowHeight, 0.01, 300.0);
     modelview = mat4(1.0);
+    modelview = lookAt(vec3(3,3,3), vec3(0,0,0), vec3(0,1,0));
 
+    Ship ship("Shaders/texture.vert", "Shaders/texture.frag", "Models/ship.png");
+    CameraDoom camera(vec3(0,1.5,0), vec3(1,0,0), vec3(0,1,0), 1, 5);
 
-    Ship ship("Shaders/texture.vert", "Shaders/texture.frag", "Models/ship.png", 1.0, 1.0);
-    //CameraDoom camera(vec3(0,1.5,0), vec3(1,0,0), vec3(0,1,0), 1, 3);
-
-    m_input.afficherPtr(true);
-    m_input.capturePtr(false);
+    m_input.afficherPtr(false);
+    m_input.capturePtr(true);
 
     while(!m_input.terminate())
     {
@@ -106,8 +106,8 @@ void SceneOpenGL::mainLoop()
         if(m_input.getKey(SDL_SCANCODE_ESCAPE))
             break;
 
-        //camera.movement(m_input);
-        //camera.lookAt(modelview);
+        camera.movement(m_input);
+        camera.lookAt(modelview);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -115,8 +115,9 @@ void SceneOpenGL::mainLoop()
         modelviewSave = modelview;
 
         // Render
-        ship.draw(projection, modelview);
-        modelview = lookAt(ship.getPosition()+vec3(-8,3,0), vec3(100,0,0), vec3(0,1,0));
+        modelview = scale(modelview, vec3(0.5,0.5,0.5));
+        ship.afficher(projection, modelview);
+        modelview = modelviewSave;
 
         // Actualization
         SDL_GL_SwapWindow(m_window);

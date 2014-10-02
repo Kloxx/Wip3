@@ -1,9 +1,7 @@
 #include "Ship.h"
 
-Ship::Ship(std::string const vertexShader, std::string const fragmentShader, std::string texture, float acceleration, float rotationSpeed) :
-    m_shader(vertexShader, fragmentShader), m_texture(texture),
-    m_acceleration(acceleration), m_linearSpeed(0.0), m_rotationSpeed(rotationSpeed),
-    m_position(0,0,0), m_orientation(1,0,0)
+Ship::Ship(std::string const vertexShader, std::string const fragmentShader, std::string texture) :
+    m_shader(vertexShader, fragmentShader), m_texture(texture)
 {
     m_shader.charger();
     m_texture.load();
@@ -267,7 +265,7 @@ Ship::Ship(std::string const vertexShader, std::string const fragmentShader, std
 
 Ship::~Ship(){}
 
-void Ship::draw(glm::mat4 &projection, glm::mat4 &modelview)
+void Ship::afficher(glm::mat4 &projection, glm::mat4 &modelview)
 {
     glUseProgram(m_shader.getProgramID());
 
@@ -288,14 +286,4 @@ void Ship::draw(glm::mat4 &projection, glm::mat4 &modelview)
         glDisableVertexAttribArray(0);
 
     glUseProgram(0);
-}
-
-glm::vec3 Ship::getPosition() const
-{
-    return m_position;
-}
-
-glm::vec3 Ship::getOrientation() const
-{
-    return m_orientation;
 }
