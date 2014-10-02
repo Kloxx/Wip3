@@ -18,7 +18,7 @@
 					<Add library="opengl32" />
 					<Add library="glew32" />
 					<Add library="mingw32" />
-					<Add library="SDL2" />
+					<Add library="SDL2main" />
 					<Add library="SDL2_image" />
 				</Linker>
 			</Target>
@@ -32,6 +32,11 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="opengl32" />
+					<Add library="glew32" />
+					<Add library="mingw32" />
+					<Add library="SDL2main" />
+					<Add library="SDL2_image" />
 				</Linker>
 			</Target>
 		</Build>
@@ -44,8 +49,8 @@
 			<Add library="opengl32" />
 			<Add library="glew32" />
 			<Add library="mingw32" />
-			<Add library="SDL2main" />
-			<Add library="SDL2.dll" />
+			<Add library="SDL2" />
+			<Add library="SDL2_image" />
 			<Add directory="$(#sdl2.lib)" />
 		</Linker>
 		<Unit filename="Camera.cpp" />
@@ -60,10 +65,11 @@
 		<Unit filename="SceneOpenGL.h" />
 		<Unit filename="Shader.cpp" />
 		<Unit filename="Shader.h" />
+		<Unit filename="Ship.cpp" />
+		<Unit filename="Ship.h" />
 		<Unit filename="Texture.cpp" />
 		<Unit filename="Texture.h" />
 		<Unit filename="main.cpp" />
-		<Unit filename="objloader.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
