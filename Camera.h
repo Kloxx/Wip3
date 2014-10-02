@@ -31,9 +31,9 @@ private:
 class CameraThirdPerson
 {
 public:
-    CameraThirdPerson(float distance, glm::vec3 verticalAxe);
+    CameraThirdPerson(glm::vec3 distance, glm::vec3 verticalAxe);
     ~CameraThirdPerson();
-    void lookAt(glm::mat4& modelview, Ship ship);
+    void lookAt(glm::mat4& modelview, Ship &ship);
 
 private:
     glm::vec3 m_distance;

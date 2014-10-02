@@ -81,8 +81,23 @@ void SceneOpenGL::mainLoop()
 {
     using namespace glm;
 
-    unsigned int frameRate(1000/40);
+    unsigned int frameRate(1000/60);
     Uint32 startLoop(0), elapsed(0);
+    Shader shader("Shaders/texture.vert", "Shaders/texture.frag");
+    shader.charger();
+    Uint32 startProgram(SDL_GetTicks());
+    int frames(0);
+
+    //********** For test **********
+    float verticesFloor[] = {
+        0,0,-10, 10000,0,-10, 10000,0,10,
+        0,0,-10, 0,0,10, 10000,0,10
+    };
+    float textureFloor[] = {
+        0,0, 1000,0, 1000,1,
+        0,0, 0,1, 1000,1
+    };
+    //********** For test **********
 
     mat4 projection;
     mat4 modelview;
@@ -91,12 +106,16 @@ void SceneOpenGL::mainLoop()
     projection = perspective(70.0, (double) m_windowWidth/m_windowHeight, 0.01, 300.0);
     modelview = mat4(1.0);
 
-
-    Ship ship("Shaders/texture.vert", "Shaders/texture.frag", "Models/ship.png", 1.0, 1.0);
-    //CameraDoom camera(vec3(0,1.5,0), vec3(1,0,0), vec3(0,1,0), 1, 3);
+    Ship ship(shader, "Models/ship.png", vec3(0,1,0), 10.0, 1.0);
+    CameraThirdPerson camera(vec3(-8,3,0), vec3(0,1,0));
 
     m_input.afficherPtr(true);
     m_input.capturePtr(false);
+
+    Texture texture("Textures/metal029.jpg");
+    texture.load();
+    modelviewSave = modelview;
+    modelview = lookAt(vec3(-10,3,0), vec3(100,0,0), vec3(0,1,0));
 
     while(!m_input.terminate())
     {
@@ -106,17 +125,32 @@ void SceneOpenGL::mainLoop()
         if(m_input.getKey(SDL_SCANCODE_ESCAPE))
             break;
 
-        //camera.movement(m_input);
-        //camera.lookAt(modelview);
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Camera
-        modelviewSave = modelview;
+        // Test
+        glUseProgram(shader.getProgramID());
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verticesFloor);
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, textureFloor);
+            glEnableVertexAttribArray(2);
+            glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "modelview"), 1, GL_FALSE, value_ptr(modelview));
+            glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
+            glBindTexture(GL_TEXTURE_2D, texture.getID());
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glDisableVertexAttribArray(1);
+            glDisableVertexAttribArray(0);
+        glUseProgram(0);
 
         // Render
+        modelviewSave = modelview;
+
+        modelview = modelviewSave;
+        ship.control(m_input);
         ship.draw(projection, modelview);
-        modelview = lookAt(ship.getPosition()+vec3(-8,3,0), vec3(100,0,0), vec3(0,1,0));
+
+        modelview = modelviewSave;
+        camera.lookAt(modelview, ship);
 
         // Actualization
         SDL_GL_SwapWindow(m_window);
@@ -125,5 +159,11 @@ void SceneOpenGL::mainLoop()
         elapsed = SDL_GetTicks() - startLoop;
         if(elapsed < frameRate)
             SDL_Delay(frameRate - elapsed);
+            frames++;
     }
+    Uint32 stopProgram(SDL_GetTicks());
+    frameRate = frames / (stopProgram/1000 - startProgram/1000);
+    std::cout << "Ran for " << stopProgram/1000 - startProgram/1000 << "s" << std::endl;
+    std::cout << "Frames : " << frames << std::endl;
+    std::cout << "Framerate : " << frameRate << std::endl;
 }

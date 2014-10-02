@@ -22,7 +22,7 @@
 class Ship
 {
 public:
-    Ship(std::string const vertexShader, std::string const fragmentShader, std::string texture, float acceleration, float rotationSpeed);
+    Ship(Shader& shader, std::string texture, glm::vec3 position, float acceleration, float rotationSpeed);
     ~Ship();
     void draw(glm::mat4& projection, glm::mat4& modelview);
     void control(Input const& input);
@@ -37,6 +37,7 @@ private:
     float m_normals[720];
     Texture m_texture;
     float m_acceleration;
+    float m_angle;
     float m_mass;
     glm::vec3 m_linearSpeed;
     float m_rotationSpeed;

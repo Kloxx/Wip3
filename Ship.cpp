@@ -1,9 +1,9 @@
 #include "Ship.h"
 
-Ship::Ship(std::string const vertexShader, std::string const fragmentShader, std::string texture, float acceleration, float rotationSpeed) :
-    m_shader(vertexShader, fragmentShader), m_texture(texture),
-    m_acceleration(acceleration), m_linearSpeed(0.0), m_rotationSpeed(rotationSpeed),
-    m_position(0,0,0), m_orientation(1,0,0)
+Ship::Ship(Shader& shader, std::string texture, glm::vec3 position, float acceleration, float rotationSpeed) :
+    m_shader(shader), m_texture(texture),
+    m_acceleration(acceleration), m_angle(0.0), m_linearSpeed(3,0,0), m_rotationSpeed(rotationSpeed),
+    m_position(position), m_orientation(100,0,0)
 {
     m_shader.charger();
     m_texture.load();
@@ -269,6 +269,7 @@ Ship::~Ship(){}
 
 void Ship::draw(glm::mat4 &projection, glm::mat4 &modelview)
 {
+    modelview = glm::translate(modelview, m_position);
     glUseProgram(m_shader.getProgramID());
 
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, m_vertex);
@@ -288,6 +289,34 @@ void Ship::draw(glm::mat4 &projection, glm::mat4 &modelview)
         glDisableVertexAttribArray(0);
 
     glUseProgram(0);
+}
+
+void Ship::control(Input const& input)
+{
+    if(input.getKey(SDL_SCANCODE_UP) || input.getKey(SDL_SCANCODE_W))
+    {
+
+    }
+    if(input.getKey(SDL_SCANCODE_DOWN) || input.getKey(SDL_SCANCODE_S))
+    {
+
+    }
+    if(input.getKey(SDL_SCANCODE_LEFT) || input.getKey(SDL_SCANCODE_A))
+    {
+
+    }
+    if(input.getKey(SDL_SCANCODE_RIGHT) || input.getKey(SDL_SCANCODE_D))
+    {
+
+    }
+    if(input.getKey(SDL_SCANCODE_Q))
+    {
+    }
+    if(input.getKey(SDL_SCANCODE_E))
+    {
+    }
+    m_position += m_linearSpeed;
+    m_orientation += m_linearSpeed;
 }
 
 glm::vec3 Ship::getPosition() const
