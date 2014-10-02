@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-    SceneOpenGL scene("Yo, dawg !", 800, 600, false);
+    SceneOpenGL scene("Yo, dawg !", 1440, 900, false);
 
     if(!scene.initWindow())
         return -1;

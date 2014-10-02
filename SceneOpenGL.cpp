@@ -90,8 +90,8 @@ void SceneOpenGL::mainLoop()
 
     //********** For test **********
     float verticesFloor[] = {
-        0,0,-15, 500,0,-15, 500,0,15,
-        0,0,-15, 0,0,15, 500,0,15,
+        0,0,-15, 500,0,-15, 500,0,20,
+        0,0,-15, 0,0,20, 500,0,20,
         460,0,20, 500,0,20, 500,0,500,
         460,0,20, 460,0,500, 500,0,500
     };
@@ -116,7 +116,7 @@ void SceneOpenGL::mainLoop()
     m_input.afficherPtr(true);
     m_input.capturePtr(false);
 
-    Texture texture("Textures/metal029.jpg");
+    Texture texture("Textures/metal029b.jpg");
     texture.load();
     modelviewSave = modelview;
 
