@@ -31,12 +31,13 @@ private:
 class CameraThirdPerson
 {
 public:
-    CameraThirdPerson(glm::vec3 distance, glm::vec3 verticalAxe);
+    CameraThirdPerson(float distanceX, float distanceY, glm::vec3 verticalAxe);
     ~CameraThirdPerson();
     void lookAt(glm::mat4& modelview, Ship &ship);
 
 private:
-    glm::vec3 m_distance;
+    float m_distanceX;
+    float m_distanceY;
     glm::vec3 m_verticalAxe;
 };
 

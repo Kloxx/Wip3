@@ -22,7 +22,7 @@
 class Ship
 {
 public:
-    Ship(Shader& shader, std::string texture, glm::vec3 position, float acceleration, float rotationSpeed);
+    Ship(Shader& shader, std::string texture, glm::vec3 position, float acceleration, float rotationSpeed, float mass);
     ~Ship();
     void draw(glm::mat4& projection, glm::mat4& modelview);
     void control(Input const& input);
@@ -43,7 +43,8 @@ private:
     float m_rotationSpeed;
     glm::vec3 m_position;
     glm::vec3 m_orientation;
-    //void movement();
+    glm::vec3 movement(float acceleration) const;
+    void orientate();
 };
 
 #endif // SHIP_H_INCLUDED

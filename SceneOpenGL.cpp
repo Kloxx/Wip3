@@ -90,12 +90,16 @@ void SceneOpenGL::mainLoop()
 
     //********** For test **********
     float verticesFloor[] = {
-        0,0,-10, 10000,0,-10, 10000,0,10,
-        0,0,-10, 0,0,10, 10000,0,10
+        0,0,-15, 500,0,-15, 500,0,15,
+        0,0,-15, 0,0,15, 500,0,15,
+        460,0,20, 500,0,20, 500,0,500,
+        460,0,20, 460,0,500, 500,0,500
     };
     float textureFloor[] = {
-        0,0, 1000,0, 1000,1,
-        0,0, 0,1, 1000,1
+        0,0, 50,0, 50,5,
+        0,0, 0,5, 50,5,
+        0,0, 5,0, 5,50,
+        0,0, 0,50, 5,50
     };
     //********** For test **********
 
@@ -103,11 +107,11 @@ void SceneOpenGL::mainLoop()
     mat4 modelview;
     mat4 modelviewSave;
 
-    projection = perspective(70.0, (double) m_windowWidth/m_windowHeight, 0.01, 300.0);
+    projection = perspective(70.0, (double) m_windowWidth/m_windowHeight, 0.01, 600.0);
     modelview = mat4(1.0);
 
-    Ship ship(shader, "Models/ship.png", vec3(0,1,0), 10.0, 1.0);
-    CameraThirdPerson camera(vec3(-8,3,0), vec3(0,1,0));
+    Ship ship(shader, "Models/ship.png", vec3(0,1,0), 0.02, 1.5, 150.0);
+    CameraThirdPerson camera(8.0, 3.0, vec3(0,1,0));
 
     m_input.afficherPtr(true);
     m_input.capturePtr(false);
@@ -115,7 +119,6 @@ void SceneOpenGL::mainLoop()
     Texture texture("Textures/metal029.jpg");
     texture.load();
     modelviewSave = modelview;
-    modelview = lookAt(vec3(-10,3,0), vec3(100,0,0), vec3(0,1,0));
 
     while(!m_input.terminate())
     {
@@ -136,7 +139,7 @@ void SceneOpenGL::mainLoop()
             glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "modelview"), 1, GL_FALSE, value_ptr(modelview));
             glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
             glBindTexture(GL_TEXTURE_2D, texture.getID());
-            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glDrawArrays(GL_TRIANGLES, 0, 12);
             glBindTexture(GL_TEXTURE_2D, 0);
             glDisableVertexAttribArray(1);
             glDisableVertexAttribArray(0);
@@ -145,7 +148,6 @@ void SceneOpenGL::mainLoop()
         // Render
         modelviewSave = modelview;
 
-        modelview = modelviewSave;
         ship.control(m_input);
         ship.draw(projection, modelview);
 
@@ -162,8 +164,8 @@ void SceneOpenGL::mainLoop()
             frames++;
     }
     Uint32 stopProgram(SDL_GetTicks());
-    frameRate = frames / (stopProgram/1000 - startProgram/1000);
-    std::cout << "Ran for " << stopProgram/1000 - startProgram/1000 << "s" << std::endl;
+    double frameRateAvg = frames / ((double) stopProgram/1000 - (double) startProgram/1000);
+    std::cout << "Ran for " << (double) stopProgram/1000 - (double) startProgram/1000 << "s" << std::endl;
     std::cout << "Frames : " << frames << std::endl;
-    std::cout << "Framerate : " << frameRate << std::endl;
+    std::cout << "Framerate : " << frameRateAvg << std::endl;
 }

@@ -86,13 +86,21 @@ void CameraDoom::lookAt(glm::mat4 &modelview)
     modelview = glm::lookAt(m_position, m_targetPoint, m_verticalAxe);
 }
 
-CameraThirdPerson::CameraThirdPerson(glm::vec3 distance, glm::vec3 verticalAxe) :
-    m_distance(distance), m_verticalAxe(verticalAxe)
+CameraThirdPerson::CameraThirdPerson(float distanceX, float distanceY, glm::vec3 verticalAxe) :
+    m_distanceX(distanceX), m_distanceY(distanceY), m_verticalAxe(verticalAxe)
 {}
 
 CameraThirdPerson::~CameraThirdPerson(){}
 
 void CameraThirdPerson::lookAt(glm::mat4& modelview, Ship &ship)
 {
-    modelview = glm::lookAt(ship.getPosition()+m_distance, ship.getOrientation(), m_verticalAxe);
+    glm::vec3 positionShip = ship.getPosition();
+    glm::vec3 orientationShip = ship.getOrientation();
+    glm::vec3 orientation(glm::normalize(orientationShip - positionShip));
+    glm::vec3 distance(0,0,0);
+    distance.x = orientation.x * -8;
+    distance.y = orientation.y * -8 + 3;
+    distance.z = orientation.z * -8;
+
+    modelview = glm::lookAt(positionShip + distance, ship.getOrientation(), m_verticalAxe);
 }

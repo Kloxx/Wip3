@@ -617,7 +617,7 @@
 1412028042 source:g:\prototypes\wip3\main.cpp
 	"SceneOpenGL.h"
 
-1412226354 source:g:\prototypes\wip3\sceneopengl.cpp
+1412283865 source:g:\prototypes\wip3\sceneopengl.cpp
 	"SceneOpenGL.h"
 
 1412132985 g:\prototypes\wip3\sceneopengl.h
@@ -642,10 +642,10 @@
 1411823258 source:g:\prototypes\wip3\texture.cpp
 	"Texture.h"
 
-1412225642 source:g:\prototypes\wip3\camera.cpp
+1412283057 source:g:\prototypes\wip3\camera.cpp
 	"Camera.h"
 
-1412225653 g:\prototypes\wip3\camera.h
+1412280905 g:\prototypes\wip3\camera.h
 	<glm/glm.hpp>
 	<glm/gtx/transform.hpp>
 	<glm/gtc/type_ptr.hpp>
@@ -667,7 +667,7 @@
 	<glm/gtc/type_ptr.hpp>
 	<iostream>
 
-1412223673 g:\prototypes\wip3\ship.h
+1412276567 g:\prototypes\wip3\ship.h
 	<GL/glew.h>
 	<GL3/gl3.h>
 	<glm/glm.hpp>
@@ -677,6 +677,6 @@
 	"Texture.h"
 	"Input.h"
 
-1412224570 source:g:\prototypes\wip3\ship.cpp
+1412283483 source:g:\prototypes\wip3\ship.cpp
 	"Ship.h"
 

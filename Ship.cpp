@@ -1,9 +1,9 @@
 #include "Ship.h"
 
-Ship::Ship(Shader& shader, std::string texture, glm::vec3 position, float acceleration, float rotationSpeed) :
+Ship::Ship(Shader& shader, std::string texture, glm::vec3 position, float acceleration, float rotationSpeed, float mass) :
     m_shader(shader), m_texture(texture),
-    m_acceleration(acceleration), m_angle(0.0), m_linearSpeed(3,0,0), m_rotationSpeed(rotationSpeed),
-    m_position(position), m_orientation(100,0,0)
+    m_acceleration(acceleration), m_angle(0.0), m_linearSpeed(0,0,0), m_mass(mass),
+    m_rotationSpeed(rotationSpeed), m_position(position), m_orientation(100,0,0)
 {
     m_shader.charger();
     m_texture.load();
@@ -270,6 +270,7 @@ Ship::~Ship(){}
 void Ship::draw(glm::mat4 &projection, glm::mat4 &modelview)
 {
     modelview = glm::translate(modelview, m_position);
+    modelview = glm::rotate(modelview, -m_angle, glm::vec3(0,1,0));
     glUseProgram(m_shader.getProgramID());
 
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, m_vertex);
@@ -293,30 +294,71 @@ void Ship::draw(glm::mat4 &projection, glm::mat4 &modelview)
 
 void Ship::control(Input const& input)
 {
-    if(input.getKey(SDL_SCANCODE_UP) || input.getKey(SDL_SCANCODE_W))
-    {
+    float acceleration(0.0);
+    float frictionFactor(m_mass / 10000.0);
+    glm::vec3 friction(0,0,0);
 
-    }
+    if(input.getKey(SDL_SCANCODE_UP) || input.getKey(SDL_SCANCODE_W))
+        acceleration = m_acceleration;
+
     if(input.getKey(SDL_SCANCODE_DOWN) || input.getKey(SDL_SCANCODE_S))
     {
-
+        acceleration = -m_acceleration;
+        frictionFactor = m_mass / 5000.0;
     }
+
     if(input.getKey(SDL_SCANCODE_LEFT) || input.getKey(SDL_SCANCODE_A))
     {
-
+        m_angle -= m_rotationSpeed;
+        //frictionFactor = m_mass / 5000.0;
     }
+
     if(input.getKey(SDL_SCANCODE_RIGHT) || input.getKey(SDL_SCANCODE_D))
     {
+        m_angle += m_rotationSpeed;
+        //frictionFactor = m_mass / 5000.0;
+    }
 
-    }
-    if(input.getKey(SDL_SCANCODE_Q))
-    {
-    }
-    if(input.getKey(SDL_SCANCODE_E))
-    {
-    }
+    if(!input.getKey(SDL_SCANCODE_UP))
+        frictionFactor = m_mass / 7000.0;
+
+    friction.x = -m_linearSpeed.x * frictionFactor;
+    friction.y = -m_linearSpeed.y * frictionFactor;
+    friction.z = -m_linearSpeed.z * frictionFactor;
+
+    if(m_angle < 0.0)
+        m_angle += 360.0;
+    if(m_angle > 360.0)
+        m_angle -= 360.0;
+
+    glm::vec3 movement(Ship::movement(acceleration));
+    m_linearSpeed += movement + friction;
     m_position += m_linearSpeed;
-    m_orientation += m_linearSpeed;
+    orientate();
+}
+
+glm::vec3 Ship::movement(float acceleration) const
+{
+    float angleRad = m_angle * M_PI / 180.0;
+    glm::vec3 movement;
+
+    movement.x = cos(angleRad) * acceleration;
+    movement.y = 0;
+    movement.z = sin(angleRad) * acceleration;
+
+    return movement;
+}
+
+void Ship::orientate()
+{
+    float angleRad = m_angle * M_PI / 180.0;
+    glm::vec3 linearSpeedNorm(glm::normalize(m_linearSpeed));
+
+    m_orientation.x = cos(angleRad) * 100;
+    m_orientation.y = 0;
+    m_orientation.z = sin(angleRad) * 100;
+
+    m_orientation += m_position;
 }
 
 glm::vec3 Ship::getPosition() const
@@ -327,4 +369,9 @@ glm::vec3 Ship::getPosition() const
 glm::vec3 Ship::getOrientation() const
 {
     return m_orientation;
+}
+
+glm::vec3 Ship::getLinearSpeed() const
+{
+    return m_linearSpeed;
 }
