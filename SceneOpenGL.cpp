@@ -110,7 +110,10 @@ void SceneOpenGL::mainLoop()
     projection = perspective(70.0, (double) m_windowWidth/m_windowHeight, 0.01, 600.0);
     modelview = mat4(1.0);
 
-    Ship ship(shader, "Models/ship.png", vec3(0,1,0), 0.02, 1.5, 150.0);
+    Ship ship(shader, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
+    //Ship ship2(shader, "Models/ship.png", vec3(0,1,0), 0.015, 2.0, 1000.0);
+    //Ship ship3(shader, "Models/ship.png", vec3(0,1,0), 0.016, 2.0, 1100.0);
+    //Ship ship4(shader, "Models/ship.png", vec3(0,1,0), 0.017, 2.0, 1200.0);
     CameraThirdPerson camera(8.0, 3.0, vec3(0,1,0));
 
     m_input.afficherPtr(true);
@@ -151,8 +154,23 @@ void SceneOpenGL::mainLoop()
         ship.control(m_input);
         ship.draw(projection, modelview);
 
+        //modelview = modelviewSave;
+
+        //ship2.control(m_input);
+        //ship2.draw(projection, modelview);
+
+        //modelview = modelviewSave;
+
+        //ship3.control(m_input);
+        //ship3.draw(projection, modelview);
+
+        //modelview = modelviewSave;
+
+        //ship4.control(m_input);
+        //ship4.draw(projection, modelview);
+
         modelview = modelviewSave;
-        camera.lookAt(modelview, ship);
+        camera.lookAt(modelview, ship2);
 
         // Actualization
         SDL_GL_SwapWindow(m_window);

@@ -295,7 +295,7 @@ void Ship::draw(glm::mat4 &projection, glm::mat4 &modelview)
 void Ship::control(Input const& input)
 {
     float acceleration(0.0);
-    float frictionFactor(m_mass / 10000.0);
+    float frictionFactor(m_mass / 100000.0);
     glm::vec3 friction(0,0,0);
 
     if(input.getKey(SDL_SCANCODE_UP) || input.getKey(SDL_SCANCODE_W))
@@ -303,8 +303,8 @@ void Ship::control(Input const& input)
 
     if(input.getKey(SDL_SCANCODE_DOWN) || input.getKey(SDL_SCANCODE_S))
     {
-        acceleration = -m_acceleration;
-        frictionFactor = m_mass / 5000.0;
+        //acceleration = -m_acceleration;
+        frictionFactor = m_mass / 30000.0;
     }
 
     if(input.getKey(SDL_SCANCODE_LEFT) || input.getKey(SDL_SCANCODE_A))
@@ -319,8 +319,8 @@ void Ship::control(Input const& input)
         //frictionFactor = m_mass / 5000.0;
     }
 
-    if(!input.getKey(SDL_SCANCODE_UP))
-        frictionFactor = m_mass / 7000.0;
+    if(!input.getKey(SDL_SCANCODE_UP) && !input.getKey(SDL_SCANCODE_DOWN))
+        frictionFactor = m_mass / 50000.0;
 
     friction.x = -m_linearSpeed.x * frictionFactor;
     friction.y = -m_linearSpeed.y * frictionFactor;

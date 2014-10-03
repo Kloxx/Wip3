@@ -617,7 +617,7 @@
 1412284481 source:g:\prototypes\wip3\main.cpp
 	"SceneOpenGL.h"
 
-1412283865 source:g:\prototypes\wip3\sceneopengl.cpp
+1412304770 source:g:\prototypes\wip3\sceneopengl.cpp
 	"SceneOpenGL.h"
 
 1412132985 g:\prototypes\wip3\sceneopengl.h
@@ -677,6 +677,6 @@
 	"Texture.h"
 	"Input.h"
 
-1412284005 source:g:\prototypes\wip3\ship.cpp
+1412295434 source:g:\prototypes\wip3\ship.cpp
 	"Ship.h"
 
