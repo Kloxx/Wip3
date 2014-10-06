@@ -12,6 +12,12 @@ include_directories(${GLM_INCLUDE_DIRS})
 link_directories(${GLM_LIBRARY_DIRS})
 add_definitions(${GLM_DEFINITIONS})
 
+find_package(OpenGL REQUIRED)
+include_directories(${OpenGL_INCLUDE_DIRS})
+link_directories(${OpenGL_LIBRARY_DIRS})
+add_definitions(${OpenGL_DEFINITIONS})
+
+message(STATUS "OpenGL_FOUND ${OPENGL_FOUND}")
 message(STATUS "GLM_FOUND ${GLM_FOUND}")
 message(STATUS "SDL2_FOUND ${SDL2_FOUND}")
 message(STATUS "SDL2IMAGE_FOUND ${SDL2IMAGE_FOUND}")
@@ -28,6 +34,8 @@ add_executable(game
     main.cpp)
 
 target_link_libraries(game
+    ${OPENGL_LIBRARIES}
+    ${SDL2IMAGE_LIBRARIES}
     ${SDL2_LIBRARIES}
     ${GLM_LIBRARIES})
 

@@ -1,5 +1,7 @@
 #include "Texture.h"
 
+#include <GL/gl.h> // for GL_BGR and GL_BGRA
+
 Texture::Texture(std::string imageFile) : m_id(0), m_imageFile(imageFile){}
 
 Texture::Texture() : m_id(0), m_imageFile(""){}
