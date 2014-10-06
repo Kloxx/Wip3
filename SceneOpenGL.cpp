@@ -170,7 +170,7 @@ void SceneOpenGL::mainLoop()
         //ship4.draw(projection, modelview);
 
         modelview = modelviewSave;
-        camera.lookAt(modelview, ship2);
+        camera.lookAt(modelview, ship);
 
         // Actualization
         SDL_GL_SwapWindow(m_window);
