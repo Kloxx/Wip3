@@ -1,3 +1,6 @@
+# Build dir
+build*
+
 # Compiled Object files
 *.slo
 *.lo

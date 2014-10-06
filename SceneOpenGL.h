@@ -6,10 +6,11 @@
 #include <GL/glew.h>
 #else
 #define GL_PROTOTYPES 1
-#include <GL3/gl3.h>
+#include <GLES3/gl3.h>
 #endif // WIN32
 
 // GLM
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
