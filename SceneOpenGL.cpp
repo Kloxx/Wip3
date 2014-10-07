@@ -112,7 +112,6 @@ void SceneOpenGL::mainLoop()
 
     mat4 projection;
     mat4 modelview;
-    mat4 modelviewSave;
 
     projection = perspective(70.0, (double) m_windowWidth/m_windowHeight, 0.01, 600.0);
     modelview = mat4(1.0);
@@ -128,7 +127,6 @@ void SceneOpenGL::mainLoop()
 
     Texture texture("Textures/metal029b.jpg");
     texture.load();
-    modelviewSave = modelview;
 
     while(!m_input.terminate())
     {
@@ -141,42 +139,25 @@ void SceneOpenGL::mainLoop()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Test
-        glUseProgram(shader.getProgramID());
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verticesFloor);
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, textureFloor);
-            glEnableVertexAttribArray(2);
-            glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "modelview"), 1, GL_FALSE, value_ptr(modelview));
-            glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
-            glBindTexture(GL_TEXTURE_2D, texture.getID());
-            glDrawArrays(GL_TRIANGLES, 0, 12);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            glDisableVertexAttribArray(1);
-            glDisableVertexAttribArray(0);
-        glUseProgram(0);
+				{
+						glUseProgram(shader.getProgramID());
+						glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verticesFloor);
+						glEnableVertexAttribArray(0);
+						glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, textureFloor);
+						glEnableVertexAttribArray(2);
+						glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "modelview"), 1, GL_FALSE, value_ptr(modelview));
+						glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
+						glBindTexture(GL_TEXTURE_2D, texture.getID());
+						glDrawArrays(GL_TRIANGLES, 0, 12);
+						glBindTexture(GL_TEXTURE_2D, 0);
+						glDisableVertexAttribArray(1);
+						glDisableVertexAttribArray(0);
+						glUseProgram(0);
+				}
 
         // Render
-        modelviewSave = modelview;
-
         ship.control(m_input);
         ship.draw(projection, modelview);
-
-        //modelview = modelviewSave;
-
-        //ship2.control(m_input);
-        //ship2.draw(projection, modelview);
-
-        //modelview = modelviewSave;
-
-        //ship3.control(m_input);
-        //ship3.draw(projection, modelview);
-
-        //modelview = modelviewSave;
-
-        //ship4.control(m_input);
-        //ship4.draw(projection, modelview);
-
-        modelview = modelviewSave;
         camera.lookAt(modelview, ship);
 
         // Actualization

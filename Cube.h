@@ -10,11 +10,11 @@
 class Cube
 {
 public:
-    Cube(float taille, std::string const vertexShader, std::string const fragmentShader);
-    ~Cube();
-    void afficher(glm::mat4 &projection, glm::mat4 &modelview);
+    Cube(const double& scale, std::string const& vertexShader, std::string const& fragmentShader);
+    void draw(const glm::mat4& projection, const glm::mat4& modelview);
 
 protected:
+    double m_scale;
     Shader m_shader;
     float m_vertex[108];
     float m_colors[108];
@@ -23,9 +23,8 @@ protected:
 class Box : public Cube
 {
 public:
-    Box(float taille, std::string const vertexShader, std::string const fragmentShader, std::string texture);
-    ~Box();
-    void afficher(glm::mat4 &projection, glm::mat4 &modelview);
+    Box(const double& scale, const std::string& vertexShader, const std::string& fragmentShader, const std::string& texture);
+    void draw(const glm::mat4& projection, const glm::mat4& modelview);
 
 protected:
     Texture m_texture;
