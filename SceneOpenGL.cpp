@@ -121,7 +121,7 @@ void SceneOpenGL::mainLoop()
     //Ship ship2(shader, "Models/ship.png", vec3(0,1,0), 0.015, 2.0, 1000.0);
     //Ship ship3(shader, "Models/ship.png", vec3(0,1,0), 0.016, 2.0, 1100.0);
     //Ship ship4(shader, "Models/ship.png", vec3(0,1,0), 0.017, 2.0, 1200.0);
-    CameraThirdPerson camera(8.0, 3.0, vec3(0,1,0));
+    CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
     m_input.afficherPtr(true);
     m_input.capturePtr(false);

@@ -275,6 +275,7 @@ void Ship::draw(glm::mat4 &projection, glm::mat4 &modelview)
     modelview = glm::translate(modelview, m_position);
     modelview = glm::rotate(modelview, glm::radians(m_angle), glm::vec3(0,-1,0));
     modelview = glm::rotate(modelview, glm::radians(m_roll), glm::vec3(1,0,0));
+
     glUseProgram(m_shader.getProgramID());
 
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, m_vertex);

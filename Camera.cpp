@@ -103,9 +103,9 @@ void CameraThirdPerson::lookAt(glm::mat4& modelview, Ship &ship)
     glm::vec3 orientationShip = ship.getOrientation();
     glm::vec3 orientation(glm::normalize(orientationShip - positionShip));
     glm::vec3 distance(0,0,0);
-    distance.x = orientation.x * -8;
-    distance.y = orientation.y * -8 + 3;
-    distance.z = orientation.z * -8;
+    distance.x = orientation.x * -m_distanceX;
+    distance.y = orientation.y * -m_distanceX + m_distanceY;
+    distance.z = orientation.z * -m_distanceX;
 
     modelview = glm::lookAt(positionShip + distance, ship.getOrientation(), m_verticalAxe);
 }
