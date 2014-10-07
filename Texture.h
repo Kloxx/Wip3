@@ -1,18 +1,10 @@
 #ifndef TEXTURE_H_INCLUDED
 #define TEXTURE_H_INCLUDED
 
-#ifdef WIN32
-#include <GL/glew.h>
-#else
-#define GL3_PROTOTYPES 1
-#include <GLES3/gl3.h>
-#include <GL/gl.h> // for GL_BGR and GL_BGRA
-#endif // WIN32
+#include "common.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <iostream>
-#include <string>
 
 class Texture
 {

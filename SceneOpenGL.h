@@ -1,25 +1,11 @@
 #ifndef SCENEOPENGL_H_INCLUDED
 #define SCENEOPENGL_H_INCLUDED
 
-// OpenGL
-#ifdef WIN32
-#include <GL/glew.h>
-#else
-#define GL_PROTOTYPES 1
-#include <GLES3/gl3.h>
-#define GLM_FORCE_RADIANS
-#endif // WIN32
-
-// GLM
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "common.h"
 
 // Other
 #include <SDL2/SDL.h>
-#include <iostream>
 #include "Shader.h"
-#include <string>
 #include "Cube.h"
 #include "Input.h"
 #include "Texture.h"

@@ -1,18 +1,7 @@
 #ifndef CUBE_H_INCLUDED
 #define CUBE_H_INCLUDED
 
-// OpenGL
-#ifdef WIN32
-#include <GL/glew.h>
-#else
-#define GL3_PROTOTYPES 1
-#include <GLES3/gl3.h>
-#endif // WIN32
-
-// GLM
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "common.h"
 
 // Other
 #include "Shader.h"
@@ -38,7 +27,7 @@ public:
     ~Box();
     void afficher(glm::mat4 &projection, glm::mat4 &modelview);
 
-private:
+protected:
     Texture m_texture;
     float m_coordTexture[72];
 };

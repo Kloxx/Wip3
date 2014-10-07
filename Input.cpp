@@ -9,7 +9,9 @@ Input::Input() : m_mouseX(0), m_mouseY(0), m_mouseRelX(0), m_mouseRelY(0), m_ter
         m_mouseButtons[i] = false;
 }
 
-Input::~Input(){}
+Input::~Input()
+{
+}
 
 void Input::updateEvents()
 {
