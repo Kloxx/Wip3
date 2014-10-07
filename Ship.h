@@ -26,8 +26,8 @@ private:
     float m_normals[720];
     Texture m_texture;
     float m_acceleration;
-    float m_angle;
-    float m_roll;
+    float m_angle; // expressed in degrees
+    float m_roll; // expressed in degrees
     glm::vec3 m_linearSpeed;
     float m_mass;
     float m_rotationSpeed;
