@@ -31,4 +31,10 @@ protected:
     float m_coordTexture[72];
 };
 
+class Skybox : public Box
+{
+public:
+		Skybox(const Shader& shader, const std::string& texture, const double& scale);
+};
+
 #endif // CUBE_H_INCLUDED

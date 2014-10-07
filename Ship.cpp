@@ -8,7 +8,6 @@ Ship::Ship(const Shader& shader, const std::string& texture, const glm::vec3& po
     m_acceleration(acceleration), m_angle(0.0), m_roll(0.0), m_linearSpeed(0,0,0), m_mass(mass),
     m_rotationSpeed(rotationSpeed), m_position(position), m_orientation(100,0,0)
 {
-    m_texture.load();
     float vertexTmp[] = {
          1.000000,-0.500000, 1.000000, -1.000000,-0.500000, 1.000000, -1.000000,-0.500000,-1.000000,
         -1.000000, 0.500000,-1.000000, -1.000000, 0.500000, 1.000000,  0.999999, 0.700000, 1.000001,

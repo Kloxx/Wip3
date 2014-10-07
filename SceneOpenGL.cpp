@@ -116,14 +116,14 @@ void SceneOpenGL::mainLoop()
     modelview = mat4(1.0);
 
     Ship ship(shader, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
-    Box skybox(shader, "Textures/debug.png", 50);
+    Box box(shader, "Textures/debug.png", 50);
+    Skybox skybox(shader, "Textures/skybox.png", 300);
     CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
     m_input.afficherPtr(true);
     m_input.capturePtr(false);
 
     Texture texture("Textures/metal029b.jpg");
-    texture.load();
 
     while(!m_input.terminate())
     {
@@ -134,6 +134,14 @@ void SceneOpenGL::mainLoop()
             break;
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        {
+            glm::mat4 modelview_local = modelview;
+            modelview_local = glm::translate(modelview_local, ship.getPosition());
+            modelview_local = glm::scale(modelview_local, vec3(1,.4,1));
+            skybox.draw(projection, modelview_local);
+        }
+        glClear(GL_DEPTH_BUFFER_BIT);
 
         // Test
         {
@@ -152,15 +160,14 @@ void SceneOpenGL::mainLoop()
             glUseProgram(0);
         }
 
-        // Render
-        ship.control(m_input);
         {
             float angle = frames*2.;
             glm::mat4 modelview_local = modelview;
             modelview_local = glm::translate(modelview_local, glm::vec3(200, 50, 200));
             modelview_local = glm::rotate(modelview_local, glm::radians(angle), glm::vec3(1,.2,-.4));
-            skybox.draw(projection, modelview_local);
+            box.draw(projection, modelview_local);
         }
+        ship.control(m_input);
         ship.draw(projection, modelview);
         camera.lookAt(modelview, ship);
 
@@ -169,9 +176,8 @@ void SceneOpenGL::mainLoop()
 
         // Framerate
         elapsed = SDL_GetTicks() - startLoop;
-        if(elapsed < frameRate)
-            SDL_Delay(frameRate - elapsed);
-            frames++;
+        if (elapsed < frameRate) SDL_Delay(frameRate - elapsed);
+        frames++;
     }
     Uint32 stopProgram(SDL_GetTicks());
     double frameRateAvg = frames / ((double) stopProgram/1000 - (double) startProgram/1000);

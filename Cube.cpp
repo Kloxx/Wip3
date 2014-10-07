@@ -74,7 +74,6 @@ Box::Box(const Shader& shader, const std::string& texture, const double& scale) 
     Cube(shader, scale),
     m_texture(texture)
 {
-    m_texture.load();
     float coordTextureTmp[] = {
         0,0, 1,0, 1,1,
         0,0, 0,1, 1,1,
@@ -122,4 +121,25 @@ Box::draw(const glm::mat4& projection, const glm::mat4& modelview)
     glDisableVertexAttribArray(0);
 
     glUseProgram(0);
+}
+
+Skybox::Skybox(const Shader& shader, const std::string& texture, const double& scale) :
+    Box(shader, texture, scale)
+{
+    float coordTextureTmp[] = {
+        0/4.,1/3., 1/4.,1/3., 1/4.,2/3., //left
+        0/4.,1/3., 0/4.,2/3., 1/4.,2/3.,
+        2/4.,1/3., 1/4.,1/3., 1/4.,2/3., //front
+        2/4.,1/3., 2/4.,2/3., 1/4.,2/3.,
+        2/4.,0/3., 2/4.,1/3., 1/4.,1/3., //bottom
+        2/4.,0/3., 1/4.,0/3., 1/4.,1/3.,
+        3/4.,1/3., 2/4.,1/3., 2/4.,2/3., //right
+        3/4.,1/3., 3/4.,2/3., 2/4.,2/3.,
+        4/4.,1/3., 3/4.,1/3., 3/4.,2/3., //back
+        4/4.,1/3., 4/4.,2/3., 3/4.,2/3.,
+        2/4.,3/3., 2/4.,2/3., 1/4.,2/3., //top
+        2/4.,3/3., 1/4.,3/3., 1/4.,2/3.,
+    };
+    for(int i(0); i<72; i++)
+        m_coordTexture[i] = coordTextureTmp[i];
 }
