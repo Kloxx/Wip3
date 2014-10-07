@@ -16,19 +16,6 @@ Shader::Shader() :
 {
 }
 
-
-Shader::Shader(Shader const &shaderACopier) :
-    m_vertexID(0),
-    m_fragmentID(0),
-    m_programID(0),
-    m_vertexSource(shaderACopier.m_vertexSource),
-    m_fragmentSource(shaderACopier.m_fragmentSource)
-{
-    const bool success = charger();
-    assert( success );
-}
-
-
 Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource) :
     m_vertexID(0),
     m_fragmentID(0),
@@ -36,7 +23,7 @@ Shader::Shader(const std::string& vertexSource, const std::string& fragmentSourc
     m_vertexSource(vertexSource),
     m_fragmentSource(fragmentSource)
 {
-    const bool success = charger();
+    const bool success = load();
     assert( success );
 }
 
@@ -69,16 +56,6 @@ Shader::~Shader()
 
 // Méthodes
 
-Shader&
-Shader::operator=(Shader const &shaderACopier)
-{
-    m_vertexSource = shaderACopier.m_vertexSource;
-    m_fragmentSource = shaderACopier.m_fragmentSource;
-    const bool success = charger();
-    assert( success );
-    return *this;
-}
-
 std::string
 Shader::getGlError(const GLuint& id)
 {
@@ -102,7 +79,7 @@ Shader::getGlError(const GLuint& id)
 }
 
 bool
-Shader::charger()
+Shader::load()
 {
     cleanup();
 

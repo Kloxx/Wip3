@@ -10,16 +10,15 @@ class Texture
 {
 public:
     Texture();
-    Texture(std::string imageFile);
-    Texture(Texture const &textureToCopy);
     ~Texture();
-    Texture &operator=(Texture const &textureToCopy);
-    bool load();
-    GLuint getID() const;
-    void setImageFile(const std::string &imageFile);
-    SDL_Surface *invertPixels(SDL_Surface *sourceImage) const;
+    Texture(const std::string& imageFile);
 
-private:
+    GLuint getID() const;
+
+protected:
+    static SDL_Surface* invertPixels(SDL_Surface* sourceImage);
+    bool load();
+
     GLuint m_id;
     std::string m_imageFile;
 };

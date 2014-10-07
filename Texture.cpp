@@ -1,32 +1,27 @@
 #include "Texture.h"
 
 #include <iostream>
+#include <cassert>
 
 #ifndef WIN32
 #include <GL/gl.h> // for GL_BGR and GL_BGRA
 #endif
 
-Texture::Texture(std::string imageFile) : m_id(0), m_imageFile(imageFile){}
-
-Texture::Texture() : m_id(0), m_imageFile(""){}
-
-Texture::Texture(Texture const &textureToCopy)
+Texture::Texture(const std::string& imageFile) :
+    m_id(0),
+    m_imageFile(imageFile)
 {
-    m_imageFile = textureToCopy.m_imageFile;
-    load();
+    const bool success = load();
+    assert( success );
+}
+
+Texture::Texture() : m_id(0), m_imageFile("")
+{
 }
 
 Texture::~Texture()
 {
     glDeleteTextures(1, &m_id);
-}
-
-Texture& Texture::operator=(Texture const &textureToCopy)
-{
-    m_imageFile = textureToCopy.m_imageFile;
-    load();
-
-    return *this;
 }
 
 bool Texture::load()
@@ -99,12 +94,7 @@ GLuint Texture::getID() const
     return m_id;
 }
 
-void Texture::setImageFile(const std::string &imageFile)
-{
-    m_imageFile = imageFile;
-}
-
-SDL_Surface* Texture::invertPixels(SDL_Surface *sourceImage) const
+SDL_Surface* Texture::invertPixels(SDL_Surface *sourceImage)
 {
     SDL_Surface *invertedImage = SDL_CreateRGBSurface(0, sourceImage->w, sourceImage->h, sourceImage->format->BitsPerPixel,
                                                      sourceImage->format->Rmask, sourceImage->format->Gmask, sourceImage->format->Bmask, sourceImage->format->Amask);

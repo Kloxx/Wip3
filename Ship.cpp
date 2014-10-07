@@ -3,13 +3,11 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Ship::Ship(Shader& shader, std::string texture, glm::vec3 position, float acceleration, float rotationSpeed, float mass) :
+Ship::Ship(const Shader& shader, const std::string& texture, const glm::vec3& position, float acceleration, float rotationSpeed, float mass) :
     m_shader(shader), m_texture(texture),
     m_acceleration(acceleration), m_angle(0.0), m_roll(0.0), m_linearSpeed(0,0,0), m_mass(mass),
     m_rotationSpeed(rotationSpeed), m_position(position), m_orientation(100,0,0)
 {
-    m_shader.charger();
-    m_texture.load();
     float vertexTmp[] = {
          1.000000,-0.500000, 1.000000, -1.000000,-0.500000, 1.000000, -1.000000,-0.500000,-1.000000,
         -1.000000, 0.500000,-1.000000, -1.000000, 0.500000, 1.000000,  0.999999, 0.700000, 1.000001,
@@ -268,13 +266,12 @@ Ship::Ship(Shader& shader, std::string texture, glm::vec3 position, float accele
         m_coordTexture[i] = coordTextureTmp[i];
 }
 
-Ship::~Ship(){}
-
-void Ship::draw(glm::mat4 &projection, glm::mat4 &modelview)
+void Ship::draw(const glm::mat4& projection, const glm::mat4& modelview)
 {
-    modelview = glm::translate(modelview, m_position);
-    modelview = glm::rotate(modelview, glm::radians(m_angle), glm::vec3(0,-1,0));
-    modelview = glm::rotate(modelview, glm::radians(m_roll), glm::vec3(1,0,0));
+    glm::mat4 modelview_local = modelview;
+    modelview_local = glm::translate(modelview_local, m_position);
+    modelview_local = glm::rotate(modelview_local, glm::radians(m_angle), glm::vec3(0,-1,0));
+    modelview_local = glm::rotate(modelview_local, glm::radians(m_roll), glm::vec3(1,0,0));
 
     glUseProgram(m_shader.getProgramID());
 
@@ -284,7 +281,7 @@ void Ship::draw(glm::mat4 &projection, glm::mat4 &modelview)
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, m_coordTexture);
         glEnableVertexAttribArray(2);
 
-        glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "modelview"), 1, GL_FALSE, glm::value_ptr(modelview));
+        glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "modelview"), 1, GL_FALSE, glm::value_ptr(modelview_local));
         glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
         glBindTexture(GL_TEXTURE_2D, m_texture.getID());

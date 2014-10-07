@@ -91,7 +91,6 @@ void SceneOpenGL::mainLoop()
     unsigned int frameRate(1000/60);
     Uint32 startLoop(0), elapsed(0);
     Shader shader("Shaders/texture.vert", "Shaders/texture.frag");
-    shader.charger();
     Uint32 startProgram(SDL_GetTicks());
     int frames(0);
 
@@ -112,23 +111,19 @@ void SceneOpenGL::mainLoop()
 
     mat4 projection;
     mat4 modelview;
-    mat4 modelviewSave;
 
     projection = perspective(70.0, (double) m_windowWidth/m_windowHeight, 0.01, 600.0);
     modelview = mat4(1.0);
 
     Ship ship(shader, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
-    //Ship ship2(shader, "Models/ship.png", vec3(0,1,0), 0.015, 2.0, 1000.0);
-    //Ship ship3(shader, "Models/ship.png", vec3(0,1,0), 0.016, 2.0, 1100.0);
-    //Ship ship4(shader, "Models/ship.png", vec3(0,1,0), 0.017, 2.0, 1200.0);
+    Box box(shader, "Textures/debug.png", 50);
+    Skybox skybox(shader, "Textures/skybox.png", 300);
     CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
     m_input.afficherPtr(true);
     m_input.capturePtr(false);
 
     Texture texture("Textures/metal029b.jpg");
-    texture.load();
-    modelviewSave = modelview;
 
     while(!m_input.terminate())
     {
@@ -140,8 +135,17 @@ void SceneOpenGL::mainLoop()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        {
+            glm::mat4 modelview_local = modelview;
+            modelview_local = glm::translate(modelview_local, ship.getPosition());
+            modelview_local = glm::scale(modelview_local, vec3(1,.4,1));
+            skybox.draw(projection, modelview_local);
+        }
+        glClear(GL_DEPTH_BUFFER_BIT);
+
         // Test
-        glUseProgram(shader.getProgramID());
+        {
+            glUseProgram(shader.getProgramID());
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verticesFloor);
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, textureFloor);
@@ -151,32 +155,20 @@ void SceneOpenGL::mainLoop()
             glBindTexture(GL_TEXTURE_2D, texture.getID());
             glDrawArrays(GL_TRIANGLES, 0, 12);
             glBindTexture(GL_TEXTURE_2D, 0);
-            glDisableVertexAttribArray(1);
+            glDisableVertexAttribArray(2);
             glDisableVertexAttribArray(0);
-        glUseProgram(0);
+            glUseProgram(0);
+        }
 
-        // Render
-        modelviewSave = modelview;
-
+        {
+            float angle = frames*2.;
+            glm::mat4 modelview_local = modelview;
+            modelview_local = glm::translate(modelview_local, glm::vec3(200, 50, 200));
+            modelview_local = glm::rotate(modelview_local, glm::radians(angle), glm::vec3(1,.2,-.4));
+            box.draw(projection, modelview_local);
+        }
         ship.control(m_input);
         ship.draw(projection, modelview);
-
-        //modelview = modelviewSave;
-
-        //ship2.control(m_input);
-        //ship2.draw(projection, modelview);
-
-        //modelview = modelviewSave;
-
-        //ship3.control(m_input);
-        //ship3.draw(projection, modelview);
-
-        //modelview = modelviewSave;
-
-        //ship4.control(m_input);
-        //ship4.draw(projection, modelview);
-
-        modelview = modelviewSave;
         camera.lookAt(modelview, ship);
 
         // Actualization
@@ -184,9 +176,8 @@ void SceneOpenGL::mainLoop()
 
         // Framerate
         elapsed = SDL_GetTicks() - startLoop;
-        if(elapsed < frameRate)
-            SDL_Delay(frameRate - elapsed);
-            frames++;
+        if (elapsed < frameRate) SDL_Delay(frameRate - elapsed);
+        frames++;
     }
     Uint32 stopProgram(SDL_GetTicks());
     double frameRateAvg = frames / ((double) stopProgram/1000 - (double) startProgram/1000);
