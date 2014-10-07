@@ -1,6 +1,7 @@
 #include "Cube.h"
 
-using namespace glm;
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 Cube::Cube(float taille, std::string const vertexShader, std::string const fragmentShader) : m_shader(vertexShader, fragmentShader)
 {
@@ -55,8 +56,8 @@ void Cube::afficher(glm::mat4 &projection, glm::mat4 &modelview)
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, m_colors);
         glEnableVertexAttribArray(1);
 
-        glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "modelview"), 1, GL_FALSE, value_ptr(modelview));
-        glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
+        glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "modelview"), 1, GL_FALSE, glm::value_ptr(modelview));
+        glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -100,8 +101,8 @@ void Box::afficher(glm::mat4 &projection, glm::mat4 &modelview)
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, m_coordTexture);
         glEnableVertexAttribArray(2);
 
-        glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "modelview"), 1, GL_FALSE, value_ptr(modelview));
-        glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
+        glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "modelview"), 1, GL_FALSE, glm::value_ptr(modelview));
+        glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
         glBindTexture(GL_TEXTURE_2D, m_texture.getID());
         glDrawArrays(GL_TRIANGLES, 0, 36);

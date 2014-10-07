@@ -1,19 +1,7 @@
 #ifndef SHIP_H_INCLUDED
 #define SHIP_H_INCLUDED
 
-// OpenGL
-#ifdef WIN32
-#include <GL/glew.h>
-#else
-#define GL3_PROTOTYPES 1
-#include <GLES3/gl3.h>
-#define GLM_FORCE_RADIANS
-#endif // WIN32
-
-// GLM
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "common.h"
 
 // Other
 #include "Shader.h"
@@ -38,8 +26,8 @@ private:
     float m_normals[720];
     Texture m_texture;
     float m_acceleration;
-    float m_angle;
-    float m_roll;
+    float m_angle; // expressed in degrees
+    float m_roll; // expressed in degrees
     glm::vec3 m_linearSpeed;
     float m_mass;
     float m_rotationSpeed;

@@ -1,8 +1,13 @@
 #include "Camera.h"
 
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 CameraDoom::CameraDoom() :
     m_position(0,1,0), m_orientation(1,0,0), m_verticalAxe(0,1,0), m_lateralAxe(0,0,1),
-    m_speed(0.5), m_rotationSpeed(0.5), m_phi(0.0){}
+    m_speed(0.5), m_rotationSpeed(0.5), m_phi(0.0)
+{
+}
 
 CameraDoom::CameraDoom(glm::vec3 position, glm::vec3 orientation, glm::vec3 verticalAxe, float speed, float rotationSpeed) :
     m_position(position), m_orientation(orientation), m_verticalAxe(verticalAxe),

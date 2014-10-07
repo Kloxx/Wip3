@@ -1,5 +1,6 @@
 #ifndef INPUT_H_INCLUDED
 #define INPUT_H_INCLUDED
+
 // SDL2
 #include <SDL2/SDL.h>
 

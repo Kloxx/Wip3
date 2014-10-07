@@ -1,9 +1,16 @@
 #include "SceneOpenGL.h"
 
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <iostream>
+#include <string>
+
 SceneOpenGL::SceneOpenGL(std::string windowTitle, int windowWidth, int windowHeight, bool fullscreen) :
     m_windowTitle(windowTitle), m_windowWidth(windowWidth), m_windowHeight(windowHeight),
     m_fullscreen(fullscreen), m_window(0), m_GLContext(0), m_input()
-{}
+{
+}
 
 SceneOpenGL::~SceneOpenGL()
 {

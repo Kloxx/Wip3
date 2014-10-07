@@ -1,5 +1,8 @@
 #include "Ship.h"
 
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 Ship::Ship(Shader& shader, std::string texture, glm::vec3 position, float acceleration, float rotationSpeed, float mass) :
     m_shader(shader), m_texture(texture),
     m_acceleration(acceleration), m_angle(0.0), m_roll(0.0), m_linearSpeed(0,0,0), m_mass(mass),
@@ -270,8 +273,8 @@ Ship::~Ship(){}
 void Ship::draw(glm::mat4 &projection, glm::mat4 &modelview)
 {
     modelview = glm::translate(modelview, m_position);
-    modelview = glm::rotate(modelview, -m_angle, glm::vec3(0,1,0));
-    modelview = glm::rotate(modelview, m_roll, glm::vec3(1,0,0));
+    modelview = glm::rotate(modelview, glm::radians(m_angle), glm::vec3(0,-1,0));
+    modelview = glm::rotate(modelview, glm::radians(m_roll), glm::vec3(1,0,0));
     glUseProgram(m_shader.getProgramID());
 
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, m_vertex);
@@ -340,7 +343,7 @@ void Ship::control(Input const& input)
 
 glm::vec3 Ship::movement(float acceleration) const
 {
-    float angleRad = m_angle * M_PI / 180.0;
+    float angleRad = glm::radians(m_angle);
     glm::vec3 movement;
 
     movement.x = cos(angleRad) * acceleration;
@@ -352,7 +355,7 @@ glm::vec3 Ship::movement(float acceleration) const
 
 void Ship::orientate()
 {
-    float angleRad = m_angle * M_PI / 180.0;
+    float angleRad = glm::radians(m_angle);
     glm::vec3 linearSpeedNorm(glm::normalize(m_linearSpeed));
 
     m_orientation.x = cos(angleRad) * 100;
