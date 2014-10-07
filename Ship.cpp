@@ -3,12 +3,11 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Ship::Ship(Shader& shader, std::string texture, glm::vec3 position, float acceleration, float rotationSpeed, float mass) :
+Ship::Ship(const Shader& shader, const std::string& texture, const glm::vec3& position, float acceleration, float rotationSpeed, float mass) :
     m_shader(shader), m_texture(texture),
     m_acceleration(acceleration), m_angle(0.0), m_roll(0.0), m_linearSpeed(0,0,0), m_mass(mass),
     m_rotationSpeed(rotationSpeed), m_position(position), m_orientation(100,0,0)
 {
-    m_shader.charger();
     m_texture.load();
     float vertexTmp[] = {
          1.000000,-0.500000, 1.000000, -1.000000,-0.500000, 1.000000, -1.000000,-0.500000,-1.000000,
@@ -267,8 +266,6 @@ Ship::Ship(Shader& shader, std::string texture, glm::vec3 position, float accele
     for(int i(0); i<480; i++)
         m_coordTexture[i] = coordTextureTmp[i];
 }
-
-Ship::~Ship(){}
 
 void Ship::draw(const glm::mat4& projection, const glm::mat4& modelview)
 {

@@ -3,25 +3,25 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Cube::Cube(const double& scale, std::string const& vertexShader, std::string const& fragmentShader) :
+Cube::Cube(const Shader& shader, const double& scale) :
     m_scale(scale),
-    m_shader(vertexShader, fragmentShader)
+    m_shader(shader)
 {
     // Temporary vertex
     //taille /= 2;
     float vertexTmp[] =
-    {0.0,0.0,0.0,        1,0.0,0.0,        1,1,0.0,
-     0.0,0.0,0.0,        0.0,1,0.0,        1,1,0.0,
-     1,0.0,1,  1,0.0,0.0,        1,1,0.0,
-     1,0.0,1,  1,1,         1,1,1,0.0,
-     0.0,0.0,1, 1,0.0,1,     1,0.0,0.0,
-     0.0,0.0,1, 0.0,0.0,0.0,           1,0.0,0.0,
-     0.0,0.0,1, 1,0.0,1,     1,1,1,
-     0.0,0.0,1, 0.0,1,1,     1,1,1,
-     0.0,0.0,0.0,        0.0,0.0,1.5*1,    0.0,1,1,
-     0.0,0.0,0.0,        0.0,1,0.0,        0.0,1,1,
-     0.0,1,1,  1,1,1,  1,1,0.0,
-     0.0,1,1,  0.0,1,0.0,        1,1,0.0};
+    {-1,-1,-1,        1,-1,-1,        1,1,-1,
+     -1,-1,-1,        -1,1,-1,        1,1,-1,
+     1,-1,1,  1,-1,-1,        1,1,-1,
+     1,-1,1,  1,1,         1,1,1,-1,
+     -1,-1,1, 1,-1,1,     1,-1,-1,
+     -1,-1,1, -1,-1,-1,           1,-1,-1,
+     -1,-1,1, 1,-1,1,     1,1,1,
+     -1,-1,1, -1,1,1,     1,1,1,
+     -1,-1,-1,        -1,-1,1,    -1,1,1,
+     -1,-1,-1,        -1,1,-1,        -1,1,1,
+     -1,1,1,  1,1,1,  1,1,-1,
+     -1,1,1,  -1,1,-1,        1,1,-1};
 
     float colorsTmp[] =
     {1.0,0.0,0.0, 1.0,0.0,0.0, 1.0,0.0,0.0,
@@ -47,7 +47,8 @@ Cube::Cube(const double& scale, std::string const& vertexShader, std::string con
 void
 Cube::draw(const glm::mat4 &projection, const glm::mat4 &modelview)
 {
-    glm::mat4 modelview_local = glm::scale(modelview, glm::vec3(m_scale, m_scale, m_scale));
+    glm::mat4 modelview_local = modelview;
+    modelview_local = glm::scale(modelview_local, glm::vec3(m_scale, m_scale, m_scale));
 
     glUseProgram(m_shader.getProgramID());
 
@@ -69,8 +70,9 @@ Cube::draw(const glm::mat4 &projection, const glm::mat4 &modelview)
 }
 
 
-Box::Box(const double& scale, const std::string& vertexShader, const std::string& fragmentShader, const std::string& texture) :
-    Cube(scale, vertexShader, fragmentShader), m_texture(texture)
+Box::Box(const Shader& shader, const std::string& texture, const double& scale) :
+    Cube(shader, scale),
+    m_texture(texture)
 {
     m_texture.load();
     float coordTextureTmp[] = {
@@ -94,6 +96,9 @@ Box::Box(const double& scale, const std::string& vertexShader, const std::string
 void
 Box::draw(const glm::mat4& projection, const glm::mat4& modelview)
 {
+    glm::mat4 modelview_local = modelview;
+    modelview_local = glm::scale(modelview_local, glm::vec3(m_scale, m_scale, m_scale));
+
     glUseProgram(m_shader.getProgramID());
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, m_vertex);
@@ -105,7 +110,7 @@ Box::draw(const glm::mat4& projection, const glm::mat4& modelview)
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, m_coordTexture);
     glEnableVertexAttribArray(2);
 
-    glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "modelview"), 1, GL_FALSE, glm::value_ptr(modelview));
+    glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "modelview"), 1, GL_FALSE, glm::value_ptr(modelview_local));
     glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
     glBindTexture(GL_TEXTURE_2D, m_texture.getID());

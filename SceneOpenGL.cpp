@@ -91,7 +91,6 @@ void SceneOpenGL::mainLoop()
     unsigned int frameRate(1000/60);
     Uint32 startLoop(0), elapsed(0);
     Shader shader("Shaders/texture.vert", "Shaders/texture.frag");
-    shader.charger();
     Uint32 startProgram(SDL_GetTicks());
     int frames(0);
 
@@ -117,9 +116,7 @@ void SceneOpenGL::mainLoop()
     modelview = mat4(1.0);
 
     Ship ship(shader, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
-    //Ship ship2(shader, "Models/ship.png", vec3(0,1,0), 0.015, 2.0, 1000.0);
-    //Ship ship3(shader, "Models/ship.png", vec3(0,1,0), 0.016, 2.0, 1100.0);
-    //Ship ship4(shader, "Models/ship.png", vec3(0,1,0), 0.017, 2.0, 1200.0);
+    Box skybox(shader, "Textures/debug.png", 50);
     CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
     m_input.afficherPtr(true);
@@ -139,24 +136,31 @@ void SceneOpenGL::mainLoop()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Test
-				{
-						glUseProgram(shader.getProgramID());
-						glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verticesFloor);
-						glEnableVertexAttribArray(0);
-						glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, textureFloor);
-						glEnableVertexAttribArray(2);
-						glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "modelview"), 1, GL_FALSE, value_ptr(modelview));
-						glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
-						glBindTexture(GL_TEXTURE_2D, texture.getID());
-						glDrawArrays(GL_TRIANGLES, 0, 12);
-						glBindTexture(GL_TEXTURE_2D, 0);
-						glDisableVertexAttribArray(1);
-						glDisableVertexAttribArray(0);
-						glUseProgram(0);
-				}
+        {
+            glUseProgram(shader.getProgramID());
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verticesFloor);
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, textureFloor);
+            glEnableVertexAttribArray(2);
+            glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "modelview"), 1, GL_FALSE, value_ptr(modelview));
+            glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
+            glBindTexture(GL_TEXTURE_2D, texture.getID());
+            glDrawArrays(GL_TRIANGLES, 0, 12);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glDisableVertexAttribArray(2);
+            glDisableVertexAttribArray(0);
+            glUseProgram(0);
+        }
 
         // Render
         ship.control(m_input);
+        {
+            float angle = frames*2.;
+            glm::mat4 modelview_local = modelview;
+            modelview_local = glm::translate(modelview_local, glm::vec3(200, 50, 200));
+            modelview_local = glm::rotate(modelview_local, glm::radians(angle), glm::vec3(1,.2,-.4));
+            skybox.draw(projection, modelview_local);
+        }
         ship.draw(projection, modelview);
         camera.lookAt(modelview, ship);
 

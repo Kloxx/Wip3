@@ -10,7 +10,7 @@
 class Cube
 {
 public:
-    Cube(const double& scale, std::string const& vertexShader, std::string const& fragmentShader);
+    Cube(const Shader& shader, const double& scale);
     void draw(const glm::mat4& projection, const glm::mat4& modelview);
 
 protected:
@@ -23,7 +23,7 @@ protected:
 class Box : public Cube
 {
 public:
-    Box(const double& scale, const std::string& vertexShader, const std::string& fragmentShader, const std::string& texture);
+    Box(const Shader& shader, const std::string& texture, const double& scale);
     void draw(const glm::mat4& projection, const glm::mat4& modelview);
 
 protected:
