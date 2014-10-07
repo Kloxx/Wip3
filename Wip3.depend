@@ -304,9 +304,10 @@
 	<string>
 	<fstream>
 
-1412644036 g:\prototypes\wip3\texture.h
+1412646177 g:\prototypes\wip3\texture.h
 	<GL/glew.h>
 	<GLES3/gl3.h>
+	<GL/gl.h>
 	<SDL2/SDL.h>
 	<SDL2/SDL_image.h>
 	<iostream>
@@ -617,7 +618,7 @@
 1412644026 source:g:\prototypes\wip3\main.cpp
 	"SceneOpenGL.h"
 
-1412644036 source:g:\prototypes\wip3\sceneopengl.cpp
+1412649412 source:g:\prototypes\wip3\sceneopengl.cpp
 	"SceneOpenGL.h"
 
 1412645422 g:\prototypes\wip3\sceneopengl.h
@@ -639,9 +640,8 @@
 1411739552 source:g:\prototypes\wip3\shader.cpp
 	"Shader.h"
 
-1412644587 source:g:\prototypes\wip3\texture.cpp
+1412646177 source:g:\prototypes\wip3\texture.cpp
 	"Texture.h"
-	<GL/gl.h>
 
 1412606027 source:g:\prototypes\wip3\camera.cpp
 	"Camera.h"
@@ -668,7 +668,7 @@
 	<glm/gtc/type_ptr.hpp>
 	<iostream>
 
-1412645422 g:\prototypes\wip3\ship.h
+1412647959 g:\prototypes\wip3\ship.h
 	<GL/glew.h>
 	<GLES3/gl3.h>
 	<glm/glm.hpp>
@@ -678,6 +678,6 @@
 	"Texture.h"
 	"Input.h"
 
-1412644635 source:g:\prototypes\wip3\ship.cpp
+1412649306 source:g:\prototypes\wip3\ship.cpp
 	"Ship.h"
 

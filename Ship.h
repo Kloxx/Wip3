@@ -39,8 +39,9 @@ private:
     Texture m_texture;
     float m_acceleration;
     float m_angle;
-    float m_mass;
+    float m_roll;
     glm::vec3 m_linearSpeed;
+    float m_mass;
     float m_rotationSpeed;
     glm::vec3 m_position;
     glm::vec3 m_orientation;

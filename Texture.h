@@ -6,6 +6,7 @@
 #else
 #define GL3_PROTOTYPES 1
 #include <GLES3/gl3.h>
+#include <GL/gl.h> // for GL_BGR and GL_BGRA
 #endif // WIN32
 
 #include <SDL2/SDL.h>

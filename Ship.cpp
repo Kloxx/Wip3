@@ -2,7 +2,7 @@
 
 Ship::Ship(Shader& shader, std::string texture, glm::vec3 position, float acceleration, float rotationSpeed, float mass) :
     m_shader(shader), m_texture(texture),
-    m_acceleration(acceleration), m_angle(0.0), m_linearSpeed(0,0,0), m_mass(mass),
+    m_acceleration(acceleration), m_angle(0.0), m_roll(0.0), m_linearSpeed(0,0,0), m_mass(mass),
     m_rotationSpeed(rotationSpeed), m_position(position), m_orientation(100,0,0)
 {
     m_shader.charger();
@@ -271,6 +271,7 @@ void Ship::draw(glm::mat4 &projection, glm::mat4 &modelview)
 {
     modelview = glm::translate(modelview, m_position);
     modelview = glm::rotate(modelview, -m_angle, glm::vec3(0,1,0));
+    modelview = glm::rotate(modelview, m_roll, glm::vec3(1,0,0));
     glUseProgram(m_shader.getProgramID());
 
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, m_vertex);
@@ -296,27 +297,25 @@ void Ship::control(Input const& input)
 {
     float acceleration(0.0);
     float frictionFactor(m_mass / 100000.0);
+    float stabilization(0.05);
     glm::vec3 friction(0,0,0);
 
     if(input.getKey(SDL_SCANCODE_UP) || input.getKey(SDL_SCANCODE_W))
         acceleration = m_acceleration;
 
     if(input.getKey(SDL_SCANCODE_DOWN) || input.getKey(SDL_SCANCODE_S))
-    {
-        //acceleration = -m_acceleration;
         frictionFactor = m_mass / 30000.0;
-    }
 
     if(input.getKey(SDL_SCANCODE_LEFT) || input.getKey(SDL_SCANCODE_A))
     {
         m_angle -= m_rotationSpeed;
-        //frictionFactor = m_mass / 5000.0;
+        m_roll -= 0.8;
     }
 
     if(input.getKey(SDL_SCANCODE_RIGHT) || input.getKey(SDL_SCANCODE_D))
     {
         m_angle += m_rotationSpeed;
-        //frictionFactor = m_mass / 5000.0;
+        m_roll += 0.8;
     }
 
     if(!(input.getKey(SDL_SCANCODE_UP) || input.getKey(SDL_SCANCODE_W)) && !(input.getKey(SDL_SCANCODE_DOWN) || input.getKey(SDL_SCANCODE_S)))
@@ -330,6 +329,8 @@ void Ship::control(Input const& input)
         m_angle += 360.0;
     if(m_angle > 360.0)
         m_angle -= 360.0;
+
+    m_roll = m_roll - stabilization*m_roll;
 
     glm::vec3 movement(Ship::movement(acceleration));
     m_linearSpeed += movement + friction;
