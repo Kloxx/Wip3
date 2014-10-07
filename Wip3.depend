@@ -2,9 +2,9 @@
 1412126447 source:g:\prototypes\wip3\cube.cpp
 	"Cube.h"
 
-1411912917 g:\prototypes\wip3\cube.h
+1412644036 g:\prototypes\wip3\cube.h
 	<GL/glew.h>
-	<GL3/gl3.h>
+	<GLES3/gl3.h>
 	<glm/glm.hpp>
 	<glm/gtx/transform.hpp>
 	<glm/gtc/type_ptr.hpp>
@@ -296,17 +296,17 @@
 
 1368219030 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtc\type_ptr.inl
 
-1360750546 g:\prototypes\wip3\shader.h
+1412644036 g:\prototypes\wip3\shader.h
 	<GL/glew.h>
 	<OpenGL/gl3.h>
-	<GL3/gl3.h>
+	<GLES3/gl3.h>
 	<iostream>
 	<string>
 	<fstream>
 
-1411821045 g:\prototypes\wip3\texture.h
+1412644036 g:\prototypes\wip3\texture.h
 	<GL/glew.h>
-	<GL3/gl3.h>
+	<GLES3/gl3.h>
 	<SDL2/SDL.h>
 	<SDL2/SDL_image.h>
 	<iostream>
@@ -614,15 +614,15 @@
 1411568633 g:\prototypes\wip3\input.h
 	<SDL2/SDL.h>
 
-1412284481 source:g:\prototypes\wip3\main.cpp
+1412644026 source:g:\prototypes\wip3\main.cpp
 	"SceneOpenGL.h"
 
-1412304770 source:g:\prototypes\wip3\sceneopengl.cpp
+1412644036 source:g:\prototypes\wip3\sceneopengl.cpp
 	"SceneOpenGL.h"
 
-1412132985 g:\prototypes\wip3\sceneopengl.h
+1412645422 g:\prototypes\wip3\sceneopengl.h
 	<GL/glew.h>
-	<GL3/gl3.h>
+	<GLES3/gl3.h>
 	<glm/glm.hpp>
 	<glm/gtx/transform.hpp>
 	<glm/gtc/type_ptr.hpp>
@@ -639,13 +639,14 @@
 1411739552 source:g:\prototypes\wip3\shader.cpp
 	"Shader.h"
 
-1411823258 source:g:\prototypes\wip3\texture.cpp
+1412644587 source:g:\prototypes\wip3\texture.cpp
 	"Texture.h"
+	<GL/gl.h>
 
-1412283057 source:g:\prototypes\wip3\camera.cpp
+1412606027 source:g:\prototypes\wip3\camera.cpp
 	"Camera.h"
 
-1412280905 g:\prototypes\wip3\camera.h
+1412645422 g:\prototypes\wip3\camera.h
 	<glm/glm.hpp>
 	<glm/gtx/transform.hpp>
 	<glm/gtc/type_ptr.hpp>
@@ -667,9 +668,9 @@
 	<glm/gtc/type_ptr.hpp>
 	<iostream>
 
-1412276567 g:\prototypes\wip3\ship.h
+1412645422 g:\prototypes\wip3\ship.h
 	<GL/glew.h>
-	<GL3/gl3.h>
+	<GLES3/gl3.h>
 	<glm/glm.hpp>
 	<glm/gtx/transform.hpp>
 	<glm/gtc/type_ptr.hpp>
@@ -677,6 +678,6 @@
 	"Texture.h"
 	"Input.h"
 
-1412295434 source:g:\prototypes\wip3\ship.cpp
+1412644635 source:g:\prototypes\wip3\ship.cpp
 	"Ship.h"
 

@@ -7,10 +7,10 @@
 #else
 #define GL_PROTOTYPES 1
 #include <GLES3/gl3.h>
+#define GLM_FORCE_RADIANS
 #endif // WIN32
 
 // GLM
-#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>

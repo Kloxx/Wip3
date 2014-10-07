@@ -1,7 +1,10 @@
 #ifndef CAMERA_H_INCLUDED
 #define CAMERA_H_INCLUDED
 
+#ifndef WIN32
 #define GLM_FORCE_RADIANS
+#endif // WIN32
+
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>

@@ -319,7 +319,7 @@ void Ship::control(Input const& input)
         //frictionFactor = m_mass / 5000.0;
     }
 
-    if(!input.getKey(SDL_SCANCODE_UP) && !input.getKey(SDL_SCANCODE_DOWN))
+    if(!(input.getKey(SDL_SCANCODE_UP) || input.getKey(SDL_SCANCODE_W)) && !(input.getKey(SDL_SCANCODE_DOWN) || input.getKey(SDL_SCANCODE_S)))
         frictionFactor = m_mass / 50000.0;
 
     friction.x = -m_linearSpeed.x * frictionFactor;
