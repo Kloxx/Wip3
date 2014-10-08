@@ -1,7 +1,6 @@
 #include "SceneOpenGL.h"
 
 #include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 #include <string>
@@ -110,13 +109,10 @@ void SceneOpenGL::mainLoop()
     };
     //********** For test **********
 
-    mat4 projection;
-    mat4 modelview;
-
-    projection = perspective(70.0, (double) m_windowWidth/m_windowHeight, 0.01, 600.0);
+    mat4 projection(perspective(70.0, static_cast<double>(m_windowWidth)/m_windowHeight, 0.01, 600.0));
     shader.setUniform("projection", projection);
     shader_background.setUniform("projection", projection);
-    modelview = mat4(1.0);
+    mat4 modelview(1);
 
     Ship ship(shader, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
     Box box(shader, "Textures/debug.png", 50);
@@ -138,9 +134,11 @@ void SceneOpenGL::mainLoop()
         if(m_input.getKey(SDL_SCANCODE_ESCAPE))
             break;
 
+        std::cout << "--------------------" << std::endl;
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        {
+        { // background
             glm::mat4 modelview_local = modelview;
             modelview_local = glm::translate(modelview_local, ship.getPosition());
             modelview_local = glm::scale(modelview_local, vec3(1,.4,1));
@@ -149,15 +147,13 @@ void SceneOpenGL::mainLoop()
 
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        // Test
-        {
+        { // track
+            shader.setUniform("modelview", modelview);
             glUseProgram(shader.getProgramID());
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verticesFloor);
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, textureFloor);
             glEnableVertexAttribArray(2);
-            glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "modelview"), 1, GL_FALSE, value_ptr(modelview));
-            glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
             glBindTexture(GL_TEXTURE_2D, texture.getID());
             glDrawArrays(GL_TRIANGLES, 0, 12);
             glBindTexture(GL_TEXTURE_2D, 0);
@@ -166,13 +162,14 @@ void SceneOpenGL::mainLoop()
             glUseProgram(0);
         }
 
-        {
+        { // floating box
             float angle = frames*2.;
             glm::mat4 modelview_local = modelview;
             modelview_local = glm::translate(modelview_local, glm::vec3(200, 50, 200));
             modelview_local = glm::rotate(modelview_local, glm::radians(angle), glm::vec3(1,.2,-.4));
             box.draw(modelview_local);
         }
+
         ship.control(m_input);
         ship.draw(modelview);
         camera.lookAt(modelview, ship);
