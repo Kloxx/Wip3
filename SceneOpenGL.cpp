@@ -174,7 +174,7 @@ void SceneOpenGL::mainLoop()
             box.draw(modelview_local);
         }
         ship.control(m_input);
-        ship.draw(projection, modelview);
+        ship.draw(modelview);
         camera.lookAt(modelview, ship);
 
         // Actualization
