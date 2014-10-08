@@ -109,10 +109,8 @@ void SceneOpenGL::mainLoop()
     };
     //********** For test **********
 
-    mat4 projection(perspective(70.0, static_cast<double>(m_windowWidth)/m_windowHeight, 0.01, 600.0));
-    shader.setUniform("projection", projection);
-    shader_background.setUniform("projection", projection);
-    mat4 modelview(1);
+    const mat4 projection_base(perspective(70.0, static_cast<double>(m_windowWidth)/m_windowHeight, 0.01, 600.0));
+    const mat4 modelview_base(1);
 
     Ship ship(shader, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
     Box box(shader, "Textures/debug.png", 50);
@@ -136,10 +134,18 @@ void SceneOpenGL::mainLoop()
 
         std::cout << "--------------------" << std::endl;
 
+        ship.control(m_input);
+
+        { // move camera
+            const mat4 projection = camera.getCameraProjection(projection_base, ship);
+            shader.setUniform("projection", projection);
+            shader_background.setUniform("projection", projection);
+        }
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         { // background
-            glm::mat4 modelview_local = modelview;
+            glm::mat4 modelview_local = modelview_base;
             modelview_local = glm::translate(modelview_local, ship.getPosition());
             modelview_local = glm::scale(modelview_local, vec3(1,.4,1));
             skybox.draw(modelview_local);
@@ -148,7 +154,7 @@ void SceneOpenGL::mainLoop()
         glClear(GL_DEPTH_BUFFER_BIT);
 
         { // track
-            shader.setUniform("modelview", modelview);
+            shader.setUniform("modelview", modelview_base);
             glUseProgram(shader.getProgramID());
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verticesFloor);
             glEnableVertexAttribArray(0);
@@ -164,15 +170,14 @@ void SceneOpenGL::mainLoop()
 
         { // floating box
             float angle = frames*2.;
-            glm::mat4 modelview_local = modelview;
+            glm::mat4 modelview_local = modelview_base;
             modelview_local = glm::translate(modelview_local, glm::vec3(200, 50, 200));
             modelview_local = glm::rotate(modelview_local, glm::radians(angle), glm::vec3(1,.2,-.4));
             box.draw(modelview_local);
         }
 
-        ship.control(m_input);
-        ship.draw(modelview);
-        camera.lookAt(modelview, ship);
+        // ship
+        ship.draw(modelview_base);
 
         // Actualization
         SDL_GL_SwapWindow(m_window);
