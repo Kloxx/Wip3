@@ -132,7 +132,7 @@ void SceneOpenGL::mainLoop()
         if(m_input.getKey(SDL_SCANCODE_ESCAPE))
             break;
 
-        std::cout << "--------------------" << std::endl;
+        //std::cout << "--------------------" << std::endl;
 
         ship.control(m_input);
 
