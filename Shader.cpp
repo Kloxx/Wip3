@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 // Constructeurs et Destructeur
 
@@ -170,6 +172,30 @@ Shader::compileShader(GLuint &shader, GLenum type, std::string const &fichierSou
 }
 
 // Getter
+
+void
+replace_all(std::string& input, const std::string& orig, const std::string& repl)
+{
+    size_t index = 0;
+    while (true)
+    {
+        index = input.find(orig, index);
+        if (index == std::string::npos) return;
+        input.replace(index, orig.size(), repl);
+        index += repl.size();
+    }
+}
+
+GLuint Shader::setUniform(const std::string& name, const glm::mat4& value) const
+{
+    GLuint location = glGetUniformLocation(m_programID, name.c_str());
+    std::cout << "mat4 uniform " << name << " @ " << location << std::endl;
+    std::string value_representation = glm::to_string(value);
+    replace_all(value_representation, "),", "),\n");
+    replace_all(value_representation, "((", "(\n (");
+    std::cout << value_representation << std::endl;
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+}
 
 GLuint Shader::getProgramID() const
 {
