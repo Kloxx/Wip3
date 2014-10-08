@@ -118,7 +118,7 @@ void SceneOpenGL::mainLoop()
 
     Ship ship(shader, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
     Box box(shader, "Textures/debug.png", 50);
-    Skybox skybox(shader_background, "Textures/skybox.png", 10);
+    Skybox skybox(shader_background, "Textures/skybox.png", 300);
     CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
     m_input.afficherPtr(true);
@@ -126,7 +126,7 @@ void SceneOpenGL::mainLoop()
 
     Texture texture("Textures/metal029b.jpg");
 
-		glClearColor(0,0,1,1);
+    glClearColor(1,0,1,1);
 
     while(!m_input.terminate())
     {
