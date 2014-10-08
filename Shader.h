@@ -19,7 +19,7 @@ public:
 
 protected:
 
-    static bool compilerShader(GLuint &shader, GLenum type, std::string const &fichierSource);
+    static bool compileShader(GLuint &shader, GLenum type, std::string const &fichierSource);
     static std::string getGlError(const GLuint& id);
     bool load();
     void cleanup();

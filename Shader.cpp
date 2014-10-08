@@ -84,8 +84,8 @@ Shader::load()
     cleanup();
 
     // Compilation des shaders
-    if(!compilerShader(m_vertexID, GL_VERTEX_SHADER, m_vertexSource)) return false;
-    if(!compilerShader(m_fragmentID, GL_FRAGMENT_SHADER, m_fragmentSource)) return false;
+    if(!compileShader(m_vertexID, GL_VERTEX_SHADER, m_vertexSource)) return false;
+    if(!compileShader(m_fragmentID, GL_FRAGMENT_SHADER, m_fragmentSource)) return false;
 
     // Création du programme
     m_programID = glCreateProgram();
@@ -115,9 +115,8 @@ Shader::load()
     return true;
 }
 
-
 bool
-Shader::compilerShader(GLuint &shader, GLenum type, std::string const &fichierSource)
+Shader::compileShader(GLuint &shader, GLenum type, std::string const &fichierSource)
 {
     // Création du shader
     shader = glCreateShader(type);
@@ -126,7 +125,7 @@ Shader::compilerShader(GLuint &shader, GLenum type, std::string const &fichierSo
     // Vérification du shader
     if(shader == 0)
     {
-        std::cout << "Erreur, le type de shader (" << type << ") n'existe pas" << std::endl;
+        std::cout << "Error, unknown shader type (" << type << ")" << std::endl;
         return false;
     }
 
@@ -138,7 +137,7 @@ Shader::compilerShader(GLuint &shader, GLenum type, std::string const &fichierSo
     // Test d'ouverture
     if(!fichier)
     {
-        std::cout << "Erreur le fichier " << fichierSource << " est introuvable" << std::endl;
+        std::cout << "Error, can't open " << fichierSource << std::endl;
         return false;
     }
 
