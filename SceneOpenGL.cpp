@@ -91,6 +91,7 @@ void SceneOpenGL::mainLoop()
     unsigned int frameRate(1000/60);
     Uint32 startLoop(0), elapsed(0);
     Shader shader("Shaders/texture.vert", "Shaders/texture.frag");
+    Shader shader_background("Shaders/background.vert", "Shaders/background.frag");
     Uint32 startProgram(SDL_GetTicks());
     int frames(0);
 
@@ -117,13 +118,15 @@ void SceneOpenGL::mainLoop()
 
     Ship ship(shader, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
     Box box(shader, "Textures/debug.png", 50);
-    Skybox skybox(shader, "Textures/skybox.png", 300);
+    Skybox skybox(shader_background, "Textures/skybox.png", 10);
     CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
     m_input.afficherPtr(true);
     m_input.capturePtr(false);
 
     Texture texture("Textures/metal029b.jpg");
+
+		glClearColor(0,0,1,1);
 
     while(!m_input.terminate())
     {
