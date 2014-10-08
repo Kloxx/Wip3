@@ -1,8 +1,8 @@
 #include "Camera.h"
 
 #include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
+/*
 CameraDoom::CameraDoom() :
     m_position(0,1,0), m_orientation(1,0,0), m_verticalAxe(0,1,0), m_lateralAxe(0,0,1),
     m_speed(0.5), m_rotationSpeed(0.5), m_phi(0.0)
@@ -16,8 +16,6 @@ CameraDoom::CameraDoom(glm::vec3 position, glm::vec3 orientation, glm::vec3 vert
     m_targetPoint = m_position + m_orientation;
     m_lateralAxe = glm::normalize(glm::cross(m_verticalAxe, m_orientation));
 }
-
-CameraDoom::~CameraDoom(){}
 
 void CameraDoom::orientate(int direction)
 {
@@ -90,6 +88,7 @@ void CameraDoom::lookAt(glm::mat4 &modelview)
 {
     modelview = glm::lookAt(m_position, m_targetPoint, m_verticalAxe);
 }
+*/
 
 CameraThirdPerson::CameraThirdPerson(float distanceX, float distanceY, glm::vec3 verticalAxe) :
     m_distanceX(distanceX), m_distanceY(distanceY), m_verticalAxe(verticalAxe)
