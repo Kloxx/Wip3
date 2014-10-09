@@ -147,9 +147,11 @@ void SceneOpenGL::mainLoop()
             shader_background.setUniform("time", startLoop/1000.);
             shader_background.setUniform("projection_inv", projection_inv);
 
+            /*
             vec4 camera_pos = projection_inv * vec4(0,0,0,1);
             camera_pos /= camera_pos.w;
             std::cout << "camera pos " << glm::to_string(camera_pos) << std::endl;
+            */
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
