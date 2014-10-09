@@ -186,7 +186,15 @@ replace_all(std::string& input, const std::string& orig, const std::string& repl
     }
 }
 
-GLuint Shader::setUniform(const std::string& name, const glm::mat4& value) const
+void Shader::setUniform(const std::string& name, const float& value) const
+{
+    GLuint location = glGetUniformLocation(m_programID, name.c_str());
+    glUseProgram(m_programID);
+    glUniform1f(location, value);
+    glUseProgram(0);
+}
+
+void Shader::setUniform(const std::string& name, const glm::mat4& value) const
 {
     GLuint location = glGetUniformLocation(m_programID, name.c_str());
     /*

@@ -15,7 +15,8 @@ public:
     Shader(const std::string& vertexSource, const std::string& fragmentSource);
     ~Shader();
 
-    GLuint setUniform(const std::string& name, const glm::mat4& value) const;
+    void setUniform(const std::string& name, const glm::mat4& value) const;
+    void setUniform(const std::string& name, const float& value) const;
     GLuint getProgramID() const;
 
 protected:

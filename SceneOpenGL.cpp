@@ -140,7 +140,9 @@ void SceneOpenGL::mainLoop()
         { // move camera
             const mat4 projection = camera.getCameraProjection(projection_base, ship);
             shader_default.setUniform("projection", projection);
+            shader_default.setUniform("time", startLoop/1000.);
             shader_background.setUniform("projection", projection);
+            shader_background.setUniform("time", startLoop/1000.);
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
