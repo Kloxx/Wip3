@@ -91,11 +91,11 @@ void CameraDoom::lookAt(glm::mat4 &modelview)
 */
 
 CameraThirdPerson::CameraThirdPerson(float distanceX, float distanceY, const glm::vec3& verticalAxe) :
-    m_distanceX(distanceX), m_distanceY(distanceY), m_verticalAxe(verticalAxe), m_replayView(false)
+    m_distanceX(distanceX), m_distanceY(distanceY), m_verticalAxe(verticalAxe), m_replayView(false), m_position()
 {
 }
 
-glm::mat4 CameraThirdPerson::getCameraProjection(const glm::mat4& projection, const Ship& ship) const
+glm::mat4 CameraThirdPerson::getCameraProjection(const glm::mat4& projection, const Ship& ship)
 {
     const glm::vec3 positionShip = ship.getPosition();
     const glm::vec3 orientationShip = ship.getOrientation();
@@ -103,7 +103,12 @@ glm::mat4 CameraThirdPerson::getCameraProjection(const glm::mat4& projection, co
     const glm::vec3 distance = glm::vec3(0, m_distanceY, 0) - orientation * m_distanceX;
 
     glm::mat4 projection_camera = projection;
-    if (m_replayView) projection_camera *= glm::lookAt(glm::vec3(200, 50, 50), ship.getPosition(), m_verticalAxe);
-    else projection_camera *= glm::lookAt(positionShip + distance, ship.getOrientation(), m_verticalAxe);
+    if (m_replayView) {
+        m_position = glm::vec3(200,50,50);
+        projection_camera *= glm::lookAt(m_position, ship.getPosition(), m_verticalAxe);
+    } else {
+        m_position = positionShip + distance;
+        projection_camera *= glm::lookAt(m_position, ship.getOrientation(), m_verticalAxe);
+    }
     return projection_camera;
 }

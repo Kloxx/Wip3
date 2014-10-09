@@ -1,6 +1,7 @@
 #include "SceneOpenGL.h"
 
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include <iostream>
 #include <string>
@@ -145,13 +146,17 @@ void SceneOpenGL::mainLoop()
             shader_background.setUniform("projection", projection);
             shader_background.setUniform("time", startLoop/1000.);
             shader_background.setUniform("projection_inv", projection_inv);
+
+            vec4 camera_pos = projection_inv * vec4(0,0,0,1);
+            camera_pos /= camera_pos.w;
+            std::cout << "camera pos " << glm::to_string(camera_pos) << std::endl;
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         { // background
             glm::mat4 modelview_local = modelview_base;
-            modelview_local = glm::translate(modelview_local, ship.getPosition());
+            modelview_local = glm::translate(modelview_local, camera.m_position);
             modelview_local = glm::scale(modelview_local, vec3(1,.4,1));
             skybox.draw(modelview_local);
         }

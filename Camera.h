@@ -32,9 +32,10 @@ class CameraThirdPerson
 {
 public:
     CameraThirdPerson(float distanceX, float distanceY, const glm::vec3& verticalAxe);
-    glm::mat4 getCameraProjection(const glm::mat4& projection, const Ship& ship) const;
+    glm::mat4 getCameraProjection(const glm::mat4& projection, const Ship& ship);
 
     bool m_replayView;
+    glm::vec3 m_position;
 
 private:
     float m_distanceX;
