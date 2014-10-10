@@ -1,7 +1,7 @@
 #include "SceneOpenGL.h"
 
 #include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include <iostream>
 #include <string>
@@ -88,11 +88,10 @@ void SceneOpenGL::mainLoop()
 {
     using namespace glm;
 
-    unsigned int frameRate(1000/60);
-    Uint32 startLoop(0), elapsed(0);
-    Shader shader("Shaders/texture.vert", "Shaders/texture.frag");
-    Uint32 startProgram(SDL_GetTicks());
-    int frames(0);
+    Shader shader_default("Shaders/texture.vert", "Shaders/texture.frag");
+    Shader shader_background("Shaders/background.vert", "Shaders/background.frag");
+
+    const unsigned int frameRate(1000/60);
 
     //********** For test **********
     float verticesFloor[] = {
@@ -109,15 +108,12 @@ void SceneOpenGL::mainLoop()
     };
     //********** For test **********
 
-    mat4 projection;
-    mat4 modelview;
+    const mat4 projection_base(perspective(70.0, static_cast<double>(m_windowWidth)/m_windowHeight, 0.01, 600.0));
+    const mat4 modelview_base(1);
 
-    projection = perspective(70.0, (double) m_windowWidth/m_windowHeight, 0.01, 600.0);
-    modelview = mat4(1.0);
-
-    Ship ship(shader, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
-    Box box(shader, "Textures/debug.png", 50);
-    Skybox skybox(shader, "Textures/skybox.png", 300);
+    Ship ship(shader_default, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
+    Box box(shader_default, "Textures/debug.png", 50);
+    Skybox skybox(shader_background, "Textures/skybox.png", 300);
     CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
     m_input.afficherPtr(true);
@@ -125,33 +121,57 @@ void SceneOpenGL::mainLoop()
 
     Texture texture("Textures/metal029b.jpg");
 
+    glClearColor(1,0,1,1);
+
+    int frames = 0;
+    const unsigned int startProgram = SDL_GetTicks();
     while(!m_input.terminate())
     {
-        startLoop = SDL_GetTicks();
+        const unsigned int startLoop = SDL_GetTicks();
+
         m_input.updateEvents();
 
         if(m_input.getKey(SDL_SCANCODE_ESCAPE))
             break;
 
+        //std::cout << "--------------------" << std::endl;
+
+        ship.control(m_input);
+
+        { // move camera
+            camera.m_replayView = m_input.getKey(SDL_SCANCODE_TAB);
+            const mat4 projection = camera.getCameraProjection(projection_base, ship);
+            const mat4 projection_inv = glm::inverse(projection);
+            shader_default.setUniform("projection", projection);
+            shader_background.setUniform("projection", projection);
+            shader_background.setUniform("time", startLoop/1000.);
+            shader_background.setUniform("projection_inv", projection_inv);
+
+            /*
+            vec4 camera_pos = projection_inv * vec4(0,0,0,1);
+            camera_pos /= camera_pos.w;
+            std::cout << "camera pos " << glm::to_string(camera_pos) << std::endl;
+            */
+        }
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        {
-            glm::mat4 modelview_local = modelview;
-            modelview_local = glm::translate(modelview_local, ship.getPosition());
+        { // background
+            glm::mat4 modelview_local = modelview_base;
+            modelview_local = glm::translate(modelview_local, camera.m_position);
             modelview_local = glm::scale(modelview_local, vec3(1,.4,1));
-            skybox.draw(projection, modelview_local);
+            skybox.draw(modelview_local);
         }
+
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        // Test
-        {
-            glUseProgram(shader.getProgramID());
+        { // track
+            shader_default.setUniform("modelview", modelview_base);
+            glUseProgram(shader_default.getProgramID());
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verticesFloor);
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, textureFloor);
             glEnableVertexAttribArray(2);
-            glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "modelview"), 1, GL_FALSE, value_ptr(modelview));
-            glUniformMatrix4fv(glGetUniformLocation(shader.getProgramID(), "projection"), 1, GL_FALSE, value_ptr(projection));
             glBindTexture(GL_TEXTURE_2D, texture.getID());
             glDrawArrays(GL_TRIANGLES, 0, 12);
             glBindTexture(GL_TEXTURE_2D, 0);
@@ -160,28 +180,32 @@ void SceneOpenGL::mainLoop()
             glUseProgram(0);
         }
 
-        {
+        { // floating box
             float angle = frames*2.;
-            glm::mat4 modelview_local = modelview;
+            glm::mat4 modelview_local = modelview_base;
             modelview_local = glm::translate(modelview_local, glm::vec3(200, 50, 200));
             modelview_local = glm::rotate(modelview_local, glm::radians(angle), glm::vec3(1,.2,-.4));
-            box.draw(projection, modelview_local);
+            box.draw(modelview_local);
         }
-        ship.control(m_input);
-        ship.draw(projection, modelview);
-        camera.lookAt(modelview, ship);
+
+        // ship
+        ship.draw(modelview_base);
 
         // Actualization
         SDL_GL_SwapWindow(m_window);
 
         // Framerate
-        elapsed = SDL_GetTicks() - startLoop;
+        const unsigned int elapsed = SDL_GetTicks() - startLoop;
         if (elapsed < frameRate) SDL_Delay(frameRate - elapsed);
         frames++;
     }
-    Uint32 stopProgram(SDL_GetTicks());
-    double frameRateAvg = frames / ((double) stopProgram/1000 - (double) startProgram/1000);
-    std::cout << "Ran for " << (double) stopProgram/1000 - (double) startProgram/1000 << "s" << std::endl;
-    std::cout << "Frames : " << frames << std::endl;
-    std::cout << "Framerate : " << frameRateAvg << std::endl;
+    const unsigned int stopProgram = SDL_GetTicks();
+
+    { // FPS stat
+        const double elapsed = static_cast<double>(stopProgram - startProgram) / 1000;
+        const double frameRateAvg = frames/elapsed;
+        std::cout << "Ran for " << elapsed << "s" << std::endl;
+        std::cout << "Frames : " << frames << std::endl;
+        std::cout << "Framerate : " << frameRateAvg << std::endl;
+    }
 }

@@ -11,7 +11,7 @@ class Cube
 {
 public:
     Cube(const Shader& shader, const double& scale);
-    void draw(const glm::mat4& projection, const glm::mat4& modelview);
+    void draw(const glm::mat4& modelview);
 
 protected:
     double m_scale;
@@ -24,7 +24,7 @@ class Box : public Cube
 {
 public:
     Box(const Shader& shader, const std::string& texture, const double& scale);
-    void draw(const glm::mat4& projection, const glm::mat4& modelview);
+    void draw(const glm::mat4& modelview);
 
 protected:
     Texture m_texture;

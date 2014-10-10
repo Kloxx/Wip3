@@ -3,15 +3,15 @@
 
 #include "common.h"
 
-#include "Input.h"
 #include "Ship.h"
 
+/*
+#include "Input.h"
 class CameraDoom
 {
 public:
     CameraDoom();
     CameraDoom(glm::vec3 position, glm::vec3 orientation, glm::vec3 verticalAxe, float speed, float rotationSpeed);
-    ~CameraDoom();
     void movement(Input const& input);
     void lookAt(glm::mat4 &modelview);
 
@@ -26,13 +26,16 @@ private:
     float m_rotationSpeed;
     float m_phi;
 };
+*/
 
 class CameraThirdPerson
 {
 public:
-    CameraThirdPerson(float distanceX, float distanceY, glm::vec3 verticalAxe);
-    ~CameraThirdPerson();
-    void lookAt(glm::mat4& modelview, Ship &ship);
+    CameraThirdPerson(float distanceX, float distanceY, const glm::vec3& verticalAxe);
+    glm::mat4 getCameraProjection(const glm::mat4& projection, const Ship& ship);
+
+    bool m_replayView;
+    glm::vec3 m_position;
 
 private:
     float m_distanceX;

@@ -12,7 +12,7 @@ class Ship
 {
 public:
     Ship(const Shader& shader, const std::string& texture, const glm::vec3& position, float acceleration, float rotationSpeed, float mass);
-    void draw(const glm::mat4& projection, const glm::mat4& modelview);
+    void draw(const glm::mat4& modelview);
     void control(Input const& input);
     glm::vec3 getPosition() const;
     glm::vec3 getOrientation() const;

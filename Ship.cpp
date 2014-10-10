@@ -1,7 +1,6 @@
 #include "Ship.h"
 
 #include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 Ship::Ship(const Shader& shader, const std::string& texture, const glm::vec3& position, float acceleration, float rotationSpeed, float mass) :
     m_shader(shader), m_texture(texture),
@@ -266,30 +265,29 @@ Ship::Ship(const Shader& shader, const std::string& texture, const glm::vec3& po
         m_coordTexture[i] = coordTextureTmp[i];
 }
 
-void Ship::draw(const glm::mat4& projection, const glm::mat4& modelview)
+void Ship::draw(const glm::mat4& modelview)
 {
     glm::mat4 modelview_local = modelview;
     modelview_local = glm::translate(modelview_local, m_position);
     modelview_local = glm::rotate(modelview_local, glm::radians(m_angle), glm::vec3(0,-1,0));
     modelview_local = glm::rotate(modelview_local, glm::radians(m_roll), glm::vec3(1,0,0));
 
+    m_shader.setUniform("modelview", modelview_local);
+
     glUseProgram(m_shader.getProgramID());
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, m_vertex);
-        glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, m_vertex);
+    glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, m_coordTexture);
-        glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, m_coordTexture);
+    glEnableVertexAttribArray(2);
 
-        glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "modelview"), 1, GL_FALSE, glm::value_ptr(modelview_local));
-        glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glBindTexture(GL_TEXTURE_2D, m_texture.getID());
+    glDrawArrays(GL_TRIANGLES, 0, 240);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
-        glBindTexture(GL_TEXTURE_2D, m_texture.getID());
-        glDrawArrays(GL_TRIANGLES, 0, 240);
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(2);
+    glDisableVertexAttribArray(0);
 
     glUseProgram(0);
 }

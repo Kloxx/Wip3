@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 // Constructeurs et Destructeur
 
@@ -84,8 +86,8 @@ Shader::load()
     cleanup();
 
     // Compilation des shaders
-    if(!compilerShader(m_vertexID, GL_VERTEX_SHADER, m_vertexSource)) return false;
-    if(!compilerShader(m_fragmentID, GL_FRAGMENT_SHADER, m_fragmentSource)) return false;
+    if(!compileShader(m_vertexID, GL_VERTEX_SHADER, m_vertexSource)) return false;
+    if(!compileShader(m_fragmentID, GL_FRAGMENT_SHADER, m_fragmentSource)) return false;
 
     // Création du programme
     m_programID = glCreateProgram();
@@ -115,9 +117,8 @@ Shader::load()
     return true;
 }
 
-
 bool
-Shader::compilerShader(GLuint &shader, GLenum type, std::string const &fichierSource)
+Shader::compileShader(GLuint &shader, GLenum type, std::string const &fichierSource)
 {
     // Création du shader
     shader = glCreateShader(type);
@@ -126,7 +127,7 @@ Shader::compilerShader(GLuint &shader, GLenum type, std::string const &fichierSo
     // Vérification du shader
     if(shader == 0)
     {
-        std::cout << "Erreur, le type de shader (" << type << ") n'existe pas" << std::endl;
+        std::cout << "Error, unknown shader type (" << type << ")" << std::endl;
         return false;
     }
 
@@ -138,7 +139,7 @@ Shader::compilerShader(GLuint &shader, GLenum type, std::string const &fichierSo
     // Test d'ouverture
     if(!fichier)
     {
-        std::cout << "Erreur le fichier " << fichierSource << " est introuvable" << std::endl;
+        std::cout << "Error, can't open " << fichierSource << std::endl;
         return false;
     }
 
@@ -171,6 +172,43 @@ Shader::compilerShader(GLuint &shader, GLenum type, std::string const &fichierSo
 }
 
 // Getter
+
+void
+replace_all(std::string& input, const std::string& orig, const std::string& repl)
+{
+    size_t index = 0;
+    while (true)
+    {
+        index = input.find(orig, index);
+        if (index == std::string::npos) return;
+        input.replace(index, orig.size(), repl);
+        index += repl.size();
+    }
+}
+
+void Shader::setUniform(const std::string& name, const float& value) const
+{
+    GLuint location = glGetUniformLocation(m_programID, name.c_str());
+    glUseProgram(m_programID);
+    glUniform1f(location, value);
+    glUseProgram(0);
+}
+
+void Shader::setUniform(const std::string& name, const glm::mat4& value) const
+{
+    GLuint location = glGetUniformLocation(m_programID, name.c_str());
+    /*
+    std::cout << "mat4 uniform " << name << " @ " << location << ":" << m_programID << std::endl;
+    std::string value_representation = glm::to_string(value);
+    replace_all(value_representation, "),", "),\n");
+    replace_all(value_representation, "((", "(\n (");
+    std::cout << value_representation << std::endl;
+    */
+
+    glUseProgram(m_programID);
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+    glUseProgram(0);
+}
 
 GLuint Shader::getProgramID() const
 {

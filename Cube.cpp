@@ -1,7 +1,6 @@
 #include "Cube.h"
 
 #include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 Cube::Cube(const Shader& shader, const double& scale) :
     m_scale(scale),
@@ -45,10 +44,11 @@ Cube::Cube(const Shader& shader, const double& scale) :
 }
 
 void
-Cube::draw(const glm::mat4 &projection, const glm::mat4 &modelview)
+Cube::draw(const glm::mat4& modelview)
 {
     glm::mat4 modelview_local = modelview;
     modelview_local = glm::scale(modelview_local, glm::vec3(m_scale, m_scale, m_scale));
+    m_shader.setUniform("modelview", modelview_local);
 
     glUseProgram(m_shader.getProgramID());
 
@@ -57,9 +57,6 @@ Cube::draw(const glm::mat4 &projection, const glm::mat4 &modelview)
 
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, m_colors);
     glEnableVertexAttribArray(1);
-
-    glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "modelview"), 1, GL_FALSE, glm::value_ptr(modelview_local));
-    glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -93,10 +90,11 @@ Box::Box(const Shader& shader, const std::string& texture, const double& scale) 
 }
 
 void
-Box::draw(const glm::mat4& projection, const glm::mat4& modelview)
+Box::draw(const glm::mat4& modelview)
 {
     glm::mat4 modelview_local = modelview;
     modelview_local = glm::scale(modelview_local, glm::vec3(m_scale, m_scale, m_scale));
+    m_shader.setUniform("modelview", modelview_local);
 
     glUseProgram(m_shader.getProgramID());
 
@@ -108,9 +106,6 @@ Box::draw(const glm::mat4& projection, const glm::mat4& modelview)
 
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, m_coordTexture);
     glEnableVertexAttribArray(2);
-
-    glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "modelview"), 1, GL_FALSE, glm::value_ptr(modelview_local));
-    glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
     glBindTexture(GL_TEXTURE_2D, m_texture.getID());
     glDrawArrays(GL_TRIANGLES, 0, 36);

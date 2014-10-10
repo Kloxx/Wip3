@@ -1,11 +1,8 @@
 #include "SceneOpenGL.h"
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
-
 int main(int argc, char *argv[])
 {
-    SceneOpenGL scene("Yo, dawg !", 1440, 900, false);
+    SceneOpenGL scene("Yo, dawg !", WINDOW_WIDTH, WINDOW_HEIGHT, false);
 
     if(!scene.initWindow())
         return -1;

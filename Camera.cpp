@@ -1,8 +1,8 @@
 #include "Camera.h"
 
 #include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
+/*
 CameraDoom::CameraDoom() :
     m_position(0,1,0), m_orientation(1,0,0), m_verticalAxe(0,1,0), m_lateralAxe(0,0,1),
     m_speed(0.5), m_rotationSpeed(0.5), m_phi(0.0)
@@ -16,8 +16,6 @@ CameraDoom::CameraDoom(glm::vec3 position, glm::vec3 orientation, glm::vec3 vert
     m_targetPoint = m_position + m_orientation;
     m_lateralAxe = glm::normalize(glm::cross(m_verticalAxe, m_orientation));
 }
-
-CameraDoom::~CameraDoom(){}
 
 void CameraDoom::orientate(int direction)
 {
@@ -90,22 +88,27 @@ void CameraDoom::lookAt(glm::mat4 &modelview)
 {
     modelview = glm::lookAt(m_position, m_targetPoint, m_verticalAxe);
 }
+*/
 
-CameraThirdPerson::CameraThirdPerson(float distanceX, float distanceY, glm::vec3 verticalAxe) :
-    m_distanceX(distanceX), m_distanceY(distanceY), m_verticalAxe(verticalAxe)
-{}
-
-CameraThirdPerson::~CameraThirdPerson(){}
-
-void CameraThirdPerson::lookAt(glm::mat4& modelview, Ship &ship)
+CameraThirdPerson::CameraThirdPerson(float distanceX, float distanceY, const glm::vec3& verticalAxe) :
+    m_distanceX(distanceX), m_distanceY(distanceY), m_verticalAxe(verticalAxe), m_replayView(false), m_position()
 {
-    glm::vec3 positionShip = ship.getPosition();
-    glm::vec3 orientationShip = ship.getOrientation();
-    glm::vec3 orientation(glm::normalize(orientationShip - positionShip));
-    glm::vec3 distance(0,0,0);
-    distance.x = orientation.x * -m_distanceX;
-    distance.y = orientation.y * -m_distanceX + m_distanceY;
-    distance.z = orientation.z * -m_distanceX;
+}
 
-    modelview = glm::lookAt(positionShip + distance, ship.getOrientation(), m_verticalAxe);
+glm::mat4 CameraThirdPerson::getCameraProjection(const glm::mat4& projection, const Ship& ship)
+{
+    const glm::vec3 positionShip = ship.getPosition();
+    const glm::vec3 orientationShip = ship.getOrientation();
+    const glm::vec3 orientation(glm::normalize(orientationShip - positionShip));
+    const glm::vec3 distance = glm::vec3(0, m_distanceY, 0) - orientation * m_distanceX;
+
+    glm::mat4 projection_camera = projection;
+    if (m_replayView) {
+        m_position = glm::vec3(200,50,50);
+        projection_camera *= glm::lookAt(m_position, ship.getPosition(), m_verticalAxe);
+    } else {
+        m_position = positionShip + distance;
+        projection_camera *= glm::lookAt(m_position, ship.getOrientation(), m_verticalAxe);
+    }
+    return projection_camera;
 }
