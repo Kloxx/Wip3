@@ -8,12 +8,10 @@ int main(int argc, const char *argv[])
     Options options(argc, argv);
     std::cout << options << std::endl;
 
-    SceneOpenGL scene("Yo, dawg !", options.width, options.height, options.fullscreen);
+    SceneOpenGL scene(options);
 
-    if(!scene.initWindow())
-        return -1;
-    if(!scene.initGL())
-        return -1;
+    if(!scene.initWindow("To, dawg!! :)")) return -1;
+    if(!scene.initGL()) return -1;
 
     scene.mainLoop();
 

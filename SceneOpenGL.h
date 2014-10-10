@@ -11,22 +11,21 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "Ship.h"
+#include "Options.h"
 
 class SceneOpenGL
 {
 public:
-    SceneOpenGL(std::string windowTitle, int windowWidth, int windowHeight, bool fullscreen);
+    SceneOpenGL(const Options& options);
     ~SceneOpenGL();
 
-    bool initWindow();
+    bool initWindow(const std::string& windowTitle);
     bool initGL();
     void mainLoop();
 
 private:
     std::string m_windowTitle;
-    int m_windowWidth;
-    int m_windowHeight;
-    bool m_fullscreen;
+    Options m_options;
 
     SDL_Window* m_window;
     SDL_GLContext m_GLContext;
