@@ -3,20 +3,12 @@
 
 #include <iostream>
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
-		ConfigFile config;
+    Options options(argc, argv);
+    std::cout << options << std::endl;
 
-		config.parseIniFile("config.ini");
-		config.parseIniFile("../config.ini");
-		if (argc > 1) config.parseIniFile(argv[1]);
-
-		std::cout << "********************" << std::endl;
-		config.dump(std::cout);
-		std::cout << "********************" << std::endl;
-		std::cout << config.get("display", "fullscreen", false) << std::endl;
-
-    SceneOpenGL scene("Yo, dawg !", WINDOW_WIDTH, WINDOW_HEIGHT, false);
+    SceneOpenGL scene("Yo, dawg !", options.width, options.height, options.fullscreen);
 
     if(!scene.initWindow())
         return -1;

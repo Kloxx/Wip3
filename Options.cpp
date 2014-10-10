@@ -63,3 +63,27 @@ ConfigFile::dump(std::ostream& os) const
     }
     return os;
 }
+
+Options::Options(const int argc, const char* argv[])
+{
+    ConfigFile config;
+    config.parseIniFile("config.ini");
+    config.parseIniFile("../config.ini");
+    config.parseIniFile("../config_sample.ini");
+    if (argc > 1) config.parseIniFile(argv[1]);
+
+    //std::cout << "********************" << std::endl;
+    //config.dump(std::cout);
+    //std::cout << "********************" << std::endl;
+
+    fullscreen = config.get("display", "fullscreen", false);
+    width = config.get("display", "width", 1024);
+    height = config.get("display", "height", 768);
+}
+
+std::ostream&
+operator<<(std::ostream& os, const Options& options)
+{
+    return os << "[Options fs=" << options.fullscreen << " res=" << options.width << "x" << options.height << "]";
+}
+

@@ -37,3 +37,16 @@ struct ConfigFile
 
 };
 
+struct Options
+{
+    Options(const int argc, const char* argv[]);
+
+    bool fullscreen;
+    unsigned int width;
+    unsigned int height;
+
+};
+
+std::ostream&
+operator<<(std::ostream& os, const Options& options);
+
