@@ -1,16 +1,46 @@
 #include "Input.h"
 
-Input::Input() : m_mouseX(0), m_mouseY(0), m_mouseRelX(0), m_mouseRelY(0), m_terminate(false)
+Input::Input() :
+    m_mouseX(0), m_mouseY(0), m_mouseRelX(0), m_mouseRelY(0),
+    m_numJoysticks(SDL_NumJoysticks()),
+    m_terminate(false)
 {
+    // Keyboard & mouse
     for(int i(0); i<SDL_NUM_SCANCODES; i++)
         m_keys[i] = false;
 
     for(int i(0); i<8; i++)
         m_mouseButtons[i] = false;
+
+    // Joysticks
+    if(m_numJoysticks > 4)
+        m_numJoysticks = 4; // Sets maximum joysticks to 4
+
+    for(int i(0); i<4; i++)
+    {
+        for(int j(0); j<13; j++)
+            m_joystickButtons[i][j] = false;
+        for(int j(0); j<6; j++)
+            m_joystickAxes[i][j] = 0;
+        m_joystickHat[i] = SDL_HAT_CENTERED;
+    }
 }
 
 Input::~Input()
 {
+    for(int i(0); i<m_numJoysticks; i++)
+        SDL_JoystickClose(m_joysticks[i]); // Close Joysticks
+    /*
+    /!\ There might be an error if a device is removed during game session /!\
+     TODO : - change m_numJoysticks and close joysticks if SDL_JOYDEVICEREMOVED in events
+            - re-open m_joysticks
+    */
+}
+
+void Input::openJoysticks()
+{
+    for(int i(0); i<m_numJoysticks; i++)
+        m_joysticks[i] = SDL_JoystickOpen(i); // Open Joysticks
 }
 
 void Input::updateEvents()
@@ -22,6 +52,7 @@ void Input::updateEvents()
     {
         switch(m_events.type)
         {
+        // Keyboard events
         case SDL_KEYDOWN:
             m_keys[m_events.key.keysym.scancode] = true;
             break;
@@ -30,6 +61,7 @@ void Input::updateEvents()
             m_keys[m_events.key.keysym.scancode] = false;
             break;
 
+        // Mouse events
         case SDL_MOUSEBUTTONDOWN:
             m_mouseButtons[m_events.button.button] = true;
             break;
@@ -46,6 +78,23 @@ void Input::updateEvents()
             m_mouseRelY = m_events.motion.yrel;
             break;
 
+        // Joystick events
+        case SDL_JOYBUTTONDOWN:
+            m_joystickButtons[m_events.jbutton.which][m_events.jbutton.button] = true;
+            break;
+
+        case SDL_JOYBUTTONUP:
+            m_joystickButtons[m_events.jbutton.which][m_events.jbutton.button] = false;
+            break;
+
+        case SDL_JOYAXISMOTION:
+            m_joystickAxes[m_events.jaxis.which][m_events.jaxis.axis] = m_events.jaxis.value;
+            break;
+
+        case SDL_JOYHATMOTION:
+            m_joystickHat[m_events.jhat.which] = m_events.jhat.value;
+
+        // Window events
         case SDL_WINDOWEVENT:
             if(m_events.window.event == SDL_WINDOWEVENT_CLOSE)
                 m_terminate = true;

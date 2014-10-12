@@ -20,9 +20,12 @@ public:
     int getMouseRelY() const;
     void afficherPtr(bool response) const;
     void capturePtr(bool response) const;
+    void openJoysticks();
 
 private:
     SDL_Event m_events;
+
+    // Keyboard & mouse
     bool m_keys[SDL_NUM_SCANCODES];
     bool m_mouseButtons[8];
 
@@ -31,7 +34,18 @@ private:
     int m_mouseRelX;
     int m_mouseRelY;
 
+    // Joysticks
+    int m_numJoysticks;
+    SDL_Joystick* m_joysticks[4];
+
+    bool m_joystickButtons[4][13];  // Max 13 buttons
+    Sint16 m_joystickAxes[4][6];    // Max 6 axes
+    Uint8 m_joystickHat[4];
+
+    // Close
     bool m_terminate;
 };
+
+
 
 #endif // INPUT_H_INCLUDED
