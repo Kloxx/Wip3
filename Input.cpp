@@ -146,6 +146,21 @@ int Input::getMouseRelY() const
     return m_mouseRelY;
 }
 
+bool Input::getJoystickButton(const int joystickNumber, const Uint8 button) const
+{
+    return m_joystickButtons[joystickNumber][button];
+}
+
+Sint16 Input::getJoystickAxes(const int joystickNumber, const Uint8 axis) const
+{
+    return m_joystickAxes[joystickNumber][axis];
+}
+
+Uint8 Input::getJoystickHat(const int joystickNumber) const
+{
+    return m_joystickHat[joystickNumber];
+}
+
 void Input::afficherPtr(bool response) const
 {
     if(response)

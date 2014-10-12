@@ -11,6 +11,8 @@ public:
     ~Input();
     void updateEvents();
     bool terminate() const;
+
+    // Keyboard & mouse
     bool getKey(const SDL_Scancode key) const;
     bool getMouseButton(const Uint8 button) const;
     bool mouseMotion() const;
@@ -18,9 +20,16 @@ public:
     int getMouseY() const;
     int getMouseRelX() const;
     int getMouseRelY() const;
+
+    // Joysticks
+    void openJoysticks();
+    bool getJoystickButton(const int joystickNumber, const Uint8 button) const;
+    Sint16 getJoystickAxes(const int joystickNumber, const Uint8 axis) const;
+    Uint8 getJoystickHat(const int joystickNumber) const;
+
+    // Pointer
     void afficherPtr(bool response) const;
     void capturePtr(bool response) const;
-    void openJoysticks();
 
 private:
     SDL_Event m_events;
