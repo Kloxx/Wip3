@@ -174,7 +174,6 @@ void SceneOpenGL::mainLoop()
         { // background
             glm::mat4 modelview_local = modelview_base;
             modelview_local = glm::translate(modelview_local, camera.m_position);
-            modelview_local = glm::scale(modelview_local, vec3(1,.4,1));
             skybox.draw(modelview_local);
         }
 
