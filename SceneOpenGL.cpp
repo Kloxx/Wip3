@@ -10,6 +10,8 @@ SceneOpenGL::SceneOpenGL(std::string windowTitle, int windowWidth, int windowHei
     m_windowTitle(windowTitle), m_windowWidth(windowWidth), m_windowHeight(windowHeight),
     m_fullscreen(fullscreen), m_window(0), m_GLContext(0), m_input()
 {
+    if(SDL_NumJoysticks())
+        m_useJoysticks = true; // Use joystick inputs if there's at least 1 joystick
 }
 
 SceneOpenGL::~SceneOpenGL()
@@ -21,7 +23,7 @@ SceneOpenGL::~SceneOpenGL()
 
 bool SceneOpenGL::initWindow()
 {
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) == -1)
     {
         std::cout << "Error while initializing SDL : " << SDL_GetError() << std::endl;
         SDL_Quit();
@@ -92,11 +94,12 @@ void SceneOpenGL::mainLoop()
     Shader shader_background("Shaders/background.vert", "Shaders/background.frag");
 
     const unsigned int frameRate(1000/60);
-	
+
 	if(m_useJoysticks)
     {
-        SDL_JoystickEventState(SDL_ENABLE);
         m_input.openJoysticks();
+        if(SDL_JoystickEventState(SDL_ENABLE))
+            std::cout << SDL_GetError();
     }
 
     //********** For test **********
