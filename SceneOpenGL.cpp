@@ -7,10 +7,8 @@
 #include <string>
 
 SceneOpenGL::SceneOpenGL(const Options& options) :
-    m_options(options), m_window(0), m_GLContext(0), m_input()
+    m_options(options), m_window(0), m_GLContext(0), m_input(), m_useJoysticks(false)
 {
-    if(SDL_NumJoysticks())
-        m_useJoysticks = true; // Use joystick inputs if there's at least 1 joystick
 }
 
 SceneOpenGL::~SceneOpenGL()
@@ -30,6 +28,9 @@ bool SceneOpenGL::initWindow(const std::string& windowTitle)
 
         return false;
     }
+
+    if(SDL_NumJoysticks())
+        m_useJoysticks = true;
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);

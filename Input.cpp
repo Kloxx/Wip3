@@ -41,10 +41,8 @@ void Input::openJoysticks()
 
 void Input::closeJoysticks()
 {
-    for(int i(0); i<m_numJoysticks; i++){
-        std::cout << i << std::endl;
-        SDL_JoystickClose(m_joysticks[i]);
-    } // Close Joysticks
+    for(int i(0); i<m_numJoysticks; i++)
+        SDL_JoystickClose(m_joysticks[i]); // Close Joysticks
     /*
     /!\ There might be an error if a device is removed during game session /!\
      TODO : - close joysticks if SDL_JOYDEVICEREMOVED in events

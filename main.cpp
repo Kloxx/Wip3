@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-int main(int argc, const char *argv[])
+int main(int argc, char *argv[])
 {
     Options options(argc, argv);
     std::cout << options << std::endl;
