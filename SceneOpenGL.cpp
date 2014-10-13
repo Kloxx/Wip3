@@ -20,7 +20,7 @@ SceneOpenGL::~SceneOpenGL()
 
 bool SceneOpenGL::initWindow(const std::string& windowTitle)
 {
-    if(SDL_Init(SDL_INIT_VIDEO<0))
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
     {
         std::cout << "Error while initializing SDL : " << SDL_GetError() << std::endl;
         SDL_Quit();
@@ -95,6 +95,12 @@ void SceneOpenGL::mainLoop()
     Shader shader_background("Shaders/background.vert", "Shaders/background.frag");
 
     const unsigned int frameRate(1000/60);
+	
+	if(m_useJoysticks)
+    {
+        SDL_JoystickEventState(SDL_ENABLE);
+        m_input.openJoysticks();
+    }
 
     //********** For test **********
     float verticesFloor[] = {

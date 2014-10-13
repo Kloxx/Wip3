@@ -20,6 +20,7 @@ public:
     ~SceneOpenGL();
 
     bool initWindow(const std::string& windowTitle);
+    void initController();
     bool initGL();
     void mainLoop();
 
@@ -31,6 +32,7 @@ private:
     SDL_GLContext m_GLContext;
     SDL_Event m_event;
     Input m_input;
+    bool m_useJoysticks;
 };
 
 #endif // SCENEOPENGL_H_INCLUDED

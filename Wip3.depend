@@ -1,10 +1,9 @@
 # depslib dependency file v1.0
-1412683818 source:g:\prototypes\wip3\cube.cpp
+1412947802 source:g:\prototypes\wip3\cube.cpp
 	"Cube.h"
 	<glm/gtx/transform.hpp>
-	<glm/gtc/type_ptr.hpp>
 
-1412683818 g:\prototypes\wip3\cube.h
+1412947802 g:\prototypes\wip3\cube.h
 	"common.h"
 	"Shader.h"
 	"Texture.h"
@@ -294,16 +293,16 @@
 
 1368219030 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtc\type_ptr.inl
 
-1412683818 g:\prototypes\wip3\shader.h
+1412947802 g:\prototypes\wip3\shader.h
 	"common.h"
 	<string>
 
-1412683818 g:\prototypes\wip3\texture.h
+1412725101 g:\prototypes\wip3\texture.h
 	"common.h"
 	<SDL2/SDL.h>
 	<SDL2/SDL_image.h>
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl.h
 	"SDL_main.h"
 	"SDL_stdinc.h"
 	"SDL_assert.h"
@@ -314,6 +313,10 @@
 	"SDL_endian.h"
 	"SDL_error.h"
 	"SDL_events.h"
+	"SDL_filesystem.h"
+	"SDL_joystick.h"
+	"SDL_gamecontroller.h"
+	"SDL_haptic.h"
 	"SDL_hints.h"
 	"SDL_loadso.h"
 	"SDL_log.h"
@@ -330,12 +333,12 @@
 	"begin_code.h"
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_main.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_main.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_stdinc.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_stdinc.h
 	"SDL_config.h"
 	<sys/types.h>
 	<stdio.h>
@@ -362,35 +365,32 @@
 	<stdlib.h>
 	"close_code.h"
 
-1353412716 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_config.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_config.h
 	"SDL_platform.h"
-	<stdarg.h>
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_platform.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_platform.h
 	"AvailabilityMacros.h"
 	"TargetConditionals.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\begin_code.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\begin_code.h
 
-1353412716 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\close_code.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\close_code.h
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_assert.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_assert.h
 	"SDL_config.h"
 	"begin_code.h"
 	<signal.h>
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_atomic.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_atomic.h
 	"SDL_stdinc.h"
 	"SDL_platform.h"
 	"begin_code.h"
-	<intrin.h>
-	<libkern/OSAtomic.h>
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_audio.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_audio.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_endian.h"
@@ -400,43 +400,44 @@
 	"begin_code.h"
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_error.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_error.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_endian.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_endian.h
 	"SDL_stdinc.h"
 	<endian.h>
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_mutex.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_mutex.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_thread.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_thread.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
+	"SDL_atomic.h"
 	"SDL_mutex.h"
 	"begin_code.h"
 	<process.h>
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_rwops.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_rwops.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_clipboard.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_clipboard.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_cpuinfo.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_cpuinfo.h
 	"SDL_stdinc.h"
 	<intrin.h>
 	<intrin.h>
@@ -448,20 +449,21 @@
 	"begin_code.h"
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_events.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_events.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
 	"SDL_keyboard.h"
 	"SDL_mouse.h"
 	"SDL_joystick.h"
+	"SDL_gamecontroller.h"
 	"SDL_quit.h"
 	"SDL_gesture.h"
 	"SDL_touch.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_video.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_video.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -469,11 +471,12 @@
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_pixels.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_pixels.h
+	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_rect.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_rect.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_pixels.h"
@@ -481,7 +484,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_surface.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_surface.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -490,11 +493,11 @@
 	"begin_code.h"
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_blendmode.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_blendmode.h
 	"begin_code.h"
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_keyboard.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_keyboard.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_keycode.h"
@@ -502,31 +505,31 @@
 	"begin_code.h"
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_keycode.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_keycode.h
 	"SDL_stdinc.h"
 	"SDL_scancode.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_scancode.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_scancode.h
 	"SDL_stdinc.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_mouse.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_mouse.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_joystick.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_joystick.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_quit.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_quit.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_gesture.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_gesture.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
@@ -534,61 +537,62 @@
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_touch.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_touch.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_hints.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_hints.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_loadso.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_loadso.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412712 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_log.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_log.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_messagebox.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_messagebox.h
 	"SDL_stdinc.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_power.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_power.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_render.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_render.h
 	"SDL_stdinc.h"
 	"SDL_rect.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_system.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_system.h
 	"SDL_stdinc.h"
-	"SDL_video.h"
 	"SDL_keyboard.h"
+	"SDL_render.h"
+	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_timer.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_timer.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1353412714 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_version.h
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_version.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
@@ -602,20 +606,20 @@
 1412683818 source:g:\prototypes\wip3\input.cpp
 	"Input.h"
 
-1412683818 g:\prototypes\wip3\input.h
+1413142923 g:\prototypes\wip3\input.h
 	<SDL2/SDL.h>
 
-1412644026 source:g:\prototypes\wip3\main.cpp
+1413139393 source:g:\prototypes\wip3\main.cpp
 	"SceneOpenGL.h"
 
-1412684280 source:g:\prototypes\wip3\sceneopengl.cpp
+1413139568 source:g:\prototypes\wip3\sceneopengl.cpp
 	"SceneOpenGL.h"
 	<glm/gtx/transform.hpp>
-	<glm/gtc/type_ptr.hpp>
+	<glm/gtx/string_cast.hpp>
 	<iostream>
 	<string>
 
-1412683818 g:\prototypes\wip3\sceneopengl.h
+1413139564 g:\prototypes\wip3\sceneopengl.h
 	"common.h"
 	<SDL2/SDL.h>
 	"Shader.h"
@@ -625,26 +629,28 @@
 	"Camera.h"
 	"Ship.h"
 
-1412683818 source:g:\prototypes\wip3\shader.cpp
+1412947802 source:g:\prototypes\wip3\shader.cpp
 	"Shader.h"
 	<iostream>
 	<fstream>
 	<cassert>
+	<glm/gtc/type_ptr.hpp>
+	<glm/gtx/string_cast.hpp>
 
-1412683818 source:g:\prototypes\wip3\texture.cpp
+1412725101 source:g:\prototypes\wip3\texture.cpp
 	"Texture.h"
 	<iostream>
+	<cassert>
 	<GL/gl.h>
 
-1412684367 source:g:\prototypes\wip3\camera.cpp
+1412947802 source:g:\prototypes\wip3\camera.cpp
 	"Camera.h"
 	<glm/gtx/transform.hpp>
-	<glm/gtc/type_ptr.hpp>
 
-1412683818 g:\prototypes\wip3\camera.h
+1412947802 g:\prototypes\wip3\camera.h
 	"common.h"
-	"Input.h"
 	"Ship.h"
+	"Input.h"
 
 1412216014 source:g:\prototypes\wip3\physics.cpp
 	"Physics.h"
@@ -661,21 +667,66 @@
 	<glm/gtc/type_ptr.hpp>
 	<iostream>
 
-1412683818 g:\prototypes\wip3\ship.h
+1412947802 g:\prototypes\wip3\ship.h
 	"common.h"
 	"Shader.h"
 	"Texture.h"
 	"Input.h"
 
-1412684441 source:g:\prototypes\wip3\ship.cpp
+1412947802 source:g:\prototypes\wip3\ship.cpp
 	"Ship.h"
 	<glm/gtx/transform.hpp>
-	<glm/gtc/type_ptr.hpp>
 
-1412684411 g:\prototypes\wip3\common.h
+1412947802 g:\prototypes\wip3\common.h
 	<GL/glew.h>
 	<OpenGL/gl3.h>
 	<GLES3/gl3.h>
 	<glm/glm.hpp>
 	<string>
+
+1368219035 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtx\string_cast.hpp
+	"../glm.hpp"
+	"../gtc/half_float.hpp"
+	"../gtx/integer.hpp"
+	"../gtx/quaternion.hpp"
+	<string>
+	"string_cast.inl"
+
+1368219032 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtx\integer.hpp
+	"../glm.hpp"
+	"integer.inl"
+
+1368219032 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtx\integer.inl
+
+1368219034 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtx\quaternion.hpp
+	"../glm.hpp"
+	"../gtc/quaternion.hpp"
+	"quaternion.inl"
+
+1368219034 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtx\quaternion.inl
+	<limits>
+
+1368219035 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\glm\gtx\string_cast.inl
+	<cstdarg>
+	<cstdio>
+
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_gamecontroller.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"SDL_joystick.h"
+	"begin_code.h"
+	"close_code.h"
+
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_filesystem.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1394257193 c:\program files (x86)\codeblocks\mingw\sdl-2.0\include\sdl2\sdl_haptic.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_joystick.h"
+	"begin_code.h"
+	"close_code.h"
 
