@@ -56,11 +56,17 @@ bool SceneOpenGL::initWindow(const std::string& windowTitle)
 
     if(!m_GLContext)
     {
-        std::cout << SDL_GetError() << std::endl;
+        std::cout << "Error while creating context : " << SDL_GetError() << std::endl;
         SDL_DestroyWindow(m_window);
         SDL_Quit();
 
         return false;
+    }
+
+    {
+        int width, height;
+        SDL_GetWindowSize(m_window, &width, &height);
+        glViewport(0, 0, width, height);
     }
 
     return true;
@@ -95,8 +101,8 @@ void SceneOpenGL::mainLoop()
     Shader shader_background("Shaders/background.vert", "Shaders/background.frag");
 
     const unsigned int frameRate(1000/60);
-	
-	if(m_useJoysticks)
+
+    if(m_useJoysticks)
     {
         SDL_JoystickEventState(SDL_ENABLE);
         m_input.openJoysticks();
