@@ -24,18 +24,7 @@ Input::Input() :
 }
 
 Input::~Input()
-{
-    for(int i(0); i<SDL_NumJoysticks(); i++){
-        std::cout << i << std::endl;
-        SDL_JoystickClose(m_joysticks[i]);
-    } // Close Joysticks
-    /*
-    /!\ There might be an error if a device is removed during game session /!\
-     TODO : - close joysticks if SDL_JOYDEVICEREMOVED in events
-            - update m_numJoystick
-            - re-open m_joysticks
-    */
-}
+{}
 
 void Input::openJoysticks()
 {
@@ -48,6 +37,20 @@ void Input::openJoysticks()
         m_joysticks[i] = SDL_JoystickOpen(i); // Open Joysticks
         std::cout << "Joystick #" << i << " OK " << std::endl;
     }
+}
+
+void Input::closeJoysticks()
+{
+    for(int i(0); i<m_numJoysticks; i++){
+        std::cout << i << std::endl;
+        SDL_JoystickClose(m_joysticks[i]);
+    } // Close Joysticks
+    /*
+    /!\ There might be an error if a device is removed during game session /!\
+     TODO : - close joysticks if SDL_JOYDEVICEREMOVED in events
+            - update m_numJoystick
+            - re-open m_joysticks
+    */
 }
 
 void Input::updateEvents()

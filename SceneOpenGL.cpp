@@ -15,6 +15,7 @@ SceneOpenGL::SceneOpenGL(const Options& options) :
 
 SceneOpenGL::~SceneOpenGL()
 {
+    m_input.closeJoysticks();
     SDL_GL_DeleteContext(m_GLContext);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
@@ -101,8 +102,7 @@ void SceneOpenGL::mainLoop()
 	if(m_useJoysticks)
     {
         m_input.openJoysticks();
-        if(SDL_JoystickEventState(SDL_ENABLE))
-            std::cout << SDL_GetError();
+        SDL_JoystickEventState(SDL_ENABLE);
     }
 
     //********** For test **********

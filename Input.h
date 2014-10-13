@@ -24,6 +24,7 @@ public:
 
     // Joysticks
     void openJoysticks();
+    void closeJoysticks();
     bool getJoystickButton(const int joystickNumber, const Uint8 button) const;
     int getJoystickAxes(const int joystickNumber, const Uint8 axis) const;
     Uint8 getJoystickHat(const int joystickNumber) const;
