@@ -24,6 +24,7 @@ message(STATUS "SDL2_FOUND ${SDL2_FOUND}")
 message(STATUS "SDL2IMAGE_FOUND ${SDL2IMAGE_FOUND}")
 
 add_executable(game
+    Options.cpp
     Camera.cpp
     Cube.cpp
     Input.cpp

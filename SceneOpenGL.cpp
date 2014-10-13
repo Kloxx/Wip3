@@ -6,9 +6,8 @@
 #include <iostream>
 #include <string>
 
-SceneOpenGL::SceneOpenGL(std::string windowTitle, int windowWidth, int windowHeight, bool fullscreen) :
-    m_windowTitle(windowTitle), m_windowWidth(windowWidth), m_windowHeight(windowHeight),
-    m_fullscreen(fullscreen), m_window(0), m_GLContext(0), m_input()
+SceneOpenGL::SceneOpenGL(const Options& options) :
+    m_options(options), m_window(0), m_GLContext(0), m_input()
 {
     if(SDL_NumJoysticks())
         m_useJoysticks = true; // Use joystick inputs if there's at least 1 joystick
@@ -21,7 +20,7 @@ SceneOpenGL::~SceneOpenGL()
     SDL_Quit();
 }
 
-bool SceneOpenGL::initWindow()
+bool SceneOpenGL::initWindow(const std::string& windowTitle)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) == -1)
     {
@@ -37,10 +36,14 @@ bool SceneOpenGL::initWindow()
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-    if(m_fullscreen)
-        m_window = SDL_CreateWindow(m_windowTitle.c_str(), SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, m_windowWidth, m_windowHeight, SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN);
-    else
-        m_window = SDL_CreateWindow(m_windowTitle.c_str(), SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, m_windowWidth, m_windowHeight, SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL);
+    if(m_options.fullscreen) m_window = SDL_CreateWindow(windowTitle.c_str(),
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        m_options.width, m_options.height,
+        SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN);
+    else m_window = SDL_CreateWindow(windowTitle.c_str(),
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        m_options.width, m_options.height,
+        SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL);
 
     if(m_window == 0)
     {
@@ -117,7 +120,7 @@ void SceneOpenGL::mainLoop()
     };
     //********** For test **********
 
-    const mat4 projection_base(perspective(70.0, static_cast<double>(m_windowWidth)/m_windowHeight, 0.01, 600.0));
+    const mat4 projection_base(perspective(70.0, static_cast<double>(m_options.width)/m_options.height, 0.01, 600.0));
     const mat4 modelview_base(1);
 
     Ship ship(shader_default, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);

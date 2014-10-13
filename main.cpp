@@ -1,13 +1,17 @@
+#include "Options.h"
 #include "SceneOpenGL.h"
 
-int main(int argc, char *argv[])
-{
-    SceneOpenGL scene("Yo, dawg !", WINDOW_WIDTH, WINDOW_HEIGHT, false);
+#include <iostream>
 
-    if(!scene.initWindow())
-        return -1;
-    if(!scene.initGL())
-        return -1;
+int main(int argc, const char *argv[])
+{
+    Options options(argc, argv);
+    std::cout << options << std::endl;
+
+    SceneOpenGL scene(options);
+
+    if(!scene.initWindow("To, dawg!! :)")) return -1;
+    if(!scene.initGL()) return -1;
 
     scene.mainLoop();
 
