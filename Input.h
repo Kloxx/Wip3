@@ -25,7 +25,7 @@ public:
     // Joysticks
     void openJoysticks();
     bool getJoystickButton(const int joystickNumber, const Uint8 button) const;
-    Sint16 getJoystickAxes(const int joystickNumber, const Uint8 axis) const;
+    int getJoystickAxes(const int joystickNumber, const Uint8 axis) const;
     Uint8 getJoystickHat(const int joystickNumber) const;
 
     // Pointer

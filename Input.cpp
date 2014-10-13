@@ -45,7 +45,7 @@ void Input::openJoysticks()
 
     for(int i(0); i<m_numJoysticks; i++)
     {
-        m_joysticks[i] = SDL_JoystickOpen(0); // Open Joysticks
+        m_joysticks[i] = SDL_JoystickOpen(i); // Open Joysticks
         std::cout << "Joystick #" << i << " OK " << std::endl;
     }
 }
@@ -57,10 +57,6 @@ void Input::updateEvents()
 
     while(SDL_PollEvent(&m_events))
     {
-        //if(m_events.type == SDL_JOYBUTTONDOWN){
-            //std::cout << "ouaisouais " << m_events.jbutton.which << std::endl;
-            //std::cout << SDL_PRESSED;}
-
         switch(m_events.type)
         {
         // Keyboard events
@@ -68,7 +64,7 @@ void Input::updateEvents()
             m_keys[m_events.key.keysym.scancode] = true;
             break;
 
-        /*case SDL_KEYUP:
+        case SDL_KEYUP:
             m_keys[m_events.key.keysym.scancode] = false;
             break;
 
@@ -87,44 +83,24 @@ void Input::updateEvents()
 
             m_mouseRelX = m_events.motion.xrel;
             m_mouseRelY = m_events.motion.yrel;
-            break;*/
+            break;
 
         // Joystick events
         case SDL_JOYBUTTONDOWN:
-            std::cout << "JOYBUTTONDOWN" << std::endl;
-            std::cout << "type : " << m_events.jbutton.type << std::endl;
-            std::cout << "which : " << m_events.jbutton.which << std::endl;
-            std::cout << "button : " << m_events.jbutton.button << std::endl;
-            std::cout << "state : " << m_events.jbutton.state << std::endl;
-            std::cout << std::endl;
-            //m_joystickButtons[m_events.jbutton.which][m_events.jbutton.button] = true;
+            m_joystickButtons[m_events.jbutton.which][m_events.jbutton.button] = true;
             break;
-/*
+
         case SDL_JOYBUTTONUP:
-            std::cout << "JOYBUTTONDOWN" << std::endl;
-            std::cout << "type : " << (m_events.jbutton.type == SDL_JOYBUTTONUP) << std::endl;
-            std::cout << "which : " << m_events.jbutton.which << std::endl;
-            std::cout << "button : " << (m_events.jbutton.button == 0) << std::endl;
-            std::cout << "state : " << (m_events.jbutton.state == SDL_RELEASED) << std::endl;
-            std::cout << std::endl;
-            //m_joystickButtons[m_events.jbutton.which][m_events.jbutton.button] = false;
+            m_joystickButtons[m_events.jbutton.which][m_events.jbutton.button] = false;
             break;
 
         case SDL_JOYAXISMOTION:
-            std::cout << "JOYAXIS" << std::endl;
-            //std::cout << "type : " << m_events.jaxis.type == SDL_JOYAXISMOTION << std::endl;
-            //m_joystickAxes[0][m_events.jaxis.axis] = m_events.jaxis.value;
+            m_joystickAxes[m_events.jaxis.which][m_events.jaxis.axis] = m_events.jaxis.value;
             break;
 
         case SDL_JOYHATMOTION:
-            std::cout << "JOYHATMOTION" << std::endl;
-            std::cout << "type : " << (m_events.jhat.type == SDL_JOYHATMOTION) << std::endl;
-            std::cout << "which : " << m_events.jhat.which << std::endl;
-            std::cout << "button : " << (m_events.jhat.hat == 0) << std::endl;
-            std::cout << "state : " << (m_events.jhat.value == SDL_HAT_UP) << std::endl;
-            std::cout << std::endl;
-            //m_joystickHat[m_events.jhat.which] = m_events.jhat.value;
-            break;*/
+            m_joystickHat[m_events.jhat.which] = m_events.jhat.value;
+            break;
 
         // Window events
         case SDL_WINDOWEVENT:
@@ -183,7 +159,7 @@ bool Input::getJoystickButton(const int joystickNumber, const Uint8 button) cons
     return m_joystickButtons[joystickNumber][button];
 }
 
-Sint16 Input::getJoystickAxes(const int joystickNumber, const Uint8 axis) const
+int Input::getJoystickAxes(const int joystickNumber, const Uint8 axis) const
 {
     return m_joystickAxes[joystickNumber][axis];
 }
