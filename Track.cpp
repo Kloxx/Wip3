@@ -71,7 +71,7 @@ PieceTurn::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& 
     unsigned int last_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,width,1), transform_texture_coords * glm::vec3(1,0,1));
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
-        transform *= glm::rotate(angle/subdiv, glm::vec3(0,1,0)) * glm::translate(glm::vec3(length/subdiv,0,0));
+        transform *= glm::translate(glm::vec3(length/subdiv/2.,0,0)) * glm::rotate(angle/subdiv, glm::vec3(0,1,0)) * glm::translate(glm::vec3(length/subdiv/2.,0,0));
         transform_texture_coords *= translate2(glm::vec2(0,1./subdiv));
 
         unsigned int new_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-width,1), transform_texture_coords * glm::vec3(0,0,1));

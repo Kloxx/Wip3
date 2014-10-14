@@ -136,7 +136,7 @@ void SceneOpenGL::mainLoop()
     pieces.push_back(new PieceStraight(15,30,50));
     pieces.push_back(new PieceTurn(30,glm::radians(60.),100));
     pieces.push_back(new PieceStraight(30,30,50));
-    pieces.push_back(new PieceTurn(30,glm::radians(-150.),250));
+    pieces.push_back(new PieceTurn(30,glm::radians(-150.),250,32));
     pieces.push_back(new PieceStraight(30,30,50));
     Track track(shader_default, "Textures/debug.png", pieces);
 
