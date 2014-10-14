@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 
     SceneOpenGL scene(options);
 
-    if(!scene.initWindow("To, dawg!! :)")) return -1;
+    if(!scene.initWindow("Yo, dawg!! :)")) return -1;
     if(!scene.initGL()) return -1;
 
     scene.mainLoop();

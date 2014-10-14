@@ -299,19 +299,19 @@ void Ship::control(Input const& input)
     float stabilization(0.05);
     glm::vec3 friction(0,0,0);
 
-    if(input.getKey(SDL_SCANCODE_UP)   || input.getKey(SDL_SCANCODE_W) || input.getJoystickButton(0, 0))
+    if(input.getKey(SDL_SCANCODE_UP)   || input.getKey(SDL_SCANCODE_W) || input.getJoystickButton(JOY0, 0))
         acceleration = m_acceleration;
 
-    if(input.getKey(SDL_SCANCODE_DOWN) || input.getKey(SDL_SCANCODE_S) || input.getJoystickButton(0, 1))
+    if(input.getKey(SDL_SCANCODE_DOWN) || input.getKey(SDL_SCANCODE_S) || input.getJoystickButton(JOY0, 1))
         frictionFactor = m_mass / 30000.0;
 
-    if(input.getKey(SDL_SCANCODE_LEFT) || input.getKey(SDL_SCANCODE_A) || input.getJoystickAxes(0, 0) < -10000)
+    if(input.getKey(SDL_SCANCODE_LEFT) || input.getKey(SDL_SCANCODE_A) || input.getJoystickAxes(JOY0, 0) < -10000)
     {
         m_angle -= m_rotationSpeed;
         m_roll -= 0.8;
     }
 
-    if(input.getKey(SDL_SCANCODE_RIGHT) || input.getKey(SDL_SCANCODE_D) || input.getJoystickAxes(0, 0) > 10000)
+    if(input.getKey(SDL_SCANCODE_RIGHT) || input.getKey(SDL_SCANCODE_D) || input.getJoystickAxes(JOY0, 0) > 10000)
     {
         m_angle += m_rotationSpeed;
         m_roll += 0.8;
@@ -319,7 +319,7 @@ void Ship::control(Input const& input)
 
     if(!(input.getKey(SDL_SCANCODE_UP) || input.getKey(SDL_SCANCODE_W)) &&
        !(input.getKey(SDL_SCANCODE_DOWN) || input.getKey(SDL_SCANCODE_S)) &&
-       !(input.getJoystickButton(0, 0) || input.getJoystickButton(0, 1)))
+       !(input.getJoystickButton(JOY0, 0) || input.getJoystickButton(JOY0, 1)))
         frictionFactor = m_mass / 50000.0;
 
     friction.x = -m_linearSpeed.x * frictionFactor;

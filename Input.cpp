@@ -15,6 +15,7 @@ Input::Input() :
     // Joysticks
     for(int i(0); i<4; i++)
     {
+        m_joysticks[i] = NULL;
         for(int j(0); j<13; j++)
             m_joystickButtons[i][j] = false;
         for(int j(0); j<6; j++)
@@ -32,17 +33,29 @@ void Input::openJoysticks()
     if(m_numJoysticks > 4)
         m_numJoysticks = 4; // Sets maximum joysticks to 4
 
+    if(SDL_GameControllerAddMappingsFromFile("gamecontrollerdb.txt") == -1)
+        std::cout << "Cannot load gamecontroller database : " << SDL_GetError() << std::endl;
+
+    if(m_numJoysticks)
+        std::cout << "Found " << m_numJoysticks << " controllers" << std::endl;
+
     for(int i(0); i<m_numJoysticks; i++)
     {
-        m_joysticks[i] = SDL_JoystickOpen(i); // Open Joysticks
-        std::cout << "Joystick #" << i << " OK " << std::endl;
+        if(SDL_IsGameController(i) == SDL_TRUE)
+        {
+            m_joysticks[i] = SDL_GameControllerOpen(i); // Open Joysticks
+            std::cout << "Controller #" << i << " OK  : " << SDL_GameControllerName(m_joysticks[i]) << std::endl;
+        }
+        else
+            std::cout << "Controller #" << i << " is not supported." << std::endl;
     }
 }
 
 void Input::closeJoysticks()
 {
     for(int i(0); i<m_numJoysticks; i++)
-        SDL_JoystickClose(m_joysticks[i]); // Close Joysticks
+        if(m_joysticks[i])
+            SDL_GameControllerClose(m_joysticks[i]); // Close Joysticks
     /*
     /!\ There might be an error if a device is removed during game session /!\
      TODO : - close joysticks if SDL_JOYDEVICEREMOVED in events
@@ -87,7 +100,7 @@ void Input::updateEvents()
             break;
 
         // Joystick events
-        case SDL_JOYBUTTONDOWN:
+        case SDL_CONTROLLERBUTTONDOWN:
             m_joystickButtons[m_events.jbutton.which][m_events.jbutton.button] = true;
             break;
 

@@ -42,7 +42,6 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="$(#sdl2.include)/SDL2" />
 			<Add directory="$(#sdl2.include)" />
 		</Compiler>
 		<Linker>
@@ -59,6 +58,8 @@
 		<Unit filename="Cube.h" />
 		<Unit filename="Input.cpp" />
 		<Unit filename="Input.h" />
+		<Unit filename="Options.cpp" />
+		<Unit filename="Options.h" />
 		<Unit filename="Physics.cpp" />
 		<Unit filename="Physics.h" />
 		<Unit filename="SceneOpenGL.cpp" />

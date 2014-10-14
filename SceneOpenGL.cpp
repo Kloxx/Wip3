@@ -103,7 +103,7 @@ void SceneOpenGL::mainLoop()
 	if(m_useJoysticks)
     {
         m_input.openJoysticks();
-        SDL_JoystickEventState(SDL_ENABLE);
+        SDL_GameControllerEventState(SDL_ENABLE);
     }
 
     //********** For test **********

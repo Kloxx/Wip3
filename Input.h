@@ -1,6 +1,11 @@
 #ifndef INPUT_H_INCLUDED
 #define INPUT_H_INCLUDED
 
+#define JOY0 0
+#define JOY1 1
+#define JOY2 2
+#define JOY3 3
+
 // SDL2
 #include <SDL2/SDL.h>
 #include <iostream>
@@ -25,6 +30,7 @@ public:
     // Joysticks
     void openJoysticks();
     void closeJoysticks();
+    void autoMap();
     bool getJoystickButton(const int joystickNumber, const Uint8 button) const;
     int getJoystickAxes(const int joystickNumber, const Uint8 axis) const;
     Uint8 getJoystickHat(const int joystickNumber) const;
@@ -47,7 +53,7 @@ private:
 
     // Joysticks
     int m_numJoysticks;
-    SDL_Joystick* m_joysticks[4];
+    SDL_GameController* m_joysticks[4];
 
     bool m_joystickButtons[4][13];  // Max 13 buttons
     Sint16 m_joystickAxes[4][6];    // Max 6 axes
@@ -56,7 +62,5 @@ private:
     // Close
     bool m_terminate;
 };
-
-
 
 #endif // INPUT_H_INCLUDED
