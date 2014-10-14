@@ -48,6 +48,22 @@ protected:
     unsigned int subdiv;
 };
 
+struct PieceTwist : public Piece
+{
+    PieceTwist(const float width, const float angle, const float length, const unsigned int subdiv=16);
+
+    virtual
+    void
+    fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& texture_coords, Indexes& indexes) const;
+
+protected:
+
+    float width;
+    float angle;
+    float length;
+    unsigned int subdiv;
+};
+
 struct Track
 {
     typedef std::list<Piece*> Pieces;
