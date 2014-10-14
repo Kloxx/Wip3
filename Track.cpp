@@ -1,6 +1,7 @@
 #include "Track.h"
 
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
 using std::cout;
@@ -18,11 +19,6 @@ push_push(Vertices& vertices, TextureCoords& texture_coords, const glm::vec4& ve
     return index;
 }
 
-void
-Piece::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& texture_coords, Indexes& indexes) const
-{
-}
-
 PieceStraight::PieceStraight(const float start_width, const float end_width, const float length) :
     Piece(),
     start_width(start_width), end_width(end_width), length(length)
@@ -32,9 +28,11 @@ PieceStraight::PieceStraight(const float start_width, const float end_width, con
 void
 PieceStraight::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& texture_coords, Indexes& indexes) const
 {
+    cout << "straigth piece start_width=" << start_width << " end_width=" << end_width << " length=" << length << endl;
+
     const unsigned int start_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-start_width,1), glm::vec2(0,0));
     const unsigned int start_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,start_width,1), glm::vec2(1,0));
-    glm::translate(transform, glm::vec3(length,0,0));
+    transform = glm::translate(transform, glm::vec3(length,0,0));
     const unsigned int end_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-end_width,1), glm::vec2(0,1));
     const unsigned int end_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,end_width,1), glm::vec2(1,1));
 
@@ -43,22 +41,32 @@ PieceStraight::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoor
 }
 
 
-Track::Track(const Shader& shader, const std::string& texture, const Pieces& pieces) :
+Track::Track(const Shader& shader, const std::string& texture, Pieces& pieces) :
     shader(shader),
     texture(texture)
 {
+    cout << "creating track with " << pieces.size() << " pieces" << endl;
+
     glm::mat4 transform(1);
     for (Pieces::const_iterator piece_iter=pieces.begin(), piece_end=pieces.end(); piece_iter!=piece_end; piece_iter++)
     {
-        const Piece& piece = *piece_iter;
-        piece.fillBuffers(transform, vertices, texture_coords, indexes);
+        const Piece* piece = *piece_iter;
+        piece->fillBuffers(transform, vertices, texture_coords, indexes);
+        delete piece;
     }
+    pieces.clear();
 
-    cout << "track " << sizeof(indexes) << " " << indexes.size() << endl;
+    cout << "** " << vertices.size() << " " << texture_coords.size() << " " << indexes.size() << endl;
+    assert( vertices.size() == texture_coords.size() );
+
+    for (size_t kk=0; kk<vertices.size(); kk++)
+    {
+        cout << glm::to_string(vertices[kk]) << " " << glm::to_string(texture_coords[kk]) << endl;
+    }
 
     glGenBuffers(1, &indexes_buffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_buffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexes.size(), indexes.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexes.size()*3*sizeof(unsigned int), indexes.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 

@@ -15,14 +15,13 @@ struct Piece
 {
     virtual
     void
-    fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& texture_coords, Indexes& indexes) const;
+    fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& texture_coords, Indexes& indexes) const = 0;
 };
 
 struct PieceStraight : public Piece
 {
     PieceStraight(const float start_width, const float end_width, const float length);
 
-    virtual
     void
     fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& texture_coords, Indexes& indexes) const;
 
@@ -46,9 +45,9 @@ struct PieceTurn : public Piece
 
 struct Track
 {
-    typedef std::list<Piece> Pieces;
+    typedef std::list<Piece*> Pieces;
 
-    Track(const Shader& shader, const std::string& texture, const Pieces& pieces);
+    Track(const Shader& shader, const std::string& texture, Pieces& pieces);
 
     void
     draw(const glm::mat4& modelview) const;
