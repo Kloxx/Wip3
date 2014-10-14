@@ -39,7 +39,7 @@ struct ConfigFile
 
 struct Options
 {
-    Options(const int argc, const char* argv[]);
+    Options(const int argc, char* argv[]);
 
     bool fullscreen;
     unsigned int width;

@@ -2,7 +2,7 @@
 
 Input::Input() :
     m_mouseX(0), m_mouseY(0), m_mouseRelX(0), m_mouseRelY(0),
-    m_numJoysticks(SDL_NumJoysticks()),
+    m_numJoysticks(0),
     m_terminate(false)
 {
     // Keyboard & mouse
@@ -13,9 +13,6 @@ Input::Input() :
         m_mouseButtons[i] = false;
 
     // Joysticks
-    if(m_numJoysticks > 4)
-        m_numJoysticks = 4; // Sets maximum joysticks to 4
-
     for(int i(0); i<4; i++)
     {
         for(int j(0); j<13; j++)
@@ -27,20 +24,31 @@ Input::Input() :
 }
 
 Input::~Input()
+{}
+
+void Input::openJoysticks()
+{
+    m_numJoysticks = SDL_NumJoysticks();
+    if(m_numJoysticks > 4)
+        m_numJoysticks = 4; // Sets maximum joysticks to 4
+
+    for(int i(0); i<m_numJoysticks; i++)
+    {
+        m_joysticks[i] = SDL_JoystickOpen(i); // Open Joysticks
+        std::cout << "Joystick #" << i << " OK " << std::endl;
+    }
+}
+
+void Input::closeJoysticks()
 {
     for(int i(0); i<m_numJoysticks; i++)
         SDL_JoystickClose(m_joysticks[i]); // Close Joysticks
     /*
     /!\ There might be an error if a device is removed during game session /!\
-     TODO : - change m_numJoysticks and close joysticks if SDL_JOYDEVICEREMOVED in events
+     TODO : - close joysticks if SDL_JOYDEVICEREMOVED in events
+            - update m_numJoystick
             - re-open m_joysticks
     */
-}
-
-void Input::openJoysticks()
-{
-    for(int i(0); i<m_numJoysticks; i++)
-        m_joysticks[i] = SDL_JoystickOpen(i); // Open Joysticks
 }
 
 void Input::updateEvents()
@@ -93,6 +101,7 @@ void Input::updateEvents()
 
         case SDL_JOYHATMOTION:
             m_joystickHat[m_events.jhat.which] = m_events.jhat.value;
+            break;
 
         // Window events
         case SDL_WINDOWEVENT:
@@ -151,7 +160,7 @@ bool Input::getJoystickButton(const int joystickNumber, const Uint8 button) cons
     return m_joystickButtons[joystickNumber][button];
 }
 
-Sint16 Input::getJoystickAxes(const int joystickNumber, const Uint8 axis) const
+int Input::getJoystickAxes(const int joystickNumber, const Uint8 axis) const
 {
     return m_joystickAxes[joystickNumber][axis];
 }

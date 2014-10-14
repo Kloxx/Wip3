@@ -7,12 +7,13 @@
 #include <string>
 
 SceneOpenGL::SceneOpenGL(const Options& options) :
-    m_options(options), m_window(0), m_GLContext(0), m_input()
+    m_options(options), m_window(0), m_GLContext(0), m_input(), m_useJoysticks(false)
 {
 }
 
 SceneOpenGL::~SceneOpenGL()
 {
+    m_input.closeJoysticks();
     SDL_GL_DeleteContext(m_GLContext);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
@@ -20,13 +21,16 @@ SceneOpenGL::~SceneOpenGL()
 
 bool SceneOpenGL::initWindow(const std::string& windowTitle)
 {
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) == -1)
     {
         std::cout << "Error while initializing SDL : " << SDL_GetError() << std::endl;
         SDL_Quit();
 
         return false;
     }
+
+    if(SDL_NumJoysticks())
+        m_useJoysticks = true;
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
@@ -102,10 +106,10 @@ void SceneOpenGL::mainLoop()
 
     const unsigned int frameRate(1000/60);
 
-    if(m_useJoysticks)
+	if(m_useJoysticks)
     {
-        SDL_JoystickEventState(SDL_ENABLE);
         m_input.openJoysticks();
+        SDL_JoystickEventState(SDL_ENABLE);
     }
 
     //********** For test **********

@@ -31,7 +31,7 @@ private:
 
     SDL_Window* m_window;
     SDL_GLContext m_GLContext;
-    SDL_Event m_event;
+    //SDL_Event m_event;
     Input m_input;
     bool m_useJoysticks;
 };

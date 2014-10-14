@@ -64,7 +64,7 @@ ConfigFile::dump(std::ostream& os) const
     return os;
 }
 
-Options::Options(const int argc, const char* argv[])
+Options::Options(const int argc, char* argv[])
 {
     ConfigFile config;
     config.parseIniFile("../config_sample.ini");
