@@ -66,7 +66,7 @@ Track::Track(const Shader& shader, const std::string& texture, Pieces& pieces) :
 
     glGenBuffers(1, &indexes_buffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_buffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexes.size()*3*sizeof(unsigned int), indexes.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexes.size()*sizeof(Indexes::value_type), indexes.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
