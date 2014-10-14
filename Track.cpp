@@ -131,6 +131,37 @@ PieceTwist::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords&
     transform *= glm::translate(glm::vec3(length,0,0)) * glm::rotate(angle, glm::vec3(1,0,0));
 }
 
+PieceQuarter::PieceQuarter(const float width, const float angle, const float length, const unsigned int subdiv) :
+    Piece(),
+    width(width), angle(angle), length(length), subdiv(subdiv)
+{
+}
+
+void
+PieceQuarter::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& texture_coords, Indexes& indexes) const
+{
+    const float radius = length/angle;
+    cout << "quarter piece width=" << width << " angle=" << angle << " length=" << length << " radius=" << radius << endl;
+
+    glm::mat3 transform_texture_coords(1);
+    unsigned int last_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-width,1), transform_texture_coords * glm::vec3(0,0,1));
+    unsigned int last_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,width,1), transform_texture_coords * glm::vec3(1,0,1));
+    for (unsigned int kk=1; kk<=subdiv; kk++)
+    {
+        transform *= glm::translate(glm::vec3(length/subdiv/2.,0,0)) * glm::rotate(angle/subdiv, glm::vec3(0,0,1)) * glm::translate(glm::vec3(length/subdiv/2.,0,0));
+        transform_texture_coords *= translate2(glm::vec2(0,1./subdiv));
+
+        unsigned int new_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-width,1), transform_texture_coords * glm::vec3(0,0,1));
+        unsigned int new_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,width,1), transform_texture_coords * glm::vec3(1,0,1));
+
+        indexes.push_back(glm::uvec3(last_left_index, last_right_index, new_right_index));
+        indexes.push_back(glm::uvec3(last_left_index, new_right_index, new_left_index));
+
+        last_left_index = new_left_index;
+        last_right_index = new_right_index;
+    }
+}
+
 Track::Track(const Shader& shader, const std::string& texture, Pieces& pieces) :
     shader(shader),
     texture(texture)

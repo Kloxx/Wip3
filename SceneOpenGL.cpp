@@ -132,14 +132,23 @@ void SceneOpenGL::mainLoop()
     CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
     Track::Pieces pieces;
-    pieces.push_back(new PieceStraight(15,15,50));
-    pieces.push_back(new PieceStraight(15,30,50));
+    pieces.push_back(new PieceStraight(30,20,50));
+    pieces.push_back(new PieceStraight(20,30,50));
     pieces.push_back(new PieceTurn(30,glm::radians(60.),100));
     pieces.push_back(new PieceStraight(30,30,50));
     pieces.push_back(new PieceTurn(30,glm::radians(-150.),250,32));
     pieces.push_back(new PieceStraight(30,30,50));
-    pieces.push_back(new PieceTwist(30,glm::radians(60.),150));
-    pieces.push_back(new PieceStraight(30,30,50));
+    pieces.push_back(new PieceTwist(30,glm::radians(90.),150));
+    pieces.push_back(new PieceStraight(30,35,50));
+    pieces.push_back(new PieceQuarter(35,glm::radians(90.),200));
+    pieces.push_back(new PieceTurn(35,glm::radians(-90.),150));
+    pieces.push_back(new PieceQuarter(35,glm::radians(180.),400));
+    pieces.push_back(new PieceQuarter(35,glm::radians(-90.),200));
+    pieces.push_back(new PieceTurn(35,glm::radians(90.),109.3));
+    pieces.push_back(new PieceQuarter(35,glm::radians(-25.),25));
+    pieces.push_back(new PieceStraight(35,30,49.85));
+    pieces.push_back(new PieceQuarter(30,glm::radians(25.),25));
+    pieces.push_back(new PieceTurn(30,glm::radians(180.),366.3/2.,64));
     Track track(shader_default, "Textures/debug.png", pieces);
 
 
