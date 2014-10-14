@@ -131,6 +131,12 @@ void SceneOpenGL::mainLoop()
     Skybox skybox(shader_background, "Textures/skybox.png", 300);
     CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
+    Track::Pieces pieces;
+    pieces.push_back(PieceStraight(50,50,300));
+    pieces.push_back(PieceStraight(50,75,100));
+    Track track(shader_default, "Textures/debug.png", pieces);
+
+
     m_input.afficherPtr(true);
     m_input.capturePtr(false);
 
@@ -180,7 +186,9 @@ void SceneOpenGL::mainLoop()
         glClear(GL_DEPTH_BUFFER_BIT);
 
         { // track
-            shader_default.setUniform("modelview", modelview_base);
+            glm::mat4 modelview_local = modelview_base;
+            modelview_local = glm::translate(modelview_local, glm::vec3(0,-1,0));
+            shader_default.setUniform("modelview", modelview_local);
             glUseProgram(shader_default.getProgramID());
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verticesFloor);
             glEnableVertexAttribArray(0);
@@ -193,6 +201,8 @@ void SceneOpenGL::mainLoop()
             glDisableVertexAttribArray(0);
             glUseProgram(0);
         }
+
+        track.draw(modelview_base);
 
         { // floating box
             float angle = frames*2.;

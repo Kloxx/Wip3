@@ -33,6 +33,7 @@ add_executable(game
     Shader.cpp
     Ship.cpp
     Texture.cpp
+    Track.cpp
     main.cpp)
 
 target_link_libraries(game

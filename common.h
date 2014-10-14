@@ -12,6 +12,7 @@
 #endif
 
 // GLM
+#define GLM_SWIZZLE
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 

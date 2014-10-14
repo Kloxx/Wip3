@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "Ship.h"
 #include "Options.h"
+#include "Track.h"
 
 class SceneOpenGL
 {
