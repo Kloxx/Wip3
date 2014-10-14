@@ -9,14 +9,28 @@ using std::endl;
 
 static
 unsigned int
-push_push(Vertices& vertices, TextureCoords& texture_coords, const glm::vec4& vertex, const glm::vec2& texture_coord)
+push_push(Vertices& vertices, TextureCoords& texture_coords, const glm::vec4& vertex, const glm::vec3& texture_coord)
 {
     unsigned int index = vertices.size();
+
     glm::vec3 vertex_std = vertex.xyz();
     vertex_std /= vertex.w;
     vertices.push_back(vertex_std);
-    texture_coords.push_back(texture_coord);
+
+    glm::vec2 texture_coord_std = texture_coord.xy();
+    texture_coord_std /= texture_coord.z;
+    texture_coords.push_back(texture_coord_std);
+
     return index;
+}
+
+glm::mat3
+translate2(const glm::vec2& vec)
+{
+    glm::mat3 mat_trans(1);
+    mat_trans[2][0] = vec[0];
+    mat_trans[2][1] = vec[1];
+    return mat_trans;
 }
 
 PieceStraight::PieceStraight(const float start_width, const float end_width, const float length) :
@@ -30,16 +44,46 @@ PieceStraight::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoor
 {
     cout << "straigth piece start_width=" << start_width << " end_width=" << end_width << " length=" << length << endl;
 
-    const unsigned int start_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-start_width,1), glm::vec2(0,0));
-    const unsigned int start_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,start_width,1), glm::vec2(1,0));
-    transform = glm::translate(transform, glm::vec3(length,0,0));
-    const unsigned int end_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-end_width,1), glm::vec2(0,1));
-    const unsigned int end_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,end_width,1), glm::vec2(1,1));
+    const unsigned int start_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-start_width,1), glm::vec3(0,0,1));
+    const unsigned int start_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,start_width,1), glm::vec3(1,0,1));
+    transform *= glm::translate(glm::vec3(length,0,0));
+    const unsigned int end_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-end_width,1), glm::vec3(0,1,1));
+    const unsigned int end_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,end_width,1), glm::vec3(1,1,1));
 
     indexes.push_back(glm::uvec3(start_left_index, start_right_index, end_right_index));
     indexes.push_back(glm::uvec3(start_left_index, end_right_index, end_left_index));
 }
 
+PieceTurn::PieceTurn(const float width, const float angle, const float length, const unsigned int subdiv) :
+    Piece(),
+    width(width), angle(angle), length(length), subdiv(subdiv)
+{
+}
+
+void
+PieceTurn::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& texture_coords, Indexes& indexes) const
+{
+    const float radius = length/angle;
+    cout << "turn piece width=" << width << " angle=" << angle << " length=" << length << " radius=" << radius << endl;
+
+    glm::mat3 transform_texture_coords(1);
+    unsigned int last_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-width,1), transform_texture_coords * glm::vec3(0,0,1));
+    unsigned int last_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,width,1), transform_texture_coords * glm::vec3(1,0,1));
+    for (unsigned int kk=0; kk<subdiv; kk++)
+    {
+        transform *= glm::rotate(angle/subdiv, glm::vec3(0,1,0)) * glm::translate(glm::vec3(length/subdiv,0,0));
+        transform_texture_coords *= translate2(glm::vec2(0,1./subdiv));
+
+        unsigned int new_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-width,1), transform_texture_coords * glm::vec3(0,0,1));
+        unsigned int new_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,width,1), transform_texture_coords * glm::vec3(1,0,1));
+
+        indexes.push_back(glm::uvec3(last_left_index, last_right_index, new_right_index));
+        indexes.push_back(glm::uvec3(last_left_index, new_right_index, new_left_index));
+
+        last_left_index = new_left_index;
+        last_right_index = new_right_index;
+    }
+}
 
 Track::Track(const Shader& shader, const std::string& texture, Pieces& pieces) :
     shader(shader),

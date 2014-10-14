@@ -132,9 +132,12 @@ void SceneOpenGL::mainLoop()
     CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
     Track::Pieces pieces;
-    pieces.push_back(new PieceStraight(15,15,100));
-    pieces.push_back(new PieceStraight(15,30,100));
-    pieces.push_back(new PieceStraight(30,10,100));
+    pieces.push_back(new PieceStraight(15,15,50));
+    pieces.push_back(new PieceStraight(15,30,50));
+    pieces.push_back(new PieceTurn(30,glm::radians(60.),100));
+    pieces.push_back(new PieceStraight(30,30,50));
+    pieces.push_back(new PieceTurn(30,glm::radians(-150.),250));
+    pieces.push_back(new PieceStraight(30,30,50));
     Track track(shader_default, "Textures/debug.png", pieces);
 
 
