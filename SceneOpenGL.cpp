@@ -103,6 +103,7 @@ void SceneOpenGL::mainLoop()
 
     Shader shader_default("Shaders/texture.vert", "Shaders/texture.frag");
     Shader shader_background("Shaders/background.vert", "Shaders/background.frag");
+    Shader shader_track("Shaders/texture.vert", "Shaders/track.frag");
 
     const unsigned int frameRate(1000/60);
 
@@ -118,9 +119,8 @@ void SceneOpenGL::mainLoop()
     Ship ship(shader_default, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
     Box box(shader_default, "Textures/debug.png", 50);
     Skybox skybox(shader_background, "Textures/skybox.png", 300);
-    CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
-    Track track(shader_default, "Textures/road_template.png");
+    Track track(shader_track, "Textures/road_template.png");
     track.appendStraight(30,20,50.006776); //adjust xx
     track.appendStraight(20,30,50);
     track.appendTurn(30,glm::radians(60.),100);
@@ -141,6 +141,8 @@ void SceneOpenGL::mainLoop()
     track.appendQuarter(30,glm::radians(25.),25);
     track.appendTurn(30,glm::radians(180.),184.75,64);
     track.build();
+
+    CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
     m_input.afficherPtr(true);
     m_input.capturePtr(false);
@@ -169,6 +171,8 @@ void SceneOpenGL::mainLoop()
             const mat4 projection = camera.getCameraProjection(projection_base, ship);
             const mat4 projection_inv = glm::inverse(projection);
             shader_default.setUniform("projection", projection);
+            shader_track.setUniform("projection", projection);
+            shader_track.setUniform("time", startLoop/1000.);
             shader_background.setUniform("projection", projection);
             shader_background.setUniform("time", startLoop/1000.);
             shader_background.setUniform("projection_inv", projection_inv);
