@@ -34,6 +34,19 @@ struct Track
 
 protected:
 
+    struct Profile
+    {
+        Profile(const float& width, Track& track);
+
+        void
+        extrude(const Profile& profile, Track& track) const;
+
+    protected:
+
+        unsigned int indexes[13];
+
+    };
+
     unsigned int
     appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord);
 

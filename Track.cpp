@@ -40,6 +40,62 @@ smooth_diff(const unsigned int kk, const unsigned int kk_max)
 using std::cout;
 using std::endl;
 
+Track::Profile::Profile(const float& width, Track& track)
+{
+    const float margin = 6;
+    const float height = 4;
+    const float road_thickness = 2;
+    const float wall_thickness = 2;
+    const float bevel = 2;
+    assert( margin < width );
+
+    glm::vec3 vertices[13];
+    vertices[0]  = glm::vec3(0,0,0);
+    vertices[1]  = glm::vec3(0,0,width-margin);
+    vertices[2]  = glm::vec3(0,0,width);
+    vertices[3]  = glm::vec3(0,height,width);
+    vertices[4]  = glm::vec3(0,height,width+wall_thickness);
+    vertices[5]  = glm::vec3(0,bevel-road_thickness,width+wall_thickness);
+    vertices[6]  = glm::vec3(0,-road_thickness,width+wall_thickness-bevel);
+    vertices[7]  = glm::vec3(0,-road_thickness,-width-wall_thickness+bevel);
+    vertices[8]  = glm::vec3(0,bevel-road_thickness,-width-wall_thickness);
+    vertices[9]  = glm::vec3(0,height,-width-wall_thickness);
+    vertices[10] = glm::vec3(0,height,-width);
+    vertices[11] = glm::vec3(0,0,-width);
+    vertices[12] = glm::vec3(0,0,-width+margin);
+
+    glm::vec2 texture_coords[13];
+    texture_coords[0]  = glm::vec2(8/16.,0);
+    texture_coords[1]  = glm::vec2(9.5/16.,0);
+    texture_coords[2]  = glm::vec2(10/16.,0);
+    texture_coords[3]  = glm::vec2(11/16.,0);
+    texture_coords[4]  = glm::vec2(11.5/16.,0);
+    texture_coords[5]  = glm::vec2(13/16.,0);
+    texture_coords[6]  = glm::vec2(13.5/16.,0);
+    texture_coords[7]  = glm::vec2(2.5/16.,0);
+    texture_coords[8]  = glm::vec2(3/16.,0);
+    texture_coords[9]  = glm::vec2(4.5/16.,0);
+    texture_coords[10] = glm::vec2(5/16.,0);
+    texture_coords[11] = glm::vec2(6/16.,0);
+    texture_coords[12] = glm::vec2(6.5/16.,0);
+
+    for (unsigned int kk=0; kk<13; kk++)
+        indexes[kk] = track.appendPoint(vertices[kk], texture_coords[kk]);
+}
+
+void
+Track::Profile::extrude(const Profile& profile_next, Track& track) const
+{
+    for (unsigned int kk=0; kk<12; kk++)
+    {
+        track.indexes.push_back(glm::uvec3(indexes[kk], indexes[kk+1], profile_next.indexes[kk+1]));
+        track.indexes.push_back(glm::uvec3(indexes[kk], profile_next.indexes[kk+1], profile_next.indexes[kk]));
+    }
+
+    track.indexes.push_back(glm::uvec3(indexes[12], indexes[0], profile_next.indexes[0]));
+    track.indexes.push_back(glm::uvec3(indexes[12], profile_next.indexes[0], profile_next.indexes[12]));
+}
+
 Track::Track(const Shader& shader, const std::string& texture) :
     shader(shader),
     texture(texture)
@@ -99,23 +155,17 @@ Track::appendStraight(const float start_width, const float end_width, const floa
 {
     cout << "straigth piece start_width=" << start_width << " end_width=" << end_width << " length=" << length << endl;
 
-    unsigned int last_left_index = appendPoint(glm::vec3(0,0,-start_width), glm::vec2(0,0));
-    unsigned int last_right_index = appendPoint(glm::vec3(0,0,start_width), glm::vec2(1,0));
+    Profile last_profile(start_width, *this);
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0));
         transform_texture_coords *= translate2(glm::vec2(0,1./subdiv));
 
-        const float radius = start_width + (end_width-start_width) * smooth_interp(kk, subdiv);
+        const float width = start_width + (end_width-start_width) * smooth_interp(kk, subdiv);
+        Profile next_profile(width, *this);
 
-        const unsigned int new_left_index = appendPoint(glm::vec3(0,0,-radius), glm::vec2(0,0));
-        const unsigned int new_right_index = appendPoint(glm::vec3(0,0,radius), glm::vec2(1,0));
-
-        indexes.push_back(glm::uvec3(last_left_index, last_right_index, new_right_index));
-        indexes.push_back(glm::uvec3(last_left_index, new_right_index, new_left_index));
-
-        last_left_index = new_left_index;
-        last_right_index = new_right_index;
+        last_profile.extrude(next_profile, *this);
+        last_profile = next_profile;
     }
 }
 
