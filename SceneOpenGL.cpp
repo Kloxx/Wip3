@@ -112,21 +112,6 @@ void SceneOpenGL::mainLoop()
         SDL_JoystickEventState(SDL_ENABLE);
     }
 
-    //********** For test **********
-    float verticesFloor[] = {
-        0,0,-15, 500,0,-15, 500,0,20,
-        0,0,-15, 0,0,20, 500,0,20,
-        460,0,20, 500,0,20, 500,0,500,
-        460,0,20, 460,0,500, 500,0,500
-    };
-    float textureFloor[] = {
-        0,0, 50,0, 50,5,
-        0,0, 0,5, 50,5,
-        0,0, 5,0, 5,50,
-        0,0, 0,50, 5,50
-    };
-    //********** For test **********
-
     const mat4 projection_base(perspective(70.0, static_cast<double>(m_options.width)/m_options.height, 0.01, 600.0));
     const mat4 modelview_base(1);
 
@@ -205,23 +190,7 @@ void SceneOpenGL::mainLoop()
 
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        { // track
-            glm::mat4 modelview_local = modelview_base;
-            modelview_local = glm::translate(modelview_local, glm::vec3(0,-1,0));
-            shader_default.setUniform("modelview", modelview_local);
-            glUseProgram(shader_default.getProgramID());
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verticesFloor);
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, textureFloor);
-            glEnableVertexAttribArray(2);
-            glBindTexture(GL_TEXTURE_2D, texture.getID());
-            glDrawArrays(GL_TRIANGLES, 0, 12);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            glDisableVertexAttribArray(2);
-            glDisableVertexAttribArray(0);
-            glUseProgram(0);
-        }
-
+        // track
         track.draw(modelview_base);
 
         { // floating box
