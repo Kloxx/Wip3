@@ -104,7 +104,7 @@ glm::mat4 CameraThirdPerson::getCameraProjection(const glm::mat4& projection, co
 
     glm::mat4 projection_camera = projection;
     if (m_replayView) {
-        m_position = glm::vec3(200,50,80);
+        m_position = glm::vec3(200,50,120);
         projection_camera *= glm::lookAt(m_position, ship.getPosition(), m_verticalAxe);
     } else {
         m_position = positionShip + distance;

@@ -200,7 +200,7 @@ void SceneOpenGL::mainLoop()
         { // floating box
             float angle = frames*2.;
             glm::mat4 modelview_local = modelview_base;
-            modelview_local = glm::translate(modelview_local, glm::vec3(200, 50, 200));
+            modelview_local = glm::translate(modelview_local, glm::vec3(200, 150, 200));
             modelview_local = glm::rotate(modelview_local, glm::radians(angle), glm::vec3(1,.2,-.4));
             box.draw(modelview_local);
         }
