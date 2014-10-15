@@ -15,7 +15,7 @@ translate2(const glm::vec2& vec)
 }
 
 float
-smooth_inter(const float xx)
+smooth_function(const float xx)
 {
     if (xx<0) return 0;
     if (xx>1) return 1;
@@ -23,11 +23,18 @@ smooth_inter(const float xx)
 }
 
 float
+smooth_interp(const unsigned int kk, const unsigned int kk_max)
+{
+    const float xx = static_cast<float>(kk)/(kk_max-1);
+    return smooth_function(xx);
+}
+
+float
 smooth_diff(const unsigned int kk, const unsigned int kk_max)
 {
     const float xx_current = static_cast<float>(kk)/kk_max;
     const float xx_next = static_cast<float>(kk+1)/kk_max;
-    return smooth_inter(xx_next)-smooth_inter(xx_current);
+    return smooth_function(xx_next)-smooth_function(xx_current);
 }
 
 using std::cout;
@@ -88,19 +95,28 @@ Track::appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord)
 }
 
 void
-Track::appendStraight(const float start_width, const float end_width, const float length)
+Track::appendStraight(const float start_width, const float end_width, const float length, const unsigned int subdiv)
 {
     cout << "straigth piece start_width=" << start_width << " end_width=" << end_width << " length=" << length << endl;
 
-    const unsigned int start_left_index = appendPoint(glm::vec3(0,0,-start_width), glm::vec2(0,0));
-    const unsigned int start_right_index = appendPoint(glm::vec3(0,0,start_width), glm::vec2(1,0));
-    transform_vertices *= glm::translate(glm::vec3(length,0,0));
-    transform_texture_coords *= translate2(glm::vec2(0,1));
-    const unsigned int end_left_index = appendPoint(glm::vec3(0,0,-end_width), glm::vec2(0,0));
-    const unsigned int end_right_index = appendPoint(glm::vec3(0,0,end_width), glm::vec2(1,0));
+    unsigned int last_left_index = appendPoint(glm::vec3(0,0,-start_width), glm::vec2(0,0));
+    unsigned int last_right_index = appendPoint(glm::vec3(0,0,start_width), glm::vec2(1,0));
+    for (unsigned int kk=0; kk<subdiv; kk++)
+    {
+        transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0));
+        transform_texture_coords *= translate2(glm::vec2(0,1./subdiv));
 
-    indexes.push_back(glm::uvec3(start_left_index, start_right_index, end_right_index));
-    indexes.push_back(glm::uvec3(start_left_index, end_right_index, end_left_index));
+        const float radius = start_width + (end_width-start_width) * smooth_interp(kk, subdiv);
+
+        const unsigned int new_left_index = appendPoint(glm::vec3(0,0,-radius), glm::vec2(0,0));
+        const unsigned int new_right_index = appendPoint(glm::vec3(0,0,radius), glm::vec2(1,0));
+
+        indexes.push_back(glm::uvec3(last_left_index, last_right_index, new_right_index));
+        indexes.push_back(glm::uvec3(last_left_index, new_right_index, new_left_index));
+
+        last_left_index = new_left_index;
+        last_right_index = new_right_index;
+    }
 }
 
 void

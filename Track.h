@@ -15,7 +15,7 @@ struct Track
     draw(const glm::mat4& modelview) const;
 
     void
-    appendStraight(const float start_width, const float end_width, const float length);
+    appendStraight(const float start_width, const float end_width, const float length, const unsigned int subdiv = 16);
 
     void
     appendTurn(const float width, const float angle, const float length, const unsigned int subdiv=16);
