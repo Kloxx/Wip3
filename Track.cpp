@@ -49,7 +49,7 @@ Track::Profile::Profile(const float& width, Track& track)
     const float bevel = 2;
     assert( margin < width );
 
-    glm::vec3 vertices[13];
+    glm::vec3 vertices[14];
     vertices[0]  = glm::vec3(0,0,0);
     vertices[1]  = glm::vec3(0,0,width-margin);
     vertices[2]  = glm::vec3(0,0,width);
@@ -63,8 +63,9 @@ Track::Profile::Profile(const float& width, Track& track)
     vertices[10] = glm::vec3(0,height,-width);
     vertices[11] = glm::vec3(0,0,-width);
     vertices[12] = glm::vec3(0,0,-width+margin);
+    vertices[13] = glm::vec3(0,0,0);
 
-    glm::vec2 texture_coords[13];
+    glm::vec2 texture_coords[14];
     texture_coords[0]  = glm::vec2(8/16.,0);
     texture_coords[1]  = glm::vec2(9.5/16.,0);
     texture_coords[2]  = glm::vec2(10/16.,0);
@@ -72,28 +73,26 @@ Track::Profile::Profile(const float& width, Track& track)
     texture_coords[4]  = glm::vec2(11.5/16.,0);
     texture_coords[5]  = glm::vec2(13/16.,0);
     texture_coords[6]  = glm::vec2(13.5/16.,0);
-    texture_coords[7]  = glm::vec2(2.5/16.,0);
-    texture_coords[8]  = glm::vec2(3/16.,0);
-    texture_coords[9]  = glm::vec2(4.5/16.,0);
-    texture_coords[10] = glm::vec2(5/16.,0);
-    texture_coords[11] = glm::vec2(6/16.,0);
-    texture_coords[12] = glm::vec2(6.5/16.,0);
+    texture_coords[7]  = glm::vec2(1.+2.5/16.,0);
+    texture_coords[8]  = glm::vec2(1.+3/16.,0);
+    texture_coords[9]  = glm::vec2(1.+4.5/16.,0);
+    texture_coords[10] = glm::vec2(1.+5/16.,0);
+    texture_coords[11] = glm::vec2(1.+6/16.,0);
+    texture_coords[12] = glm::vec2(1.+6.5/16.,0);
+    texture_coords[13] = glm::vec2(1.+8/16.,0);
 
-    for (unsigned int kk=0; kk<13; kk++)
+    for (unsigned int kk=0; kk<14; kk++)
         indexes[kk] = track.appendPoint(vertices[kk], texture_coords[kk]);
 }
 
 void
 Track::Profile::extrude(const Profile& profile_next, Track& track) const
 {
-    for (unsigned int kk=0; kk<12; kk++)
+    for (unsigned int kk=0; kk<13; kk++)
     {
         track.indexes.push_back(glm::uvec3(indexes[kk], indexes[kk+1], profile_next.indexes[kk+1]));
         track.indexes.push_back(glm::uvec3(indexes[kk], profile_next.indexes[kk+1], profile_next.indexes[kk]));
     }
-
-    track.indexes.push_back(glm::uvec3(indexes[12], indexes[0], profile_next.indexes[0]));
-    track.indexes.push_back(glm::uvec3(indexes[12], profile_next.indexes[0], profile_next.indexes[12]));
 }
 
 Track::Track(const Shader& shader, const std::string& texture) :
@@ -159,7 +158,7 @@ Track::appendStraight(const float start_width, const float end_width, const floa
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0));
-        transform_texture_coords *= translate2(glm::vec2(0,1./subdiv));
+        transform_texture_coords *= translate2(glm::vec2(0,length/subdiv/32.));
 
         const float width = start_width + (end_width-start_width) * smooth_interp(kk, subdiv);
         Profile next_profile(width, *this);
@@ -175,15 +174,15 @@ Track::appendTurn(const float width, const float angle, const float length, cons
     const float radius = length/angle;
     cout << "turn piece width=" << width << " angle=" << angle << " length=" << length << " radius=" << radius << endl;
 
-    unsigned int last_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(0,0));
-    unsigned int last_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(1,0));
+    unsigned int last_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(6/16.,0));
+    unsigned int last_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(10/16.,0));
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv/2.,0,0)) * glm::rotate(angle/subdiv, glm::vec3(0,1,0)) * glm::translate(glm::vec3(length/subdiv/2.,0,0));
-        transform_texture_coords *= translate2(glm::vec2(0,1./subdiv));
+        transform_texture_coords *= translate2(glm::vec2(0,length/subdiv/32.));
 
-        unsigned int new_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(0,0));
-        unsigned int new_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(1,0));
+        unsigned int new_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(6/16.,0));
+        unsigned int new_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(10/16.,0));
 
         indexes.push_back(glm::uvec3(last_left_index, last_right_index, new_right_index));
         indexes.push_back(glm::uvec3(last_left_index, new_right_index, new_left_index));
