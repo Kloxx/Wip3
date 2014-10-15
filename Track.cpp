@@ -43,8 +43,8 @@ using std::endl;
 Track::Profile::Profile(const float& width, Track& track)
 {
     const float margin = 6;
-    const float height = 4;
-    const float road_thickness = 2;
+    const float height = 3;
+    const float road_thickness = 4;
     const float wall_thickness = 2;
     const float bevel = 2;
     assert( margin < width );
@@ -118,6 +118,8 @@ Track::clear()
 void
 Track::build()
 {
+    const glm::vec4 final_position = transform_vertices * glm::vec4(0,0,0,1);
+    cout << "final position " << glm::to_string(final_position.xyz()/final_position.w) << endl;
     assert( vertices.size() == texture_coords.size() );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_buffer);
@@ -162,7 +164,6 @@ Track::appendStraight(const float start_width, const float end_width, const floa
 
         const float width = start_width + (end_width-start_width) * smooth_interp(kk, subdiv);
         Profile next_profile(width, *this);
-
         last_profile.extrude(next_profile, *this);
         last_profile = next_profile;
     }
@@ -174,21 +175,15 @@ Track::appendTurn(const float width, const float angle, const float length, cons
     const float radius = length/angle;
     cout << "turn piece width=" << width << " angle=" << angle << " length=" << length << " radius=" << radius << endl;
 
-    unsigned int last_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(6/16.,0));
-    unsigned int last_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(10/16.,0));
+    Profile last_profile(width, *this);
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv/2.,0,0)) * glm::rotate(angle/subdiv, glm::vec3(0,1,0)) * glm::translate(glm::vec3(length/subdiv/2.,0,0));
         transform_texture_coords *= translate2(glm::vec2(0,length/subdiv/32.));
 
-        unsigned int new_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(6/16.,0));
-        unsigned int new_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(10/16.,0));
-
-        indexes.push_back(glm::uvec3(last_left_index, last_right_index, new_right_index));
-        indexes.push_back(glm::uvec3(last_left_index, new_right_index, new_left_index));
-
-        last_left_index = new_left_index;
-        last_right_index = new_right_index;
+        Profile next_profile(width, *this);
+        last_profile.extrude(next_profile, *this);
+        last_profile = next_profile;
     }
 }
 
@@ -198,26 +193,15 @@ Track::appendTwist(const float width, const float angle, const float length, con
     const float radius = length/angle;
     cout << "twist piece width=" << width << " angle=" << angle << " length=" << length << " radius=" << radius << endl;
 
-    unsigned int last_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(0,0));
-    unsigned int last_middle_index = appendPoint(glm::vec3(0,0,0), glm::vec2(.5,0));
-    unsigned int last_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(1,0));
+    Profile last_profile(width, *this);
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0)) * glm::rotate(angle*smooth_diff(kk, subdiv), glm::vec3(1,0,0));
-        transform_texture_coords *= translate2(glm::vec2(0,1./subdiv));
+        transform_texture_coords *= translate2(glm::vec2(0,length/subdiv/32.));
 
-        unsigned int new_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(0,0));
-        unsigned int new_middle_index = appendPoint(glm::vec3(0,0,0), glm::vec2(.5,0));
-        unsigned int new_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(1,0));
-
-        indexes.push_back(glm::uvec3(last_left_index, last_middle_index, new_middle_index));
-        indexes.push_back(glm::uvec3(last_middle_index, last_right_index, new_right_index));
-        indexes.push_back(glm::uvec3(last_left_index, new_middle_index, new_left_index));
-        indexes.push_back(glm::uvec3(last_middle_index, new_right_index, new_middle_index));
-
-        last_left_index = new_left_index;
-        last_middle_index = new_middle_index;
-        last_right_index = new_right_index;
+        Profile next_profile(width, *this);
+        last_profile.extrude(next_profile, *this);
+        last_profile = next_profile;
     }
 }
 
@@ -227,21 +211,18 @@ Track::appendQuarter(const float width, const float angle, const float length, c
     const float radius = length/angle;
     cout << "quarter piece width=" << width << " angle=" << angle << " length=" << length << " radius=" << radius << endl;
 
-    unsigned int last_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(0,0));
-    unsigned int last_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(1,0));
+    Profile last_profile(width, *this);
     for (unsigned int kk=1; kk<=subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv/2.,0,0)) * glm::rotate(angle/subdiv, glm::vec3(0,0,1)) * glm::translate(glm::vec3(length/subdiv/2.,0,0));
-        transform_texture_coords *= translate2(glm::vec2(0,1./subdiv));
+        transform_texture_coords *= translate2(glm::vec2(0,length/subdiv/32.));
 
         unsigned int new_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(0,0));
         unsigned int new_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(1,0));
 
-        indexes.push_back(glm::uvec3(last_left_index, last_right_index, new_right_index));
-        indexes.push_back(glm::uvec3(last_left_index, new_right_index, new_left_index));
-
-        last_left_index = new_left_index;
-        last_right_index = new_right_index;
+        Profile next_profile(width, *this);
+        last_profile.extrude(next_profile, *this);
+        last_profile = next_profile;
     }
 }
 

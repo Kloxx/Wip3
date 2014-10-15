@@ -136,25 +136,26 @@ void SceneOpenGL::mainLoop()
     CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
     Track track(shader_default, "Textures/road_template.png");
-    track.appendStraight(30,20,50);
+    track.appendStraight(30,20,50.006776); //adjust xx
     track.appendStraight(20,30,50);
     track.appendTurn(30,glm::radians(60.),100);
     track.appendStraight(30,30,50);
     track.appendTurn(30,glm::radians(-150.),250,32);
     track.appendStraight(30,30,60);
-    track.appendTwist(30,glm::radians(90.),150);
+    track.appendTwist(30,glm::radians(90.),150,64);
     track.appendStraight(30,35,40);
     track.appendQuarter(35,glm::radians(90.),200);
     track.appendTurn(35,glm::radians(-90.),150);
-    track.appendQuarter(35,glm::radians(180.),400);
-    track.appendQuarter(35,glm::radians(-90.),200);
+    track.appendQuarter(35,glm::radians(180.),400,128);
+    track.appendStraight(35,35,31.745621); // adjust yy
+    track.appendQuarter(35,glm::radians(-90.),150,32);
+    track.appendStraight(35,35,50-18.132910); // adjust zz
     track.appendTurn(35,glm::radians(90.),109.3);
     track.appendQuarter(35,glm::radians(-25.),25);
     track.appendStraight(35,30,49.85);
     track.appendQuarter(30,glm::radians(25.),25);
-    track.appendTurn(30,glm::radians(180.),366.3/2.,64);
+    track.appendTurn(30,glm::radians(180.),184.75,64);
     track.build();
-
 
     m_input.afficherPtr(true);
     m_input.capturePtr(false);
