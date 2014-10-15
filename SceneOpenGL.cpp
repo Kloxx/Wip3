@@ -106,7 +106,7 @@ void SceneOpenGL::mainLoop()
 
     const unsigned int frameRate(1000/60);
 
-	if(m_useJoysticks)
+  if(m_useJoysticks)
     {
         m_input.openJoysticks();
         SDL_JoystickEventState(SDL_ENABLE);
@@ -135,25 +135,25 @@ void SceneOpenGL::mainLoop()
     Skybox skybox(shader_background, "Textures/skybox.png", 300);
     CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
-    Track::Pieces pieces;
-    pieces.push_back(new PieceStraight(30,20,50));
-    pieces.push_back(new PieceStraight(20,30,50));
-    pieces.push_back(new PieceTurn(30,glm::radians(60.),100));
-    pieces.push_back(new PieceStraight(30,30,50));
-    pieces.push_back(new PieceTurn(30,glm::radians(-150.),250,32));
-    pieces.push_back(new PieceStraight(30,30,50));
-    pieces.push_back(new PieceTwist(30,glm::radians(90.),150));
-    pieces.push_back(new PieceStraight(30,35,50));
-    pieces.push_back(new PieceQuarter(35,glm::radians(90.),200));
-    pieces.push_back(new PieceTurn(35,glm::radians(-90.),150));
-    pieces.push_back(new PieceQuarter(35,glm::radians(180.),400));
-    pieces.push_back(new PieceQuarter(35,glm::radians(-90.),200));
-    pieces.push_back(new PieceTurn(35,glm::radians(90.),109.3));
-    pieces.push_back(new PieceQuarter(35,glm::radians(-25.),25));
-    pieces.push_back(new PieceStraight(35,30,49.85));
-    pieces.push_back(new PieceQuarter(30,glm::radians(25.),25));
-    pieces.push_back(new PieceTurn(30,glm::radians(180.),366.3/2.,64));
-    Track track(shader_default, "Textures/debug.png", pieces);
+    Track track(shader_default, "Textures/debug.png");
+    track.appendStraight(30,20,50);
+    track.appendStraight(20,30,50);
+    track.appendTurn(30,glm::radians(60.),100);
+    track.appendStraight(30,30,50);
+    track.appendTurn(30,glm::radians(-150.),250,32);
+    track.appendStraight(30,30,50);
+    track.appendTwist(30,glm::radians(90.),150);
+    track.appendStraight(30,35,50);
+    track.appendQuarter(35,glm::radians(90.),200);
+    track.appendTurn(35,glm::radians(-90.),150);
+    track.appendQuarter(35,glm::radians(180.),400);
+    track.appendQuarter(35,glm::radians(-90.),200);
+    track.appendTurn(35,glm::radians(90.),109.3);
+    track.appendQuarter(35,glm::radians(-25.),25);
+    track.appendStraight(35,30,49.85);
+    track.appendQuarter(30,glm::radians(25.),25);
+    track.appendTurn(30,glm::radians(180.),366.3/2.,64);
+    track.build();
 
 
     m_input.afficherPtr(true);

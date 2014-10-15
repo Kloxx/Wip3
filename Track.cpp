@@ -4,25 +4,6 @@
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
-using std::cout;
-using std::endl;
-
-static
-unsigned int
-push_push(Vertices& vertices, TextureCoords& texture_coords, const glm::vec4& vertex, const glm::vec3& texture_coord)
-{
-    unsigned int index = vertices.size();
-
-    glm::vec3 vertex_std = vertex.xyz();
-    vertex_std /= vertex.w;
-    vertices.push_back(vertex_std);
-
-    glm::vec2 texture_coord_std = texture_coord.xy();
-    texture_coord_std /= texture_coord.z;
-    texture_coords.push_back(texture_coord_std);
-
-    return index;
-}
 
 glm::mat3
 translate2(const glm::vec2& vec)
@@ -38,52 +19,105 @@ smooth_inter(const float xx)
 {
     if (xx<0) return 0;
     if (xx>1) return 1;
-    return 3*xx*xx-2*xx*xx*xx;
+    return xx*xx*(3-2*xx);
 }
 
-PieceStraight::PieceStraight(const float start_width, const float end_width, const float length) :
-    Piece(),
-    start_width(start_width), end_width(end_width), length(length)
+float
+smooth_diff(const unsigned int kk, const unsigned int kk_max)
 {
+    const float xx_current = static_cast<float>(kk)/kk_max;
+    const float xx_next = static_cast<float>(kk+1)/kk_max;
+    return smooth_inter(xx_next)-smooth_inter(xx_current);
+}
+
+using std::cout;
+using std::endl;
+
+Track::Track(const Shader& shader, const std::string& texture) :
+    shader(shader),
+    texture(texture)
+{
+    glGenBuffers(1, &indexes_buffer);
+    assert( indexes_buffer );
+    clear();
 }
 
 void
-PieceStraight::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& texture_coords, Indexes& indexes) const
+Track::clear()
+{
+    transform_vertices = glm::mat4(1);
+    transform_texture_coords = glm::mat3(1);
+
+    vertices.clear();
+    texture_coords.clear();
+    indexes.clear();
+}
+
+void
+Track::build()
+{
+    assert( vertices.size() == texture_coords.size() );
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_buffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexes.size()*sizeof(Indexes::value_type), indexes.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+unsigned int
+Track::appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord)
+{
+    unsigned int index = vertices.size();
+
+    { // transform vertex
+        const glm::vec4 vertex_homo(vertex, 1);
+        const glm::vec4 vertex_transform_homo = transform_vertices * vertex_homo;
+        glm::vec3 vertex_transform = vertex_transform_homo.xyz();
+        vertex_transform /= vertex_transform_homo.w;
+        vertices.push_back(vertex_transform);
+    }
+
+    { // trasnform texture coord
+        const glm::vec3 texture_coord_homo(texture_coord, 1);
+        const glm::vec3 texture_coord_transform_homo = transform_texture_coords * texture_coord_homo;
+        glm::vec2 texture_coord_transform = texture_coord_transform_homo.xy();
+        texture_coord_transform /= texture_coord_transform_homo.z;
+        texture_coords.push_back(texture_coord_transform);
+    }
+
+    return index;
+}
+
+void
+Track::appendStraight(const float start_width, const float end_width, const float length)
 {
     cout << "straigth piece start_width=" << start_width << " end_width=" << end_width << " length=" << length << endl;
 
-    const unsigned int start_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-start_width,1), glm::vec3(0,0,1));
-    const unsigned int start_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,start_width,1), glm::vec3(1,0,1));
-    transform *= glm::translate(glm::vec3(length,0,0));
-    const unsigned int end_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-end_width,1), glm::vec3(0,1,1));
-    const unsigned int end_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,end_width,1), glm::vec3(1,1,1));
+    const unsigned int start_left_index = appendPoint(glm::vec3(0,0,-start_width), glm::vec2(0,0));
+    const unsigned int start_right_index = appendPoint(glm::vec3(0,0,start_width), glm::vec2(1,0));
+    transform_vertices *= glm::translate(glm::vec3(length,0,0));
+    transform_texture_coords *= translate2(glm::vec2(0,1));
+    const unsigned int end_left_index = appendPoint(glm::vec3(0,0,-end_width), glm::vec2(0,0));
+    const unsigned int end_right_index = appendPoint(glm::vec3(0,0,end_width), glm::vec2(1,0));
 
     indexes.push_back(glm::uvec3(start_left_index, start_right_index, end_right_index));
     indexes.push_back(glm::uvec3(start_left_index, end_right_index, end_left_index));
 }
 
-PieceTurn::PieceTurn(const float width, const float angle, const float length, const unsigned int subdiv) :
-    Piece(),
-    width(width), angle(angle), length(length), subdiv(subdiv)
-{
-}
-
 void
-PieceTurn::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& texture_coords, Indexes& indexes) const
+Track::appendTurn(const float width, const float angle, const float length, const unsigned int subdiv)
 {
     const float radius = length/angle;
     cout << "turn piece width=" << width << " angle=" << angle << " length=" << length << " radius=" << radius << endl;
 
-    glm::mat3 transform_texture_coords(1);
-    unsigned int last_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-width,1), transform_texture_coords * glm::vec3(0,0,1));
-    unsigned int last_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,width,1), transform_texture_coords * glm::vec3(1,0,1));
+    unsigned int last_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(0,0));
+    unsigned int last_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(1,0));
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
-        transform *= glm::translate(glm::vec3(length/subdiv/2.,0,0)) * glm::rotate(angle/subdiv, glm::vec3(0,1,0)) * glm::translate(glm::vec3(length/subdiv/2.,0,0));
+        transform_vertices *= glm::translate(glm::vec3(length/subdiv/2.,0,0)) * glm::rotate(angle/subdiv, glm::vec3(0,1,0)) * glm::translate(glm::vec3(length/subdiv/2.,0,0));
         transform_texture_coords *= translate2(glm::vec2(0,1./subdiv));
 
-        unsigned int new_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-width,1), transform_texture_coords * glm::vec3(0,0,1));
-        unsigned int new_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,width,1), transform_texture_coords * glm::vec3(1,0,1));
+        unsigned int new_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(0,0));
+        unsigned int new_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(1,0));
 
         indexes.push_back(glm::uvec3(last_left_index, last_right_index, new_right_index));
         indexes.push_back(glm::uvec3(last_left_index, new_right_index, new_left_index));
@@ -93,30 +127,23 @@ PieceTurn::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& 
     }
 }
 
-PieceTwist::PieceTwist(const float width, const float angle, const float length, const unsigned int subdiv) :
-    Piece(),
-    width(width), angle(angle), length(length), subdiv(subdiv)
-{
-}
-
 void
-PieceTwist::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& texture_coords, Indexes& indexes) const
+Track::appendTwist(const float width, const float angle, const float length, const unsigned int subdiv)
 {
     const float radius = length/angle;
     cout << "twist piece width=" << width << " angle=" << angle << " length=" << length << " radius=" << radius << endl;
 
-    glm::mat3 transform_texture_coords(1);
-    unsigned int last_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-width,1), transform_texture_coords * glm::vec3(0,0,1));
-    unsigned int last_middle_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,0,1), transform_texture_coords * glm::vec3(.5,0,1));
-    unsigned int last_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,width,1), transform_texture_coords * glm::vec3(1,0,1));
-    for (unsigned int kk=1; kk<=subdiv; kk++)
+    unsigned int last_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(0,0));
+    unsigned int last_middle_index = appendPoint(glm::vec3(0,0,0), glm::vec2(.5,0));
+    unsigned int last_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(1,0));
+    for (unsigned int kk=0; kk<subdiv; kk++)
     {
-        const glm::mat4 transform_local = transform * glm::translate(glm::vec3(kk*length/subdiv,0,0)) * glm::rotate(angle*smooth_inter(static_cast<float>(kk)/subdiv), glm::vec3(1,0,0));
+        transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0)) * glm::rotate(angle*smooth_diff(kk, subdiv), glm::vec3(1,0,0));
         transform_texture_coords *= translate2(glm::vec2(0,1./subdiv));
 
-        unsigned int new_left_index = push_push(vertices, texture_coords, transform_local * glm::vec4(0,0,-width,1), transform_texture_coords * glm::vec3(0,0,1));
-        unsigned int new_middle_index = push_push(vertices, texture_coords, transform_local * glm::vec4(0,0,0,1), transform_texture_coords * glm::vec3(.5,0,1));
-        unsigned int new_right_index = push_push(vertices, texture_coords, transform_local * glm::vec4(0,0,width,1), transform_texture_coords * glm::vec3(1,0,1));
+        unsigned int new_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(0,0));
+        unsigned int new_middle_index = appendPoint(glm::vec3(0,0,0), glm::vec2(.5,0));
+        unsigned int new_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(1,0));
 
         indexes.push_back(glm::uvec3(last_left_index, last_middle_index, new_middle_index));
         indexes.push_back(glm::uvec3(last_middle_index, last_right_index, new_right_index));
@@ -127,32 +154,23 @@ PieceTwist::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords&
         last_middle_index = new_middle_index;
         last_right_index = new_right_index;
     }
-
-    transform *= glm::translate(glm::vec3(length,0,0)) * glm::rotate(angle, glm::vec3(1,0,0));
-}
-
-PieceQuarter::PieceQuarter(const float width, const float angle, const float length, const unsigned int subdiv) :
-    Piece(),
-    width(width), angle(angle), length(length), subdiv(subdiv)
-{
 }
 
 void
-PieceQuarter::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoords& texture_coords, Indexes& indexes) const
+Track::appendQuarter(const float width, const float angle, const float length, const unsigned int subdiv)
 {
     const float radius = length/angle;
     cout << "quarter piece width=" << width << " angle=" << angle << " length=" << length << " radius=" << radius << endl;
 
-    glm::mat3 transform_texture_coords(1);
-    unsigned int last_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-width,1), transform_texture_coords * glm::vec3(0,0,1));
-    unsigned int last_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,width,1), transform_texture_coords * glm::vec3(1,0,1));
+    unsigned int last_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(0,0));
+    unsigned int last_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(1,0));
     for (unsigned int kk=1; kk<=subdiv; kk++)
     {
-        transform *= glm::translate(glm::vec3(length/subdiv/2.,0,0)) * glm::rotate(angle/subdiv, glm::vec3(0,0,1)) * glm::translate(glm::vec3(length/subdiv/2.,0,0));
+        transform_vertices *= glm::translate(glm::vec3(length/subdiv/2.,0,0)) * glm::rotate(angle/subdiv, glm::vec3(0,0,1)) * glm::translate(glm::vec3(length/subdiv/2.,0,0));
         transform_texture_coords *= translate2(glm::vec2(0,1./subdiv));
 
-        unsigned int new_left_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,-width,1), transform_texture_coords * glm::vec3(0,0,1));
-        unsigned int new_right_index = push_push(vertices, texture_coords, transform * glm::vec4(0,0,width,1), transform_texture_coords * glm::vec3(1,0,1));
+        unsigned int new_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(0,0));
+        unsigned int new_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(1,0));
 
         indexes.push_back(glm::uvec3(last_left_index, last_right_index, new_right_index));
         indexes.push_back(glm::uvec3(last_left_index, new_right_index, new_left_index));
@@ -160,35 +178,6 @@ PieceQuarter::fillBuffers(glm::mat4& transform, Vertices& vertices, TextureCoord
         last_left_index = new_left_index;
         last_right_index = new_right_index;
     }
-}
-
-Track::Track(const Shader& shader, const std::string& texture, Pieces& pieces) :
-    shader(shader),
-    texture(texture)
-{
-    cout << "creating track with " << pieces.size() << " pieces" << endl;
-
-    glm::mat4 transform(1);
-    for (Pieces::const_iterator piece_iter=pieces.begin(), piece_end=pieces.end(); piece_iter!=piece_end; piece_iter++)
-    {
-        const Piece* piece = *piece_iter;
-        piece->fillBuffers(transform, vertices, texture_coords, indexes);
-        delete piece;
-    }
-    pieces.clear();
-
-    cout << "** " << vertices.size() << " " << texture_coords.size() << " " << indexes.size() << endl;
-    assert( vertices.size() == texture_coords.size() );
-
-    for (size_t kk=0; kk<vertices.size(); kk++)
-    {
-        cout << glm::to_string(vertices[kk]) << " " << glm::to_string(texture_coords[kk]) << endl;
-    }
-
-    glGenBuffers(1, &indexes_buffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_buffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexes.size()*sizeof(Indexes::value_type), indexes.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void
