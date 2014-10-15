@@ -135,7 +135,7 @@ void SceneOpenGL::mainLoop()
     Skybox skybox(shader_background, "Textures/skybox.png", 300);
     CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
 
-    Track track(shader_default, "Textures/debug.png");
+    Track track(shader_default, "Textures/road_template.png");
     track.appendStraight(30,20,50);
     track.appendStraight(20,30,50);
     track.appendTurn(30,glm::radians(60.),100);
