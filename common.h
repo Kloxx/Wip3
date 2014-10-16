@@ -16,6 +16,22 @@
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
+namespace glm
+{
+
+template <typename T, precision P>
+detail::tmat3x3<T,P>
+translate(const detail::tvec2<T,P>& vec)
+{
+    typedef detail::tmat3x3<T,P> mat3;
+    mat3 mat_trans(1);
+    mat_trans[2][0] = vec[0];
+    mat_trans[2][1] = vec[1];
+    return mat_trans;
+}
+
+}
+
 // std library
 #include <string>
 

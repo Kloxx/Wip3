@@ -4,16 +4,6 @@
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
-
-glm::mat3
-translate2(const glm::vec2& vec)
-{
-    glm::mat3 mat_trans(1);
-    mat_trans[2][0] = vec[0];
-    mat_trans[2][1] = vec[1];
-    return mat_trans;
-}
-
 float
 smooth_function(const float xx)
 {
@@ -160,7 +150,7 @@ Track::appendStraight(const float start_width, const float end_width, const floa
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0));
-        transform_texture_coords *= translate2(glm::vec2(0,length/subdiv/32.));
+        transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
 
         const float width = start_width + (end_width-start_width) * smooth_interp(kk, subdiv);
         Profile next_profile(width, *this);
@@ -179,7 +169,7 @@ Track::appendTurn(const float width, const float angle, const float length, cons
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv/2.,0,0)) * glm::rotate(angle/subdiv, glm::vec3(0,1,0)) * glm::translate(glm::vec3(length/subdiv/2.,0,0));
-        transform_texture_coords *= translate2(glm::vec2(0,length/subdiv/32.));
+        transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
 
         Profile next_profile(width, *this);
         last_profile.extrude(next_profile, *this);
@@ -197,7 +187,7 @@ Track::appendTwist(const float width, const float angle, const float length, con
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0)) * glm::rotate(angle*smooth_diff(kk, subdiv), glm::vec3(1,0,0));
-        transform_texture_coords *= translate2(glm::vec2(0,length/subdiv/32.));
+        transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
 
         Profile next_profile(width, *this);
         last_profile.extrude(next_profile, *this);
@@ -215,7 +205,7 @@ Track::appendQuarter(const float width, const float angle, const float length, c
     for (unsigned int kk=1; kk<=subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv/2.,0,0)) * glm::rotate(angle/subdiv, glm::vec3(0,0,1)) * glm::translate(glm::vec3(length/subdiv/2.,0,0));
-        transform_texture_coords *= translate2(glm::vec2(0,length/subdiv/32.));
+        transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
 
         unsigned int new_left_index = appendPoint(glm::vec3(0,0,-width), glm::vec2(0,0));
         unsigned int new_right_index = appendPoint(glm::vec3(0,0,width), glm::vec2(1,0));
