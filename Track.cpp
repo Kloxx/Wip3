@@ -73,6 +73,8 @@ Track::Profile::Profile(const float& width, Track& track)
 
     for (unsigned int kk=0; kk<14; kk++)
         indexes[kk] = track.appendPoint(vertices[kk], texture_coords[kk]);
+
+    track.registerTransform();
 }
 
 void
@@ -100,6 +102,8 @@ Track::clear()
     transform_vertices = glm::mat4(1);
     transform_texture_coords = glm::mat3(1);
 
+    transforms.clear();
+
     vertices.clear();
     texture_coords.clear();
     indexes.clear();
@@ -110,6 +114,7 @@ Track::build()
 {
     const glm::vec4 final_position = transform_vertices * glm::vec4(0,0,0,1);
     cout << "final position " << glm::to_string(final_position.xyz()/final_position.w) << endl;
+    cout << "transforms size " << transforms.size() << endl;
     assert( vertices.size() == texture_coords.size() );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_buffer);
@@ -125,20 +130,34 @@ Track::appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord)
     { // transform vertex
         const glm::vec4 vertex_homo(vertex, 1);
         const glm::vec4 vertex_transform_homo = transform_vertices * vertex_homo;
-        glm::vec3 vertex_transform = vertex_transform_homo.xyz();
-        vertex_transform /= vertex_transform_homo.w;
+        const glm::vec3 vertex_transform = vertex_transform_homo.xyz()/vertex_transform_homo.w;
         vertices.push_back(vertex_transform);
     }
 
     { // trasnform texture coord
         const glm::vec3 texture_coord_homo(texture_coord, 1);
         const glm::vec3 texture_coord_transform_homo = transform_texture_coords * texture_coord_homo;
-        glm::vec2 texture_coord_transform = texture_coord_transform_homo.xy();
-        texture_coord_transform /= texture_coord_transform_homo.z;
+        const glm::vec2 texture_coord_transform = texture_coord_transform_homo.xy()/texture_coord_transform_homo.z;
         texture_coords.push_back(texture_coord_transform);
     }
 
     return index;
+}
+
+float
+Track::registerTransform()
+{
+    const glm::vec3 map_origin_homo = transform_texture_coords * glm::vec3(0,0,1);
+    const glm::vec2 map_origin = map_origin_homo.xy()/map_origin_homo.z;
+    assert( map_origin.x == 0 );
+    const float length = map_origin.y;
+
+    //cout << "prout " << glm::to_string(map_origin) << " " << length << " " << (transforms.find(length) != transforms.end() ? "found" : "not found") << endl;
+
+    if (transforms.find(length) != transforms.end()) return length;
+
+    transforms.insert(std::make_pair(length, transform_vertices));
+    return length;
 }
 
 void

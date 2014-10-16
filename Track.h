@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <list>
+#include <map>
 
 struct Track
 {
@@ -50,8 +51,15 @@ protected:
     unsigned int
     appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord);
 
+    float
+    registerTransform();
+
     Shader shader;
     Texture texture;
+
+    typedef std::map<float, glm::mat4> Transforms;
+
+    Transforms transforms;
 
     typedef std::vector<glm::vec3> Vertices;
     typedef std::vector<glm::vec2> TextureCoords;
