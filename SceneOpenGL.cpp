@@ -113,7 +113,6 @@ void SceneOpenGL::mainLoop()
         SDL_JoystickEventState(SDL_ENABLE);
     }
 
-    const mat4 projection_base(perspective(70.0, static_cast<double>(m_options.width)/m_options.height, 0.01, 600.0));
     const mat4 modelview_base(1);
 
     Ship ship(shader_default, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
@@ -142,7 +141,7 @@ void SceneOpenGL::mainLoop()
     track.appendTurn(30,glm::radians(180.),184.75,64);
     track.build();
 
-    CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
+    Camera camera(12.0, 4.0, vec3(0,1,0), perspective(70.0f, static_cast<float>(m_options.width)/m_options.height, 5.f, 600.0f));
 
     m_input.afficherPtr(true);
     m_input.capturePtr(false);
@@ -168,7 +167,7 @@ void SceneOpenGL::mainLoop()
 
         { // move camera
             camera.m_replayView = m_input.getKey(SDL_SCANCODE_TAB);
-            const mat4 projection = camera.getCameraProjection(projection_base, ship);
+            const mat4 projection = camera.getCameraProjection(ship);
             const mat4 projection_inv = glm::inverse(projection);
             shader_default.setUniform("projection", projection);
             shader_track.setUniform("projection", projection);
