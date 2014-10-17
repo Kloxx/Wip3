@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-template <typename T, unsigned int size>
+template <typename T, size_t size_template>
 struct Array
 {
     typedef size_t size_type;
@@ -11,20 +11,27 @@ struct Array
     value_type&
     operator[](const size_t& index)
     {
-        assert( index < size );
+        assert( index < size_template );
         return container[index];
     }
 
-    value_type
+    const value_type&
     operator[](const size_t& index) const
     {
-        assert( index < size );
+        assert( index < size_template );
         return container[index];
+    }
+
+    static
+    size_type
+    size()
+    {
+        return size_template;
     }
 
 protected:
 
-    T container[size];
+    T container[size_template];
 };
 
 

@@ -36,19 +36,9 @@ struct Track
 
 protected:
 
-    struct Profile
-    {
-        Profile(const float& width, Track& track);
-
-        void
-        extrude(const Profile& profile, Track& track) const;
-
-    protected:
-
-        typedef Array<unsigned int, 14> Indexes;
-        Indexes indexes;
-
-    };
+    template <size_t additional_vertices>
+    friend
+    struct Profile; // forward
 
     unsigned int
     appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord);
