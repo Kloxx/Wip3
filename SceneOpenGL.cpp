@@ -125,12 +125,15 @@ void SceneOpenGL::mainLoop()
     track.appendTurn(30,glm::radians(60.),100);
     track.appendStraight(30,30,50);
     track.appendTurn(30,glm::radians(-150.),250,32);
-    track.appendStraight(30,30,60);
-    track.appendTwist(30,glm::radians(90.),150,64);
-    track.appendStraight(30,35,40);
+    track.appendStraight(30,50,75);
+    track.appendStraight(50,50,100);
+    track.appendStraight(50,35,75);
+    track.appendTwist(35,glm::radians(90.),150,64);
     track.appendQuarter(35,glm::radians(90.),200);
     track.appendTurn(35,glm::radians(-90.),150);
-    track.appendQuarter(35,glm::radians(180.),400,128);
+    track.appendQuarter(35,glm::radians(90.),200,64);
+    track.appendStraight(35,35,150);
+    track.appendQuarter(35,glm::radians(90.),200,64);
     track.appendStraight(35,35,31.745621); // adjust yy
     track.appendQuarter(35,glm::radians(-90.),150,32);
     track.appendStraight(35,35,50-18.132910); // adjust zz
@@ -141,7 +144,7 @@ void SceneOpenGL::mainLoop()
     track.appendTurn(30,glm::radians(180.),184.75,64);
     track.build();
 
-    Camera camera(12.0, 4.0, vec3(0,1,0), perspective(70.0f, static_cast<float>(m_options.width)/m_options.height, 5.f, 600.0f));
+    Camera camera(12.0, 4.0, vec3(0,1,0), perspective(70.0f, static_cast<float>(m_options.width)/m_options.height, 5.f, 1000.0f));
 
     m_input.afficherPtr(true);
     m_input.capturePtr(false);
