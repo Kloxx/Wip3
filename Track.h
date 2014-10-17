@@ -3,6 +3,7 @@
 #include "common.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "Array.h"
 
 #include <vector>
 #include <list>
@@ -44,7 +45,8 @@ protected:
 
     protected:
 
-        unsigned int indexes[14];
+        typedef Array<unsigned int, 14> Indexes;
+        Indexes indexes;
 
     };
 
