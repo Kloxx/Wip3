@@ -60,9 +60,11 @@ Profile<additional_vertices>::flatProfile(const float& width, Track& track)
     const float bevel = 2;
     assert( margin < width );
 
-    assert( Indexes::size() == 13 );
+    assert( Indexes::size == 13 );
 
-    glm::vec3 vertices[13];
+    typedef Array<glm::vec3, Indexes::size> Vertices;
+    Vertices vertices;
+
     vertices[0]  = glm::vec3(0,-road_thickness,-width-wall_thickness+bevel);
     vertices[1]  = glm::vec3(0,bevel-road_thickness,-width-wall_thickness);
     vertices[2]  = glm::vec3(0,height,-width-wall_thickness);
@@ -79,7 +81,9 @@ Profile<additional_vertices>::flatProfile(const float& width, Track& track)
 
     vertices[12] = vertices[0];
 
-    glm::vec2 texture_coords[13];
+    typedef Array<glm::vec2, Indexes::size> TextureCoords;
+    TextureCoords texture_coords;
+
     texture_coords[0]  = glm::vec2(2.5/16.,0);
     texture_coords[1]  = glm::vec2(3/16.,0);
     texture_coords[2]  = glm::vec2(4.5/16.,0);
@@ -97,7 +101,7 @@ Profile<additional_vertices>::flatProfile(const float& width, Track& track)
     texture_coords[12]  = glm::vec2(1.+2.5/16.,0);
 
     Self profile;
-    for (unsigned int kk=0; kk<Indexes::size(); kk++)
+    for (unsigned int kk=0; kk<Indexes::size; kk++)
         profile.indexes[kk] = track.appendPoint(vertices[kk], texture_coords[kk]);
 
     track.registerTransform();
@@ -109,7 +113,7 @@ template <size_t additional_vertices>
 void
 Profile<additional_vertices>::extrude(const Self& profile_next, Track& track) const
 {
-    for (unsigned int kk=0; kk<Indexes::size()-1; kk++)
+    for (unsigned int kk=0; kk<Indexes::size-1; kk++)
     {
         track.indexes.push_back(glm::uvec3(indexes[kk], indexes[kk+1], profile_next.indexes[kk+1]));
         track.indexes.push_back(glm::uvec3(indexes[kk], profile_next.indexes[kk+1], profile_next.indexes[kk]));

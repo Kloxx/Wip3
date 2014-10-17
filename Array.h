@@ -9,25 +9,20 @@ struct Array
     typedef T value_type;
 
     value_type&
-    operator[](const size_t& index)
+    operator[](const size_t index)
     {
         assert( index < size_template );
         return container[index];
     }
 
     const value_type&
-    operator[](const size_t& index) const
+    operator[](const size_t index) const
     {
         assert( index < size_template );
         return container[index];
     }
 
-    static
-    size_type
-    size()
-    {
-        return size_template;
-    }
+    static const size_type size = size_template;
 
 protected:
 
