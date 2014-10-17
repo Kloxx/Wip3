@@ -21,7 +21,7 @@ namespace glm
 
 template <typename T, precision P>
 detail::tmat3x3<T,P>
-translate(const detail::tvec2<T,P>& vec)
+translate(const detail::tvec2<T,P> vec)
 {
     typedef detail::tmat3x3<T,P> mat3;
     mat3 mat_trans(1);
@@ -30,11 +30,28 @@ translate(const detail::tvec2<T,P>& vec)
     return mat_trans;
 }
 
+template <typename T, precision P>
+detail::tvec2<T,P>
+transform(const detail::tmat3x3<T,P> matrix, const detail::tvec2<T,P> vertex)
+{
+    typedef detail::tvec3<T,P> vec3;
+    const vec3 vertex_homo(vertex,1);
+    const vec3 vertex_transformed_homo = matrix * vertex_homo;
+    return vertex_transformed_homo.xy()/vertex_transformed_homo.z;
+}
+
+template <typename T, precision P>
+detail::tvec3<T,P>
+transform(const detail::tmat4x4<T,P> matrix, const detail::tvec3<T,P> vertex)
+{
+    typedef detail::tvec4<T,P> vec4;
+    const vec4 vertex_homo(vertex,1);
+    const vec4 vertex_transformed_homo = matrix * vertex_homo;
+    return vertex_transformed_homo.xyz()/vertex_transformed_homo.w;
+}
+
 }
 
 // std library
 #include <string>
-
-#define WINDOW_WIDTH 1440
-#define WINDOW_HEIGHT 900
 

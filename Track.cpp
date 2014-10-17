@@ -80,6 +80,7 @@ Profile<additional_vertices>::flatProfile(const float& width, Track& track)
     vertices[11] = glm::vec3(0,-road_thickness,width+wall_thickness-bevel);
 
     vertices[12] = vertices[0];
+    vertices[12].y -= road_thickness;
 
     typedef Array<glm::vec2, Indexes::size> TextureCoords;
     TextureCoords texture_coords;
@@ -160,19 +161,8 @@ Track::appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord)
 {
     unsigned int index = vertices.size();
 
-    { // transform vertex
-        const glm::vec4 vertex_homo(vertex, 1);
-        const glm::vec4 vertex_transform_homo = transform_vertices * vertex_homo;
-        const glm::vec3 vertex_transform = vertex_transform_homo.xyz()/vertex_transform_homo.w;
-        vertices.push_back(vertex_transform);
-    }
-
-    { // trasnform texture coord
-        const glm::vec3 texture_coord_homo(texture_coord, 1);
-        const glm::vec3 texture_coord_transform_homo = transform_texture_coords * texture_coord_homo;
-        const glm::vec2 texture_coord_transform = texture_coord_transform_homo.xy()/texture_coord_transform_homo.z;
-        texture_coords.push_back(texture_coord_transform);
-    }
+    vertices.push_back(glm::transform(transform_vertices, vertex));
+    texture_coords.push_back(glm::transform(transform_texture_coords, texture_coord));
 
     return index;
 }
