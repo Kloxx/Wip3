@@ -5,6 +5,13 @@
 #include <iostream>
 
 float
+linspace(const unsigned int kk, const unsigned int kk_max, const float min_value, const float max_value)
+{
+    const float xx = static_cast<float>(kk+1)/(kk_max+1);
+    return min_value + (max_value-min_value)*xx;
+}
+
+float
 smooth_function(const float xx)
 {
     if (xx<0) return 0;
@@ -43,8 +50,11 @@ struct Profile
     extrude(const Self& profile, Track& track) const;
 
 protected:
+    typedef Array<std::pair<glm::vec3, glm::vec2>, 7> Border;
+    typedef Array<glm::vec3, 1+2*(Border::size+additional_vertices)> Vertices;
+    typedef Array<glm::vec2, 1+2*(Border::size+additional_vertices)> TextureCoords;
+    typedef Array<unsigned int, 1+2*(Border::size+additional_vertices)> Indexes;
 
-    typedef Array<unsigned int, 1+2*(6+additional_vertices)> Indexes;
     Indexes indexes;
 
 };
@@ -60,46 +70,74 @@ Profile<additional_vertices>::flatProfile(const float& width, Track& track)
     const float bevel = 2;
     assert( margin < width );
 
-    assert( Indexes::size == 13 );
+    Border left_border;
+    left_border[0] = std::make_pair(glm::vec3(0,-road_thickness,0),                            glm::vec2(2/16.,0));
+    left_border[1] = std::make_pair(glm::vec3(0,-road_thickness,-margin-wall_thickness+bevel), glm::vec2(2.5/16.,0));
+    left_border[2] = std::make_pair(glm::vec3(0,bevel-road_thickness,-margin-wall_thickness),  glm::vec2(3/16.,0));
+    left_border[3] = std::make_pair(glm::vec3(0,height,-margin-wall_thickness),                glm::vec2(4.5/16.,0));
+    left_border[4] = std::make_pair(glm::vec3(0,height,-margin),                               glm::vec2(5/16.,0));
+    left_border[5] = std::make_pair(glm::vec3(0,0,-margin),                                    glm::vec2(6/16.,0));
+    left_border[6] = std::make_pair(glm::vec3(0,0,0),                                          glm::vec2(6.5/16.,0));
 
-    typedef Array<glm::vec3, Indexes::size> Vertices;
+    Border right_border;
+    for (size_t kk=0; kk<Border::size; kk++)
+    {
+        glm::vec3 vertex = left_border[kk].first;
+        glm::vec2 texture_coord = left_border[kk].second;
+        vertex.z = -vertex.z;
+        texture_coord.x = 1-texture_coord.x;
+        right_border[Border::size-1-kk] = std::make_pair(vertex, texture_coord);
+    }
+
     Vertices vertices;
-
-    vertices[0]  = glm::vec3(0,-road_thickness,-width-wall_thickness+bevel);
-    vertices[1]  = glm::vec3(0,bevel-road_thickness,-width-wall_thickness);
-    vertices[2]  = glm::vec3(0,height,-width-wall_thickness);
-    vertices[3]  = glm::vec3(0,height,-width);
-    vertices[4]  = glm::vec3(0,0,-width);
-    vertices[5]  = glm::vec3(0,0,-width+margin);
-
-    vertices[6]  = glm::vec3(0,0,width-margin);
-    vertices[7]  = glm::vec3(0,0,width);
-    vertices[8]  = glm::vec3(0,height,width);
-    vertices[9]  = glm::vec3(0,height,width+wall_thickness);
-    vertices[10] = glm::vec3(0,bevel-road_thickness,width+wall_thickness);
-    vertices[11] = glm::vec3(0,-road_thickness,width+wall_thickness-bevel);
-
-    vertices[12] = vertices[0];
-    //vertices[12].y -= road_thickness;
-
-    typedef Array<glm::vec2, Indexes::size> TextureCoords;
     TextureCoords texture_coords;
 
-    texture_coords[0]  = glm::vec2(2.5/16.,0);
-    texture_coords[1]  = glm::vec2(3/16.,0);
-    texture_coords[2]  = glm::vec2(4.5/16.,0);
-    texture_coords[3]  = glm::vec2(5/16.,0);
-    texture_coords[4]  = glm::vec2(6/16.,0);
-    texture_coords[5]  = glm::vec2(6.5/16.,0);
+    {
+        size_t kk = 0;
 
-    texture_coords[6]  = glm::vec2(9.5/16.,0);
-    texture_coords[7]  = glm::vec2(10/16.,0);
-    texture_coords[8]  = glm::vec2(11/16.,0);
-    texture_coords[9]  = glm::vec2(11.5/16.,0);
-    texture_coords[10] = glm::vec2(13/16.,0);
-    texture_coords[11] = glm::vec2(13.5/16.,0);
+        // left border
+        for (size_t ll=0; ll<Border::size; ll++)
+        {
+            vertices[kk] = glm::transform(glm::translate(glm::vec3(0,0,-width)), left_border[ll].first);
+            texture_coords[kk] = left_border[ll].second;
+            kk++;
+        }
 
-    texture_coords[12]  = glm::vec2(1.+2.5/16.,0);
+        // top
+        for (size_t ll=0; ll<additional_vertices; ll++)
+        {
+            const float shift_vertex = linspace(ll, additional_vertices, -width, width);
+            vertices[kk] = glm::transform(glm::translate(glm::vec3(0,0,shift_vertex)), glm::vec3(0,0,0));
+            const float shift_texture_coord = linspace(ll, additional_vertices, left_border[Border::size-1].second.x, right_border[0].second.x);
+            texture_coords[kk] = glm::transform(glm::translate(glm::vec2(shift_texture_coord, 0)), glm::vec2(0,0));
+            kk++;
+        }
+
+        // right border
+        for (size_t ll=0; ll<Border::size; ll++)
+        {
+            vertices[kk] = glm::transform(glm::translate(glm::vec3(0,0,width)), right_border[ll].first);
+            texture_coords[kk] = right_border[ll].second;
+            kk++;
+        }
+
+        // bottom
+        for (size_t ll=0; ll<additional_vertices; ll++)
+        {
+            const float shift_vertex = linspace(ll, additional_vertices, width, -width);
+            vertices[kk] = glm::transform(glm::translate(glm::vec3(0,0,shift_vertex)), glm::vec3(0,-road_thickness,0));
+            const float shift_texture_coord = linspace(ll, additional_vertices, right_border[Border::size-1].second.x, 1+left_border[0].second.x);
+            texture_coords[kk] = glm::transform(glm::translate(glm::vec2(shift_texture_coord, 0)), glm::vec2(0,0));
+            kk++;
+        }
+
+        assert( kk == Indexes::size-1 );
+
+        vertices[kk] = vertices[0];
+
+        texture_coords[kk] = texture_coords[0];
+        texture_coords[kk].x += 1;
+    }
 
     Self profile;
     for (unsigned int kk=0; kk<Indexes::size; kk++)
@@ -183,7 +221,7 @@ Track::registerTransform()
     return length;
 }
 
-typedef Profile<0> TrackProfile;
+typedef Profile<5> TrackProfile;
 
 void
 Track::appendStraight(const float start_width, const float end_width, const float length, const unsigned int subdiv)
