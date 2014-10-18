@@ -80,7 +80,7 @@ Profile<additional_vertices>::flatProfile(const float& width, Track& track)
     vertices[11] = glm::vec3(0,-road_thickness,width+wall_thickness-bevel);
 
     vertices[12] = vertices[0];
-    vertices[12].y -= road_thickness;
+    //vertices[12].y -= road_thickness;
 
     typedef Array<glm::vec2, Indexes::size> TextureCoords;
     TextureCoords texture_coords;

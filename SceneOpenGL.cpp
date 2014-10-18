@@ -119,7 +119,7 @@ void SceneOpenGL::mainLoop()
     Box box(shader_default, "Textures/debug.png", 50);
     Skybox skybox(shader_background, "Textures/skybox.png", 300);
 
-    Track track(shader_track, "Textures/road.png");
+    Track track(shader_track, "Textures/road_template.png");
     track.appendStraight(30,20,50.006776); //adjust xx
     track.appendStraight(20,30,50);
     track.appendTurn(30,glm::radians(60.),100);
