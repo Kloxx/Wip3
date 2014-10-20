@@ -15,6 +15,7 @@
 #define GLM_SWIZZLE
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
 
 namespace glm
 {
@@ -52,6 +53,25 @@ transform(const detail::tmat4x4<T,P> matrix, const detail::tvec3<T,P> vertex)
 
 }
 
+namespace utils
+{
+
+float
+linspace(const unsigned int kk, const unsigned int kk_max, const float min_value, const float max_value);
+
+float
+smooth_function(const float xx);
+
+float
+smooth_interp(const unsigned int kk, const unsigned int kk_max);
+
+float
+smooth_diff(const unsigned int kk, const unsigned int kk_max);
+
+}
+
+
 // std library
 #include <string>
+#include <cassert>
 

@@ -1,0 +1,144 @@
+
+#include "common.h"
+
+template <size_t additional_vertices>
+Profile<additional_vertices>
+Profile<additional_vertices>::flatProfile(const float width)
+{
+    Transforms transforms;
+    for (size_t ll=0; ll<Transforms::size; ll++)
+    {
+        const float shift = utils::linspace(ll-1, Transforms::size-2, -width, width);
+        transforms[ll] = glm::translate(glm::vec3(0,0,shift));
+    }
+
+    return Profile(width, width, 0, transforms);
+}
+
+template <size_t additional_vertices>
+Profile<additional_vertices>
+Profile<additional_vertices>::curvedProfile(const float total_width, const float flat_width, const float angle)
+{
+    assert( total_width >= flat_width );
+    const float radius = angle ? (total_width-flat_width)/angle : 0;
+
+    Transforms transforms;
+    for (size_t ll=0; ll<Transforms::size; ll++)
+    {
+        const float shift = utils::linspace(ll-1, Transforms::size-2, -total_width, total_width);
+        if (abs(shift) < flat_width)
+        {
+            transforms[ll] = glm::translate(glm::vec3(0,0,shift));
+            continue;
+        }
+
+        const float flat_shift = shift > 0 ? flat_width : -flat_width;
+        const float theta = radius ? (shift-flat_shift)/radius : 0;
+        transforms[ll] = glm::translate(glm::vec3(0,radius,flat_shift)) * glm::rotate(theta, glm::vec3(-1,0,0)) * glm::translate(glm::vec3(0,-radius,0));
+    }
+
+    return Profile(total_width, flat_width, angle, transforms);
+}
+
+template <size_t additional_vertices>
+Profile<additional_vertices>::Profile(const float total_width, const float flat_width, const float angle, const Transforms& transforms) :
+    total_width(total_width),
+    flat_width(flat_width),
+    angle(angle),
+    transforms(transforms)
+{
+    static const Border left_border = getLeftBorder();
+    static const Border right_border = getRightBorder();
+
+    size_t kk = 0;
+
+    // left border
+    for (size_t ll=0; ll<Border::size; ll++)
+    {
+        vertices[kk] = glm::transform(transforms[0], left_border[ll].first);
+        texture_coords[kk] = left_border[ll].second;
+        kk++;
+    }
+
+    // top
+    for (size_t ll=0; ll<additional_vertices; ll++)
+    {
+        vertices[kk] = glm::transform(transforms[1+ll], left_border[Border::size-1].first);
+        const float shift_texture_coord = utils::linspace(ll, additional_vertices, left_border[Border::size-1].second.x, right_border[0].second.x);
+        texture_coords[kk] = glm::vec2(shift_texture_coord, 0);
+        kk++;
+    }
+
+    // right border
+    for (size_t ll=0; ll<Border::size; ll++)
+    {
+        vertices[kk] = glm::transform(transforms[Transforms::size-1], right_border[ll].first);
+        texture_coords[kk] = right_border[ll].second;
+        kk++;
+    }
+
+    // bottom
+    for (size_t ll=0; ll<additional_vertices; ll++)
+    {
+        vertices[kk] = glm::transform(transforms[Transforms::size-2-ll], right_border[Border::size-1].first);
+        const float shift_texture_coord = utils::linspace(ll, additional_vertices, right_border[Border::size-1].second.x, 1+left_border[0].second.x);
+        texture_coords[kk] = glm::vec2(shift_texture_coord, 0);
+        kk++;
+    }
+
+    assert( kk == Vertices::size-1 );
+
+    vertices[kk] = vertices[0];
+
+    texture_coords[kk] = texture_coords[0];
+    texture_coords[kk].x += 1;
+}
+
+template <size_t additional_vertices>
+bool
+Profile<additional_vertices>::isFlat() const
+{
+    return total_width && total_width == flat_width && angle == 0;
+}
+
+template <size_t additional_vertices>
+Array<std::pair<glm::vec3, glm::vec2>, 7>
+Profile<additional_vertices>::getLeftBorder()
+{
+    const float margin = 6;
+    const float height = 3;
+    const float road_thickness = 4;
+    const float wall_thickness = 2;
+    const float bevel = 2;
+
+    Border left_border;
+    left_border[0] = std::make_pair(glm::vec3(0,-road_thickness,0),                            glm::vec2(2/16.,0));
+    left_border[1] = std::make_pair(glm::vec3(0,-road_thickness,-margin-wall_thickness+bevel), glm::vec2(2.5/16.,0));
+    left_border[2] = std::make_pair(glm::vec3(0,bevel-road_thickness,-margin-wall_thickness),  glm::vec2(3/16.,0));
+    left_border[3] = std::make_pair(glm::vec3(0,height,-margin-wall_thickness),                glm::vec2(4.5/16.,0));
+    left_border[4] = std::make_pair(glm::vec3(0,height,-margin),                               glm::vec2(5/16.,0));
+    left_border[5] = std::make_pair(glm::vec3(0,0,-margin),                                    glm::vec2(6/16.,0));
+    left_border[6] = std::make_pair(glm::vec3(0,0,0),                                          glm::vec2(6.5/16.,0));
+
+    return left_border;
+}
+
+template <size_t additional_vertices>
+Array<std::pair<glm::vec3, glm::vec2>, 7>
+Profile<additional_vertices>::getRightBorder()
+{
+    const Border left_border = getLeftBorder();
+
+    Border right_border;
+    for (size_t kk=0; kk<Border::size; kk++)
+    {
+        glm::vec3 vertex = left_border[kk].first;
+        glm::vec2 texture_coord = left_border[kk].second;
+        vertex.z = -vertex.z;
+        texture_coord.x = 1-texture_coord.x;
+        right_border[Border::size-1-kk] = std::make_pair(vertex, texture_coord);
+    }
+
+    return right_border;
+}
+

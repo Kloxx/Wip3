@@ -4,10 +4,10 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Array.h"
+#include "Profile.h"
 
 #include <vector>
 #include <list>
-#include <map>
 
 struct Track
 {
@@ -16,41 +16,47 @@ struct Track
     void
     draw(const glm::mat4& modelview) const;
 
-    void
-    appendStraight(const float start_width, const float end_width, const float length, const unsigned int subdiv=16);
+    typedef Profile<21> TrackProfile;
 
     void
-    appendTurn(const float width, const float angle, const float length, const unsigned int subdiv=16);
+    beginBuild(const TrackProfile& profile);
 
     void
-    appendTwist(const float width, const float angle, const float length, const unsigned int subdiv=16);
+    appendStraight(const float length, const unsigned int subdiv=16);
 
     void
-    appendQuarter(const float width, const float angle, const float length, const unsigned int subdiv=16);
+    appendTurn(const float angle, const float length, const unsigned int subdiv=16);
 
     void
-    appendPipeIn(const float width, const float width_total, const float width_flat, const float angle, const float length, const unsigned int subdiv=16);
+    appendFlatWidthChange(const float end_width, const float length, const unsigned int subdiv=16);
 
     void
-    appendPipeOut(const float width_total, const float width_flat, const float angle, const float width, const float length, const unsigned int subdiv=16);
+    appendPipeIn(const float width_total, const float width_flat, const float angle, const float length, const unsigned int subdiv=16);
 
     void
-    appendPipe(const float width_total, const float width_flat, const float angle, const float length, const unsigned int subdiv=16);
+    appendPipeOut(const float width, const float length, const unsigned int subdiv=16);
 
     void
-    clear();
+    appendTwist(const float angle, const float length, const unsigned int subdiv=16);
 
     void
-    build();
+    appendQuarter(const float angle, const float length, const unsigned int subdiv=16);
+
+    void
+    endBuild();
 
 protected:
 
-    template <size_t additional_vertices>
-    friend
-    struct Profile; // forward
-
     unsigned int
     appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord);
+
+    TrackProfile last_profile;
+
+    TrackProfile
+    appendProfile(const TrackProfile& profile);
+
+    void
+    extrudeProfile(const TrackProfile& profile);
 
     Shader shader;
     Texture texture;

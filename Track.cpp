@@ -4,171 +4,10 @@
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
-float
-linspace(const unsigned int kk, const unsigned int kk_max, const float min_value, const float max_value)
-{
-    const float xx = static_cast<float>(kk+1)/(kk_max+1);
-    return min_value + (max_value-min_value)*xx;
-}
-
-float
-smooth_function(const float xx)
-{
-    if (xx<0) return 0;
-    if (xx>1) return 1;
-    return xx*xx*(3-2*xx);
-}
-
-float
-smooth_interp(const unsigned int kk, const unsigned int kk_max)
-{
-    const float xx = static_cast<float>(kk+1)/(kk_max);
-    return smooth_function(xx);
-}
-
-float
-smooth_diff(const unsigned int kk, const unsigned int kk_max)
-{
-    const float xx_current = static_cast<float>(kk)/kk_max;
-    const float xx_next = static_cast<float>(kk+1)/kk_max;
-    return smooth_function(xx_next)-smooth_function(xx_current);
-}
-
 using std::cout;
 using std::endl;
 
-template <size_t additional_vertices>
-struct Profile
-{
-    typedef Profile<additional_vertices> Self;
-    typedef Array<glm::mat4, additional_vertices+2> Transforms;
-
-    Profile(const Transforms& transforms, Track& track);
-
-    static
-    Self
-    flatProfile(const float width, Track& track);
-
-    static
-    Self
-    curvedProfile(const float total_width, const float flat_width, const float angle, Track& track);
-
-    void
-    extrude(const Self& profile, Track& track) const;
-
-protected:
-    typedef Array<std::pair<glm::vec3, glm::vec2>, 7> Border;
-    typedef Array<glm::vec3, 1+2*(Border::size+additional_vertices)> Vertices;
-    typedef Array<glm::vec2, 1+2*(Border::size+additional_vertices)> TextureCoords;
-    typedef Array<unsigned int, 1+2*(Border::size+additional_vertices)> Indexes;
-
-    static
-    Border
-    getLeftBorder();
-
-    static
-    Border
-    getRightBorder();
-
-    Vertices vertices;
-    TextureCoords texture_coords;
-    Indexes indexes;
-};
-
-template <size_t additional_vertices>
-Profile<additional_vertices>
-Profile<additional_vertices>::flatProfile(const float width, Track& track)
-{
-    Transforms transforms;
-    for (size_t ll=0; ll<Transforms::size; ll++)
-    {
-        const float shift = linspace(ll-1, Transforms::size-2, -width, width);
-        transforms[ll] = glm::translate(glm::vec3(0,0,shift));
-    }
-
-    return Profile(transforms, track);
-}
-
-template <size_t additional_vertices>
-Profile<additional_vertices>
-Profile<additional_vertices>::curvedProfile(const float total_width, const float flat_width, const float angle, Track& track)
-{
-    assert( total_width >= flat_width );
-    const float radius = angle ? (total_width-flat_width)/angle : 0;
-    cout << "prout radius=" << radius << endl;
-
-    Transforms transforms;
-    for (size_t ll=0; ll<Transforms::size; ll++)
-    {
-        const float shift = linspace(ll-1, Transforms::size-2, -total_width, total_width);
-        if (abs(shift) < flat_width)
-        {
-            transforms[ll] = glm::translate(glm::vec3(0,0,shift));
-            continue;
-        }
-
-        const float flat_shift = shift > 0 ? flat_width : -flat_width;
-        const float theta = radius ? (shift-flat_shift)/radius : 0;
-        cout << "prout theta=" << theta << endl;
-        transforms[ll] = glm::translate(glm::vec3(0,radius,flat_shift)) * glm::rotate(theta, glm::vec3(-1,0,0)) * glm::translate(glm::vec3(0,-radius,0));
-    }
-
-    return Profile(transforms, track);
-}
-
-template <size_t additional_vertices>
-Profile<additional_vertices>::Profile(const Transforms& transforms, Track& track)
-{
-    static const Border left_border = getLeftBorder();
-    static const Border right_border = getRightBorder();
-
-    size_t kk = 0;
-
-    // left border
-    for (size_t ll=0; ll<Border::size; ll++)
-    {
-        vertices[kk] = glm::transform(transforms[0], left_border[ll].first);
-        texture_coords[kk] = left_border[ll].second;
-        kk++;
-    }
-
-    // top
-    for (size_t ll=0; ll<additional_vertices; ll++)
-    {
-        vertices[kk] = glm::transform(transforms[1+ll], left_border[Border::size-1].first);
-        const float shift_texture_coord = linspace(ll, additional_vertices, left_border[Border::size-1].second.x, right_border[0].second.x);
-        texture_coords[kk] = glm::vec2(shift_texture_coord, 0);
-        kk++;
-    }
-
-    // right border
-    for (size_t ll=0; ll<Border::size; ll++)
-    {
-        vertices[kk] = glm::transform(transforms[Transforms::size-1], right_border[ll].first);
-        texture_coords[kk] = right_border[ll].second;
-        kk++;
-    }
-
-    // bottom
-    for (size_t ll=0; ll<additional_vertices; ll++)
-    {
-        vertices[kk] = glm::transform(transforms[Transforms::size-2-ll], right_border[Border::size-1].first);
-        const float shift_texture_coord = linspace(ll, additional_vertices, right_border[Border::size-1].second.x, 1+left_border[0].second.x);
-        texture_coords[kk] = glm::vec2(shift_texture_coord, 0);
-        kk++;
-    }
-
-    assert( kk == Indexes::size-1 );
-
-    vertices[kk] = vertices[0];
-
-    texture_coords[kk] = texture_coords[0];
-    texture_coords[kk].x += 1;
-
-    for (unsigned int kk=0; kk<Indexes::size; kk++)
-        indexes[kk] = track.appendPoint(vertices[kk], texture_coords[kk]);
-}
-
+/*
 template <size_t additional_vertices>
 void
 Profile<additional_vertices>::extrude(const Self& profile_next, Track& track) const
@@ -179,60 +18,19 @@ Profile<additional_vertices>::extrude(const Self& profile_next, Track& track) co
         track.indexes.push_back(glm::uvec3(indexes[kk], profile_next.indexes[kk+1], profile_next.indexes[kk]));
     }
 }
-
-template <size_t additional_vertices>
-Array<std::pair<glm::vec3, glm::vec2>, 7>
-Profile<additional_vertices>::getLeftBorder()
-{
-    const float margin = 6;
-    const float height = 3;
-    const float road_thickness = 4;
-    const float wall_thickness = 2;
-    const float bevel = 2;
-
-    Border left_border;
-    left_border[0] = std::make_pair(glm::vec3(0,-road_thickness,0),                            glm::vec2(2/16.,0));
-    left_border[1] = std::make_pair(glm::vec3(0,-road_thickness,-margin-wall_thickness+bevel), glm::vec2(2.5/16.,0));
-    left_border[2] = std::make_pair(glm::vec3(0,bevel-road_thickness,-margin-wall_thickness),  glm::vec2(3/16.,0));
-    left_border[3] = std::make_pair(glm::vec3(0,height,-margin-wall_thickness),                glm::vec2(4.5/16.,0));
-    left_border[4] = std::make_pair(glm::vec3(0,height,-margin),                               glm::vec2(5/16.,0));
-    left_border[5] = std::make_pair(glm::vec3(0,0,-margin),                                    glm::vec2(6/16.,0));
-    left_border[6] = std::make_pair(glm::vec3(0,0,0),                                          glm::vec2(6.5/16.,0));
-
-    return left_border;
-}
-
-template <size_t additional_vertices>
-Array<std::pair<glm::vec3, glm::vec2>, 7>
-Profile<additional_vertices>::getRightBorder()
-{
-    const Border left_border = getLeftBorder();
-
-    Border right_border;
-    for (size_t kk=0; kk<Border::size; kk++)
-    {
-        glm::vec3 vertex = left_border[kk].first;
-        glm::vec2 texture_coord = left_border[kk].second;
-        vertex.z = -vertex.z;
-        texture_coord.x = 1-texture_coord.x;
-        right_border[Border::size-1-kk] = std::make_pair(vertex, texture_coord);
-    }
-
-    return right_border;
-}
-
+        */
 
 Track::Track(const Shader& shader, const std::string& texture) :
     shader(shader),
-    texture(texture)
+    texture(texture),
+    last_profile(TrackProfile::flatProfile(20))
 {
     glGenBuffers(1, &indexes_buffer);
     assert( indexes_buffer );
-    clear();
 }
 
 void
-Track::clear()
+Track::beginBuild(const TrackProfile& profile)
 {
     transform_vertices = glm::mat4(1);
     transform_texture_coords = glm::mat3(1);
@@ -240,13 +38,16 @@ Track::clear()
     vertices.clear();
     texture_coords.clear();
     indexes.clear();
+
+    last_profile = appendProfile(profile);
 }
 
 void
-Track::build()
+Track::endBuild()
 {
     const glm::vec4 final_position = transform_vertices * glm::vec4(0,0,0,1);
     cout << "final position " << glm::to_string(final_position.xyz()/final_position.w) << endl;
+    cout << vertices.size() << " vertices " << vertices.size()/TrackProfile::Vertices::size << " profiles" << endl;
     assert( vertices.size() == texture_coords.size() );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_buffer);
@@ -265,134 +66,150 @@ Track::appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord)
     return index;
 }
 
-typedef Profile<21> TrackProfile;
+Track::TrackProfile
+Track::appendProfile(const TrackProfile& profile)
+{
+    TrackProfile profile_copy = profile;
+
+    for (size_t kk=0; kk<TrackProfile::Indexes::size; kk++)
+        profile_copy.indexes[kk] = appendPoint(profile.vertices[kk], profile.texture_coords[kk]);
+
+    return profile_copy;
+}
 
 void
-Track::appendStraight(const float start_width, const float end_width, const float length, const unsigned int subdiv)
+Track::extrudeProfile(const TrackProfile& profile_next)
 {
-    cout << "straigth piece start_width=" << start_width << " end_width=" << end_width << " length=" << length << endl;
+    for (unsigned int kk=0; kk<TrackProfile::Indexes::size-1; kk++)
+    {
+        indexes.push_back(glm::uvec3(last_profile.indexes[kk], last_profile.indexes[kk+1], profile_next.indexes[kk+1]));
+        indexes.push_back(glm::uvec3(last_profile.indexes[kk], profile_next.indexes[kk+1], profile_next.indexes[kk]));
+    }
 
-    TrackProfile last_profile = TrackProfile::flatProfile(start_width, *this);
+    last_profile = profile_next;
+}
+
+void
+Track::appendFlatWidthChange(const float end_width, const float length, const unsigned int subdiv)
+{
+    assert( last_profile.isFlat() );
+    const float start_width = last_profile.total_width;
+    cout << "flat width change piece start_width=" << start_width << " end_width=" << end_width << " length=" << length << endl;
+
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0));
         transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
 
-        const float width = start_width + (end_width-start_width) * smooth_interp(kk, subdiv);
-        TrackProfile next_profile = TrackProfile::flatProfile(width, *this);
-        last_profile.extrude(next_profile, *this);
-        last_profile = next_profile;
+        const float width = start_width + (end_width-start_width) * utils::smooth_interp(kk, subdiv);
+        const TrackProfile next_profile = appendProfile(TrackProfile::flatProfile(width));
+        extrudeProfile(next_profile);
     }
 }
 
 void
-Track::appendTurn(const float width, const float angle, const float length, const unsigned int subdiv)
+Track::appendStraight(const float length, const unsigned int subdiv)
+{
+    cout << "straigth piece length=" << length << endl;
+
+    for (unsigned int kk=0; kk<subdiv; kk++)
+    {
+        transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0));
+        transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
+
+        const TrackProfile next_profile = appendProfile(last_profile);
+        extrudeProfile(next_profile);
+    }
+}
+
+void
+Track::appendTurn(const float angle, const float length, const unsigned int subdiv)
 {
     const float radius = length/angle;
-    cout << "turn piece width=" << width << " angle=" << angle << " length=" << length << " radius=" << radius << endl;
+    cout << "turn piece angle=" << angle << " length=" << length << " radius=" << radius << endl;
 
-    TrackProfile last_profile = TrackProfile::flatProfile(width, *this);
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv/2.,0,0)) * glm::rotate(angle/subdiv, glm::vec3(0,1,0)) * glm::translate(glm::vec3(length/subdiv/2.,0,0));
         transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
 
-        TrackProfile next_profile = TrackProfile::flatProfile(width, *this);
-        last_profile.extrude(next_profile, *this);
-        last_profile = next_profile;
+        const TrackProfile next_profile = appendProfile(last_profile);
+        extrudeProfile(next_profile);
     }
 }
 
 void
-Track::appendTwist(const float width, const float angle, const float length, const unsigned int subdiv)
+Track::appendTwist(const float angle, const float length, const unsigned int subdiv)
 {
-    const float radius = length/angle;
-    cout << "twist piece width=" << width << " angle=" << angle << " length=" << length << " radius=" << radius << endl;
+    cout << "twist piece angle=" << angle << " length=" << length << endl;
 
-    TrackProfile last_profile = TrackProfile::flatProfile(width, *this);
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
-        transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0)) * glm::rotate(angle*smooth_diff(kk, subdiv), glm::vec3(1,0,0));
+        transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0)) * glm::rotate(angle*utils::smooth_diff(kk, subdiv), glm::vec3(1,0,0));
         transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
 
-        TrackProfile next_profile = TrackProfile::flatProfile(width, *this);
-        last_profile.extrude(next_profile, *this);
-        last_profile = next_profile;
+        const TrackProfile next_profile = appendProfile(last_profile);
+        extrudeProfile(next_profile);
     }
 }
 
 void
-Track::appendQuarter(const float width, const float angle, const float length, const unsigned int subdiv)
+Track::appendQuarter(const float angle, const float length, const unsigned int subdiv)
 {
     const float radius = length/angle;
-    cout << "quarter piece width=" << width << " angle=" << angle << " length=" << length << " radius=" << radius << endl;
+    cout << "quarter piece angle=" << angle << " length=" << length << " radius=" << radius << endl;
 
-    TrackProfile last_profile = TrackProfile::flatProfile(width, *this);
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv/2.,0,0)) * glm::rotate(angle/subdiv, glm::vec3(0,0,1)) * glm::translate(glm::vec3(length/subdiv/2.,0,0));
         transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
 
-        TrackProfile next_profile = TrackProfile::flatProfile(width, *this);
-        last_profile.extrude(next_profile, *this);
-        last_profile = next_profile;
+        const TrackProfile next_profile = appendProfile(last_profile);
+        extrudeProfile(next_profile);
     }
 }
 
 void
-Track::appendPipe(const float width_total, const float width_flat, const float angle, const float length, const unsigned int subdiv)
+Track::appendPipeIn(const float width_total, const float width_flat, const float angle, const float length, const unsigned int subdiv)
 {
-    cout << "pipe piece width_total=" << width_total << " width_flat=" << width_flat << " length=" << length << endl;
+    assert( last_profile.isFlat() );
+    const float width = last_profile.total_width;
+    cout << "pipe in piece width_total=" << width_total << " width_flat=" << width_flat << " length=" << length << endl;
 
-    TrackProfile last_profile = TrackProfile::curvedProfile(width_total, width_flat, angle, *this);
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0));
         transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
 
-        TrackProfile next_profile = TrackProfile::curvedProfile(width_total, width_flat, angle, *this);
-        last_profile.extrude(next_profile, *this);
-        last_profile = next_profile;
+        const float width_total_interp = width + (width_total-width) * utils::smooth_interp(kk, subdiv);
+        const float width_flat_interp = width + (width_flat-width) * utils::smooth_interp(kk, subdiv);
+        const float angle_interp = angle * utils::smooth_interp(kk, subdiv);
+
+        const TrackProfile next_profile = appendProfile(TrackProfile::curvedProfile(width_total_interp, width_flat_interp, angle_interp));
+        extrudeProfile(next_profile);
     }
 }
 
 void
-Track::appendPipeIn(const float width, const float width_total, const float width_flat, const float angle, const float length, const unsigned int subdiv)
+Track::appendPipeOut(const float width, const float length, const unsigned int subdiv)
 {
-    cout << "pipe in piece width=" << width << " width_total=" << width_total << " width_flat=" << width_flat << " length=" << length << endl;
+    assert( !last_profile.isFlat() );
+    const float width_total = last_profile.total_width;
+    const float width_flat = last_profile.flat_width;
+    const float angle = last_profile.angle;
+    cout << "pipe out piece width=" << width << " length=" << length << endl;
 
-    TrackProfile last_profile = TrackProfile::flatProfile(width, *this);
     for (unsigned int kk=0; kk<subdiv; kk++)
     {
         transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0));
         transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
 
-        const float width_total_interp = width + (width_total-width) * smooth_interp(kk, subdiv);
-        const float width_flat_interp = width + (width_flat-width) * smooth_interp(kk, subdiv);
-        const float angle_interp = angle * smooth_interp(kk, subdiv);
-        TrackProfile next_profile = TrackProfile::curvedProfile(width_total_interp, width_flat_interp, angle_interp, *this);
-        last_profile.extrude(next_profile, *this);
-        last_profile = next_profile;
-    }
-}
+        const float width_total_interp = width_total + (width-width_total) * utils::smooth_interp(kk, subdiv);
+        const float width_flat_interp = width_flat + (width-width_flat) * utils::smooth_interp(kk, subdiv);
+        const float angle_interp = angle * (1-utils::smooth_interp(kk, subdiv));
 
-void
-Track::appendPipeOut(const float width_total, const float width_flat, const float angle, const float width, const float length, const unsigned int subdiv)
-{
-    cout << "pipe in piece width_total=" << width_total << " width_flat=" << width_flat << " width=" << width << " length=" << length << endl;
-
-    TrackProfile last_profile = TrackProfile::curvedProfile(width_total, width_flat, angle, *this);
-    for (unsigned int kk=0; kk<subdiv; kk++)
-    {
-        transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0));
-        transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
-
-        const float width_total_interp = width_total + (width-width_total) * smooth_interp(kk, subdiv);
-        const float width_flat_interp = width_flat + (width-width_flat) * smooth_interp(kk, subdiv);
-        const float angle_interp = angle * (1-smooth_interp(kk, subdiv));
-        TrackProfile next_profile = TrackProfile::curvedProfile(width_total_interp, width_flat_interp, angle_interp, *this);
-        last_profile.extrude(next_profile, *this);
-        last_profile = next_profile;
+        const TrackProfile next_profile = appendProfile(TrackProfile::curvedProfile(width_total_interp, width_flat_interp, angle_interp));
+        extrudeProfile(next_profile);
     }
 }
 

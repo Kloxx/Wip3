@@ -120,29 +120,31 @@ void SceneOpenGL::mainLoop()
     Skybox skybox(shader_background, "Textures/skybox.png", 300);
 
     Track track(shader_track, "Textures/road.png");
-    track.appendStraight(30,20,50.006776); //adjust xx
-    track.appendStraight(20,30,50);
-    track.appendTurn(30,glm::radians(60.),100);
-    track.appendStraight(30,30,50);
-    track.appendTurn(30,glm::radians(-150.),250,32);
-    track.appendPipeIn(30,50,10,glm::radians(60.),75);
-    track.appendPipe(50,10,glm::radians(60.),100);
-    track.appendPipeOut(50,10,glm::radians(60.),35,75);
-    track.appendTwist(35,glm::radians(90.),150,64);
-    track.appendQuarter(35,glm::radians(90.),200);
-    track.appendTurn(35,glm::radians(-90.),150);
-    track.appendQuarter(35,glm::radians(90.),200,64);
-    track.appendStraight(35,35,150);
-    track.appendQuarter(35,glm::radians(90.),200,64);
-    track.appendStraight(35,35,31.745621); // adjust yy
-    track.appendQuarter(35,glm::radians(-90.),150,32);
-    track.appendStraight(35,35,50-18.132910); // adjust zz
-    track.appendTurn(35,glm::radians(90.),109.3);
-    track.appendQuarter(35,glm::radians(-25.),25);
-    track.appendStraight(35,30,49.85);
-    track.appendQuarter(30,glm::radians(25.),25);
-    track.appendTurn(30,glm::radians(180.),184.75,64);
-    track.build();
+
+    track.beginBuild( Track::TrackProfile::flatProfile(30) );
+    track.appendFlatWidthChange(20,40.006776); //adjust xx
+    track.appendStraight(25);
+    track.appendFlatWidthChange(30,35);
+    track.appendTurn(glm::radians(60.),100);
+    track.appendPipeIn(30,10,glm::radians(45.),50);
+    track.appendTurn(glm::radians(-150.),250,32);
+    track.appendTwist(glm::radians(90.),150);
+    track.appendPipeOut(30,75);
+    track.appendPipeIn(55,0,glm::radians(-80.),175);
+    track.appendQuarter(glm::radians(90.),200);
+    track.appendTurn(glm::radians(-90.),150);
+    track.appendQuarter(glm::radians(90.),200,64);
+    track.appendPipeOut(35,150);
+    track.appendQuarter(glm::radians(90.),200,64);
+    track.appendStraight(31.745621); // adjust yy
+    track.appendQuarter(glm::radians(-90.),150,32);
+    track.appendStraight(50-18.132910); // adjust zz
+    track.appendTurn(glm::radians(90.),109.3);
+    track.appendQuarter(glm::radians(-25.),25);
+    track.appendFlatWidthChange(30,49.85);
+    track.appendQuarter(glm::radians(25.),25);
+    track.appendTurn(glm::radians(180.),184.75,64);
+    track.endBuild();
 
     Camera camera(12.0, 4.0, vec3(0,1,0), perspective(70.0f, static_cast<float>(m_options.width)/m_options.height, 5.f, 1000.0f));
 

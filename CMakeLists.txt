@@ -34,6 +34,7 @@ add_executable(game
     Ship.cpp
     Texture.cpp
     Track.cpp
+    common.cpp
     main.cpp)
 
 target_link_libraries(game
