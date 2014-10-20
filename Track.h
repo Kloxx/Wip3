@@ -17,7 +17,7 @@ struct Track
     draw(const glm::mat4& modelview) const;
 
     void
-    appendStraight(const float start_width, const float end_width, const float length, const unsigned int subdiv = 16);
+    appendStraight(const float start_width, const float end_width, const float length, const unsigned int subdiv=16);
 
     void
     appendTurn(const float width, const float angle, const float length, const unsigned int subdiv=16);
@@ -43,15 +43,8 @@ protected:
     unsigned int
     appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord);
 
-    float
-    registerTransform();
-
     Shader shader;
     Texture texture;
-
-    typedef std::map<float, glm::mat4> Transforms;
-
-    Transforms transforms;
 
     typedef std::vector<glm::vec3> Vertices;
     typedef std::vector<glm::vec2> TextureCoords;
