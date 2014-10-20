@@ -104,6 +104,7 @@ void SceneOpenGL::mainLoop()
     Shader shader_default("Shaders/texture.vert", "Shaders/texture.frag");
     Shader shader_background("Shaders/background.vert", "Shaders/background.frag");
     Shader shader_track("Shaders/texture.vert", "Shaders/track.frag");
+    Shader shader_map("Shaders/map.vert", "Shaders/map.frag");
 
     const unsigned int frameRate(1000/60);
 
@@ -119,7 +120,7 @@ void SceneOpenGL::mainLoop()
     Box box(shader_default, "Textures/debug.png", 50);
     Skybox skybox(shader_background, "Textures/skybox.png", 300);
 
-    Track track(shader_track, "Textures/road.png");
+    Track track(shader_track, shader_map, "Textures/road.png");
 
     track.beginBuild( Track::TrackProfile::flatProfile(30) );
     track.appendFlatWidthChange(20,40.006776); //adjust xx
@@ -154,6 +155,7 @@ void SceneOpenGL::mainLoop()
     Texture texture("Textures/metal029b.jpg");
 
     glClearColor(1,0,1,1);
+    glLineWidth(20.);
 
     int frames = 0;
     const unsigned int startProgram = SDL_GetTicks();
@@ -175,11 +177,13 @@ void SceneOpenGL::mainLoop()
             const mat4 projection = camera.getCameraProjection(ship);
             const mat4 projection_inv = glm::inverse(projection);
             shader_default.setUniform("projection", projection);
-            shader_track.setUniform("projection", projection);
-            shader_track.setUniform("time", startLoop/1000.);
             shader_background.setUniform("projection", projection);
             shader_background.setUniform("time", startLoop/1000.);
             shader_background.setUniform("projection_inv", projection_inv);
+            shader_track.setUniform("projection", projection);
+            shader_track.setUniform("time", startLoop/1000.);
+            shader_map.setUniform("projection", projection);
+            shader_map.setUniform("time", startLoop/1000.);
 
             /*
             vec4 camera_pos = projection_inv * vec4(0,0,0,1);

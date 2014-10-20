@@ -7,21 +7,9 @@
 using std::cout;
 using std::endl;
 
-/*
-template <size_t additional_vertices>
-void
-Profile<additional_vertices>::extrude(const Self& profile_next, Track& track) const
-{
-    for (unsigned int kk=0; kk<Indexes::size-1; kk++)
-    {
-        track.indexes.push_back(glm::uvec3(indexes[kk], indexes[kk+1], profile_next.indexes[kk+1]));
-        track.indexes.push_back(glm::uvec3(indexes[kk], profile_next.indexes[kk+1], profile_next.indexes[kk]));
-    }
-}
-        */
-
-Track::Track(const Shader& shader, const std::string& texture) :
-    shader(shader),
+Track::Track(const Shader& shader_track, const Shader& shader_map, const std::string& texture) :
+    shader_track(shader_track),
+    shader_map(shader_map),
     texture(texture),
     last_profile(TrackProfile::flatProfile(20))
 {
@@ -35,6 +23,7 @@ Track::beginBuild(const TrackProfile& profile)
     transform_vertices = glm::mat4(1);
     transform_texture_coords = glm::mat3(1);
 
+    vertices_map.clear();
     vertices.clear();
     texture_coords.clear();
     indexes.clear();
@@ -47,8 +36,11 @@ Track::endBuild()
 {
     const glm::vec4 final_position = transform_vertices * glm::vec4(0,0,0,1);
     cout << "final position " << glm::to_string(final_position.xyz()/final_position.w) << endl;
-    cout << vertices.size() << " vertices " << vertices.size()/TrackProfile::Vertices::size << " profiles" << endl;
+    cout << vertices.size() << " vertices " << map_transforms.size() << " profiles" << endl;
     assert( vertices.size() == texture_coords.size() );
+
+    for (int kk=0; kk<map_transforms.size(); kk++)
+        vertices_map.push_back(glm::transform(map_transforms[kk][5], glm::vec3(0,1,0)));
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_buffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexes.size()*sizeof(Indexes::value_type), indexes.data(), GL_STATIC_DRAW);
@@ -73,6 +65,16 @@ Track::appendProfile(const TrackProfile& profile)
 
     for (size_t kk=0; kk<TrackProfile::Indexes::size; kk++)
         profile_copy.indexes[kk] = appendPoint(profile.vertices[kk], profile.texture_coords[kk]);
+
+    const glm::vec2 origin = glm::transform(transform_texture_coords, glm::vec2(.5,0));
+    assert( origin.x == .5 );
+    map_positions.push_back(origin.y);
+
+    TrackProfile::Transforms transformed_transforms;
+    for (size_t kk=0; kk<TrackProfile::Transforms::size; kk++)
+        transformed_transforms[kk] = transform_vertices * profile_copy.transforms[kk];
+
+    map_transforms.push_back(transformed_transforms);
 
     return profile_copy;
 }
@@ -218,28 +220,48 @@ Track::draw(const glm::mat4& modelview) const
 {
     glm::mat4 modelview_local = modelview;
     //modelview_local = glm::scale(modelview_local, glm::vec3(m_scale, m_scale, m_scale));
-    shader.setUniform("modelview", modelview_local);
+    shader_track.setUniform("modelview", modelview_local);
+    shader_map.setUniform("modelview", modelview_local);
 
-    glUseProgram(shader.getProgramID());
+    {
+        glUseProgram(shader_track.getProgramID());
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vertices.data());
-    glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vertices.data());
+        glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, texture_coords.data());
-    glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, texture_coords.data());
+        glEnableVertexAttribArray(2);
 
-    glBindTexture(GL_TEXTURE_2D, texture.getID());
+        glBindTexture(GL_TEXTURE_2D, texture.getID());
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_buffer);
-    glDrawElements(GL_TRIANGLES, indexes.size()*3, GL_UNSIGNED_INT, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_buffer);
+        glDrawElements(GL_TRIANGLES, indexes.size()*3, GL_UNSIGNED_INT, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
-    glDisableVertexAttribArray(2);
-    glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(2);
+        glDisableVertexAttribArray(0);
 
-    glUseProgram(0);
+        glUseProgram(0);
+    }
+
+    {
+        glUseProgram(shader_map.getProgramID());
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vertices_map.data());
+        glEnableVertexAttribArray(0);
+
+        glBindTexture(GL_TEXTURE_2D, texture.getID());
+
+        glDrawArrays(GL_LINE_STRIP, 0, vertices_map.size());
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glDisableVertexAttribArray(0);
+
+        glUseProgram(0);
+    }
 
 }
 

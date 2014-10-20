@@ -3,7 +3,7 @@
 
 
 #include "common.h"
-#include <string>
+#include <vector>
 
 // Classe Shader
 

@@ -11,7 +11,7 @@
 
 struct Track
 {
-    Track(const Shader& shader, const std::string& texture);
+    Track(const Shader& shader_track, const Shader& shader_map, const std::string& texture);
 
     void
     draw(const glm::mat4& modelview) const;
@@ -50,21 +50,28 @@ protected:
     unsigned int
     appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord);
 
-    TrackProfile last_profile;
-
     TrackProfile
     appendProfile(const TrackProfile& profile);
 
     void
     extrudeProfile(const TrackProfile& profile);
 
-    Shader shader;
+    TrackProfile last_profile;
+
+    typedef std::vector<float> MapPositions;
+    typedef std::vector<TrackProfile::Transforms> MapTransforms;
+    MapPositions map_positions;
+    MapTransforms map_transforms;
+
+    Shader shader_track;
+    Shader shader_map;
     Texture texture;
 
     typedef std::vector<glm::vec3> Vertices;
     typedef std::vector<glm::vec2> TextureCoords;
     typedef std::vector<glm::uvec3> Indexes;
 
+    Vertices vertices_map;
     Vertices vertices;
     TextureCoords texture_coords;
     Indexes indexes;
