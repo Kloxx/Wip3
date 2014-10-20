@@ -29,6 +29,12 @@ struct Track
     appendQuarter(const float width, const float angle, const float length, const unsigned int subdiv=16);
 
     void
+    appendPipeIn(const float width, const float width_total, const float width_flat, const float angle, const float length, const unsigned int subdiv=16);
+
+    void
+    appendPipeOut(const float width_total, const float width_flat, const float angle, const float width, const float length, const unsigned int subdiv=16);
+
+    void
     appendPipe(const float width_total, const float width_flat, const float angle, const float length, const unsigned int subdiv=16);
 
     void

@@ -22,7 +22,7 @@ smooth_function(const float xx)
 float
 smooth_interp(const unsigned int kk, const unsigned int kk_max)
 {
-    const float xx = static_cast<float>(kk)/(kk_max-1);
+    const float xx = static_cast<float>(kk+1)/(kk_max);
     return smooth_function(xx);
 }
 
@@ -93,8 +93,8 @@ template <size_t additional_vertices>
 Profile<additional_vertices>
 Profile<additional_vertices>::curvedProfile(const float total_width, const float flat_width, const float angle, Track& track)
 {
-    assert( total_width > flat_width );
-    const float radius = (total_width-flat_width)/angle;
+    assert( total_width >= flat_width );
+    const float radius = angle ? (total_width-flat_width)/angle : 0;
     cout << "prout radius=" << radius << endl;
 
     Transforms transforms;
@@ -108,7 +108,7 @@ Profile<additional_vertices>::curvedProfile(const float total_width, const float
         }
 
         const float flat_shift = shift > 0 ? flat_width : -flat_width;
-        const float theta = (shift-flat_shift)/radius;
+        const float theta = radius ? (shift-flat_shift)/radius : 0;
         cout << "prout theta=" << theta << endl;
         transforms[ll] = glm::translate(glm::vec3(0,radius,flat_shift)) * glm::rotate(theta, glm::vec3(-1,0,0)) * glm::translate(glm::vec3(0,-radius,0));
     }
@@ -342,7 +342,7 @@ Track::appendQuarter(const float width, const float angle, const float length, c
 void
 Track::appendPipe(const float width_total, const float width_flat, const float angle, const float length, const unsigned int subdiv)
 {
-    cout << "pipe in piece width_total=" << width_total << " width_flat=" << width_flat << " length=" << length << endl;
+    cout << "pipe piece width_total=" << width_total << " width_flat=" << width_flat << " length=" << length << endl;
 
     TrackProfile last_profile = TrackProfile::curvedProfile(width_total, width_flat, angle, *this);
     for (unsigned int kk=0; kk<subdiv; kk++)
@@ -351,6 +351,46 @@ Track::appendPipe(const float width_total, const float width_flat, const float a
         transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
 
         TrackProfile next_profile = TrackProfile::curvedProfile(width_total, width_flat, angle, *this);
+        last_profile.extrude(next_profile, *this);
+        last_profile = next_profile;
+    }
+}
+
+void
+Track::appendPipeIn(const float width, const float width_total, const float width_flat, const float angle, const float length, const unsigned int subdiv)
+{
+    cout << "pipe in piece width=" << width << " width_total=" << width_total << " width_flat=" << width_flat << " length=" << length << endl;
+
+    TrackProfile last_profile = TrackProfile::flatProfile(width, *this);
+    for (unsigned int kk=0; kk<subdiv; kk++)
+    {
+        transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0));
+        transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
+
+        const float width_total_interp = width + (width_total-width) * smooth_interp(kk, subdiv);
+        const float width_flat_interp = width + (width_flat-width) * smooth_interp(kk, subdiv);
+        const float angle_interp = angle * smooth_interp(kk, subdiv);
+        TrackProfile next_profile = TrackProfile::curvedProfile(width_total_interp, width_flat_interp, angle_interp, *this);
+        last_profile.extrude(next_profile, *this);
+        last_profile = next_profile;
+    }
+}
+
+void
+Track::appendPipeOut(const float width_total, const float width_flat, const float angle, const float width, const float length, const unsigned int subdiv)
+{
+    cout << "pipe in piece width_total=" << width_total << " width_flat=" << width_flat << " width=" << width << " length=" << length << endl;
+
+    TrackProfile last_profile = TrackProfile::curvedProfile(width_total, width_flat, angle, *this);
+    for (unsigned int kk=0; kk<subdiv; kk++)
+    {
+        transform_vertices *= glm::translate(glm::vec3(length/subdiv,0,0));
+        transform_texture_coords *= glm::translate(glm::vec2(0,length/subdiv/32.));
+
+        const float width_total_interp = width_total + (width-width_total) * smooth_interp(kk, subdiv);
+        const float width_flat_interp = width_flat + (width-width_flat) * smooth_interp(kk, subdiv);
+        const float angle_interp = angle * (1-smooth_interp(kk, subdiv));
+        TrackProfile next_profile = TrackProfile::curvedProfile(width_total_interp, width_flat_interp, angle_interp, *this);
         last_profile.extrude(next_profile, *this);
         last_profile = next_profile;
     }

@@ -125,9 +125,9 @@ void SceneOpenGL::mainLoop()
     track.appendTurn(30,glm::radians(60.),100);
     track.appendStraight(30,30,50);
     track.appendTurn(30,glm::radians(-150.),250,32);
-    track.appendStraight(30,50,75);
-    track.appendPipe(50,20,glm::radians(90.),100);
-    track.appendStraight(50,35,75);
+    track.appendPipeIn(30,50,10,glm::radians(60.),75);
+    track.appendPipe(50,10,glm::radians(60.),100);
+    track.appendPipeOut(50,10,glm::radians(60.),35,75);
     track.appendTwist(35,glm::radians(90.),150,64);
     track.appendQuarter(35,glm::radians(90.),200);
     track.appendTurn(35,glm::radians(-90.),150);
