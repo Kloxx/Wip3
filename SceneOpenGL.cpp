@@ -173,8 +173,11 @@ void SceneOpenGL::mainLoop()
         ship.control(m_input);
 
         { // move camera
-            camera.m_replayView = m_input.getKey(SDL_SCANCODE_TAB);
-            const mat4 projection = camera.getCameraProjection(ship);
+            if (m_input.getKey(SDL_SCANCODE_I)) camera.m_type = Camera::SHIP_VIEW;
+            if (m_input.getKey(SDL_SCANCODE_O)) camera.m_type = Camera::REPLAY_VIEW;
+            if (m_input.getKey(SDL_SCANCODE_P)) camera.m_type = Camera::TRACK_VIEW;
+
+            const mat4 projection = camera.getCameraProjection(ship, track, startLoop/1000.);
             const mat4 projection_inv = glm::inverse(projection);
             shader_default.setUniform("projection", projection);
             shader_background.setUniform("projection", projection);

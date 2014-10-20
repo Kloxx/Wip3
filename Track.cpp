@@ -47,6 +47,23 @@ Track::endBuild()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+glm::vec3
+Track::trackPosition(const glm::vec2& position, const float height) const
+{
+    glm::vec2 position_remap = position;
+    while (position_remap.y > map_transforms.size()-1)
+        position_remap.y -= map_transforms.size()-1;
+
+    const glm::ivec2 position_aa(std::floor(position_remap.x), std::floor(position_remap.y));
+    const glm::ivec2 position_bb = position_aa + glm::ivec2(1,1);
+    assert( position_aa.x >= 0 && position_aa.y >= 0 );
+    assert( position_bb.x < TrackProfile::Transforms::size && position_bb.y < map_transforms.size() );
+
+    const glm::vec3 foo(position_remap.y-position_aa.y, height, position_remap.x-position_aa.x);
+    //cout << "prout " << glm::to_string(position_remap) << " " << glm::to_string(position_aa) << " " << glm::to_string(foo) << endl;
+    return glm::transform(map_transforms[position_aa.y][position_aa.x], foo);
+}
+
 unsigned int
 Track::appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord)
 {

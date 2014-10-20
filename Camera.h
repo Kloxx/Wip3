@@ -4,14 +4,16 @@
 #include "common.h"
 
 #include "Ship.h"
+#include "Track.h"
 
 class Camera
 {
 public:
     Camera(float distanceX, float distanceY, const glm::vec3& verticalAxe, const glm::mat4& projectionBase);
-    glm::mat4 getCameraProjection(const Ship& ship);
+    glm::mat4 getCameraProjection(const Ship& ship, const Track& track, const float time);
 
-    bool m_replayView;
+    enum Type {SHIP_VIEW, REPLAY_VIEW, TRACK_VIEW};
+    Type m_type;
     glm::vec3 m_position;
 
 private:
