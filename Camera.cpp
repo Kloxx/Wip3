@@ -17,9 +17,9 @@ glm::mat4 Camera::getCameraProjection(const Ship& ship, const Track& track, cons
     const glm::vec3 distance = glm::vec3(0, m_distanceY, 0) - orientation * m_distanceX;
 
     glm::mat4 projection = m_projectionBase;
-    const glm::vec3 prout = track.getPosition(glm::vec2(5+2*cos(5*time), 30*time), 5);
-    const glm::vec3 up = track.getPosition(glm::vec2(5+2*cos(5*time), 30*time), 6) - prout;
-    const glm::vec3 to = track.getPosition(glm::vec2(5+2*cos(5*time), 30*time+1), 5);
+    const glm::vec3 prout = track.getPosition(glm::vec2(.2*cos(5*time), 3*time), 5);
+    const glm::vec3 up = track.getPosition(glm::vec2(.2*cos(5*time), 3*time), 6) - prout;
+    const glm::vec3 to = track.getPosition(glm::vec2(.2*cos(5*time+1), 3*time+1), 5);
     switch (m_type)
     {
         case REPLAY_VIEW:

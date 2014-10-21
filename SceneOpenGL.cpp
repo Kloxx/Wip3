@@ -155,7 +155,7 @@ void SceneOpenGL::mainLoop()
     Texture texture("Textures/metal029b.jpg");
 
     glClearColor(1,0,1,1);
-    glLineWidth(20.);
+    glLineWidth(5.);
 
     int frames = 0;
     const unsigned int startProgram = SDL_GetTicks();

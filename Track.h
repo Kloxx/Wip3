@@ -50,6 +50,9 @@ struct Track
 
 protected:
 
+    float
+    dichotomyLength(const float length_orig) const;
+
     unsigned int
     appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord);
 

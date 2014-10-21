@@ -37,25 +37,69 @@ Track::endBuild()
     const glm::vec4 final_position = transform_vertices * glm::vec4(0,0,0,1);
     cout << "final position " << glm::to_string(final_position.xyz()/final_position.w) << endl;
     cout << vertices.size() << " vertices " << map_transforms.size() << " profiles" << endl;
-    assert( vertices.size() == texture_coords.size() );
+    cout << "length " << map_positions.back() << endl;
 
-    for (float tt=0; tt<200; tt+=.1)
-        vertices_map.push_back(getPosition(glm::vec2((TrackProfile::Transforms::size-1)*(1-cos(2*M_PI*tt/32))/2., tt), 1));
+    assert( vertices.size() == texture_coords.size() );
+    assert( map_positions.size() == map_transforms.size() );
+
+    for (float tt=0; tt<1; tt+=.00025)
+        vertices_map.push_back(getPosition(glm::vec2(cos(2*M_PI*50*tt), map_positions.back()*tt), 1));
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_buffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexes.size()*sizeof(Indexes::value_type), indexes.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+float
+Track::dichotomyLength(const float length_orig) const
+{
+    assert( map_positions.front() == 0);
+    const float length_total = map_positions.back();
+    float length = length_orig;
+
+    while (length >= map_positions.back()) length -= map_positions.back();
+    while (length < 0) length += map_positions.front();
+
+    size_t left_dichotomy_interval = 0;
+    size_t right_dichotomy_interval = map_positions.size()-1;
+    while (true)
+    {
+        const size_t center_dichotomy_interval = (left_dichotomy_interval+right_dichotomy_interval)/2;
+
+        assert( center_dichotomy_interval >= 0 );
+        assert( center_dichotomy_interval < map_positions.size()-1 );
+
+        const float left_center_length = map_positions[center_dichotomy_interval];
+        const float right_center_length = map_positions[center_dichotomy_interval+1];
+        //cout << kk << " " << center_dichotomy_interval << " " << left_center_length << " " << length << " " << right_center_length << endl;
+
+        if (left_center_length > length)
+        {
+            right_dichotomy_interval = center_dichotomy_interval;
+            continue;
+        }
+
+        if (right_center_length <= length)
+        {
+            left_dichotomy_interval = center_dichotomy_interval+1;
+            continue;
+        }
+
+        return center_dichotomy_interval+ (length-left_center_length)/(right_center_length-left_center_length);
+    }
+
+    return 0;
+}
+
 glm::vec3
 Track::getPosition(const glm::vec2& position, const float height) const
 {
-    glm::vec2 position_remap = position;
-    while (position_remap.y > map_transforms.size()-1)
-        position_remap.y -= map_transforms.size()-1;
+    const glm::vec2 position_remap((TrackProfile::Transforms::size-1)*(position.x+1)/2., dichotomyLength(position.y));
 
     const glm::ivec2 position_aa(std::floor(position_remap.x), std::floor(position_remap.y));
     const glm::ivec2 position_bb(std::ceil(position_remap.x), std::ceil(position_remap.y));
+
+    //cout << "prout " << glm::to_string(position_remap) << " " << glm::to_string(position_aa) << " " << glm::to_string(position_bb) << endl;
 
     assert( position_aa.x >= 0 );
     assert( position_aa.y >= 0 );
@@ -75,8 +119,6 @@ Track::getPosition(const glm::vec2& position, const float height) const
         delta_x     * delta_y     * glm::transform(map_transforms[position_bb.y][position_bb.x], glm::vec3(0, height, 0)) +
         (1-delta_x) * delta_y     * glm::transform(map_transforms[position_bb.y][position_aa.x], glm::vec3(0, height, 0)) +
         delta_x     * (1-delta_y) * glm::transform(map_transforms[position_aa.y][position_bb.x], glm::vec3(0, height, 0));
-
-    //cout << "prout " << glm::to_string(position_remap) << " " << glm::to_string(position_aa) << " " << glm::to_string(position_bb) << " " << glm::to_string(foo) << endl;
 
     return accum;
 }
