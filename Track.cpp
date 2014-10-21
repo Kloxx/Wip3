@@ -39,8 +39,8 @@ Track::endBuild()
     cout << vertices.size() << " vertices " << map_transforms.size() << " profiles" << endl;
     assert( vertices.size() == texture_coords.size() );
 
-    for (int kk=0; kk<map_transforms.size(); kk++)
-        vertices_map.push_back(glm::transform(map_transforms[kk][5], glm::vec3(0,1,0)));
+    for (float tt=0; tt<200; tt+=.1)
+        vertices_map.push_back(getPosition(glm::vec2((TrackProfile::Transforms::size-1)*(1-cos(2*M_PI*tt/32))/2., tt), 1));
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexes_buffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexes.size()*sizeof(Indexes::value_type), indexes.data(), GL_STATIC_DRAW);
@@ -48,20 +48,37 @@ Track::endBuild()
 }
 
 glm::vec3
-Track::trackPosition(const glm::vec2& position, const float height) const
+Track::getPosition(const glm::vec2& position, const float height) const
 {
     glm::vec2 position_remap = position;
     while (position_remap.y > map_transforms.size()-1)
         position_remap.y -= map_transforms.size()-1;
 
     const glm::ivec2 position_aa(std::floor(position_remap.x), std::floor(position_remap.y));
-    const glm::ivec2 position_bb = position_aa + glm::ivec2(1,1);
-    assert( position_aa.x >= 0 && position_aa.y >= 0 );
-    assert( position_bb.x < TrackProfile::Transforms::size && position_bb.y < map_transforms.size() );
+    const glm::ivec2 position_bb(std::ceil(position_remap.x), std::ceil(position_remap.y));
 
-    const glm::vec3 foo(position_remap.y-position_aa.y, height, position_remap.x-position_aa.x);
-    //cout << "prout " << glm::to_string(position_remap) << " " << glm::to_string(position_aa) << " " << glm::to_string(foo) << endl;
-    return glm::transform(map_transforms[position_aa.y][position_aa.x], foo);
+    assert( position_aa.x >= 0 );
+    assert( position_aa.y >= 0 );
+    assert( position_bb.x <= TrackProfile::Transforms::size-1 );
+    assert( position_bb.y <= map_transforms.size()-1 );
+
+    const float delta_x = position_remap.x-position_aa.x;
+    const float delta_y = position_remap.y-position_aa.y;
+
+    assert( delta_x >= 0 );
+    assert( delta_y >= 0 );
+    assert( delta_x < 1 );
+    assert( delta_y < 1 );
+
+    const glm::vec3 accum =
+        (1-delta_x) * (1-delta_y) * glm::transform(map_transforms[position_aa.y][position_aa.x], glm::vec3(0, height, 0)) +
+        delta_x     * delta_y     * glm::transform(map_transforms[position_bb.y][position_bb.x], glm::vec3(0, height, 0)) +
+        (1-delta_x) * delta_y     * glm::transform(map_transforms[position_bb.y][position_aa.x], glm::vec3(0, height, 0)) +
+        delta_x     * (1-delta_y) * glm::transform(map_transforms[position_aa.y][position_bb.x], glm::vec3(0, height, 0));
+
+    //cout << "prout " << glm::to_string(position_remap) << " " << glm::to_string(position_aa) << " " << glm::to_string(position_bb) << " " << glm::to_string(foo) << endl;
+
+    return accum;
 }
 
 unsigned int

@@ -46,7 +46,7 @@ struct Track
     endBuild();
 
     glm::vec3
-    trackPosition(const glm::vec2& position, const float height) const;
+    getPosition(const glm::vec2& position, const float height) const;
 
 protected:
 
