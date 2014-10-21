@@ -52,6 +52,14 @@ transform(const detail::tmat4x4<T,P> matrix, const detail::tvec3<T,P> vertex)
     return vertex_transformed_homo.xyz()/vertex_transformed_homo.w;
 }
 
+template <typename T, precision P>
+detail::tmat4x4<T,P>
+normalize(const detail::tmat4x4<T,P> mat)
+{
+    assert( mat[3][3] != 0);
+    return mat/mat[3][3];
+}
+
 }
 
 namespace utils

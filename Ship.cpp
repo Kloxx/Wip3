@@ -273,6 +273,7 @@ glm::mat4 Ship::getTransform() const
 {
     glm::mat4 transform(1);
     transform *= m_track.getTransform(m_position);
+    transform *= glm::translate(glm::vec3(0,1,0));
     transform *= glm::rotate(glm::radians(m_angle), glm::vec3(0,1,0));
     transform *= glm::rotate(glm::radians(m_roll), glm::vec3(1,0,0));
     return transform;
@@ -283,7 +284,7 @@ void Ship::draw(const glm::mat4& modelview)
     const glm::mat4 ship_transform = getTransform();
     cout << "hello " << m_angle << "/" << m_rotationSpeed << " ";
     cout << glm::to_string(m_position) << "/" << glm::to_string(m_linearSpeed) << " ";
-    cout << glm::to_string(getForwardDirection()) << glm::to_string(glm::transform(ship_transform, glm::vec3(0,0,0))) << endl;
+    cout << glm::to_string(getForwardDirection()) << " " << glm::to_string(glm::transform(ship_transform, glm::vec3(0,0,0))) << endl;
 
     glm::mat4 modelview_local = modelview;
     modelview_local *= ship_transform;
@@ -312,7 +313,7 @@ void Ship::control(Input const& input)
 {
     const float dt = 1./60;
 
-    float frictionFactor = 1./10;
+    float frictionFactor = 1.;
     glm::vec2 acceleration(0,0);
     float rotationAcceleration(0);
 
@@ -320,7 +321,7 @@ void Ship::control(Input const& input)
         acceleration += 10.f*getForwardDirection();
 
     if(input.getKey(SDL_SCANCODE_DOWN) || input.getKey(SDL_SCANCODE_S) || input.getJoystickButton(0, 1))
-        frictionFactor = 1/1.0;
+        frictionFactor = 1/.2;
 
     if(input.getKey(SDL_SCANCODE_LEFT) || input.getKey(SDL_SCANCODE_A) || input.getJoystickAxes(0, 0) < -10000)
     {

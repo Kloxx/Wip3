@@ -146,7 +146,7 @@ void SceneOpenGL::mainLoop()
     Box box(shader_default, "Textures/debug.png", 50);
     Skybox skybox(shader_background, "Textures/skybox.png", 300);
 
-    Camera camera(12.0, 4.0, vec3(0,1,0), perspective(70.0f, static_cast<float>(m_options.width)/m_options.height, 5.f, 1000.0f));
+    Camera camera(12.0, 3.0, vec3(0,1,0), perspective(70.0f, static_cast<float>(m_options.width)/m_options.height, 5.f, 1000.0f));
 
     m_input.afficherPtr(true);
     m_input.capturePtr(false);

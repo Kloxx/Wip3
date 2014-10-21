@@ -22,8 +22,8 @@ glm::mat4 Camera::getCameraProjection(const Ship& ship, const Track& track, cons
     if (m_type == TRACK_VIEW)
     {
         const glm::vec3 origin = track.getPosition(glm::vec2(.2*cos(5*time), 3*time), 5);
-        const glm::vec3 up = track.getPosition(glm::vec2(.2*cos(5*time), 3*time), 6) - origin;
         const glm::vec3 to = track.getPosition(glm::vec2(.2*cos(5*time+1), 3*time+1), 5);
+        const glm::vec3 up = track.getPosition(glm::vec2(.2*cos(5*time), 3*time), 6) - origin;
         m_position = origin;
         return m_projectionBase * glm::lookAt(m_position, to, up);
     }
@@ -32,9 +32,10 @@ glm::mat4 Camera::getCameraProjection(const Ship& ship, const Track& track, cons
     {
         const glm::mat4 ship_transform = ship.getTransform();
         const glm::vec3 ship_position = glm::transform(ship_transform, glm::vec3(0,0,0));
-        const glm::vec3 ship_front = glm::transform(ship_transform, glm::vec3(1,0,0));
+        const glm::vec3 ship_front = glm::transform(ship_transform, glm::vec3(m_distanceX,0,0));
+        const glm::vec3 ship_up = glm::transform(ship_transform, glm::vec3(0,1,0)) - ship_position;
         m_position = glm::transform(ship_transform, glm::vec3(-m_distanceX,m_distanceY,0));
-        return m_projectionBase * glm::lookAt(m_position, ship_position, ship_front);
+        return m_projectionBase * glm::lookAt(m_position, ship_front, ship_up);
     }
 
     return m_projectionBase;

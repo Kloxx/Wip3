@@ -89,8 +89,8 @@ Track::dichotomyLength(const float length_orig) const
     return 0;
 }
 
-glm::vec3
-Track::getPosition(const glm::vec2& position, const float height) const
+glm::mat4
+Track::getTransform(const glm::vec2& position) const
 {
     const glm::vec2 position_remap((TrackProfile::Transforms::size-1)*(position.x+1)/2., dichotomyLength(position.y));
 
@@ -112,19 +112,19 @@ Track::getPosition(const glm::vec2& position, const float height) const
     assert( delta_x < 1 );
     assert( delta_y < 1 );
 
-    const glm::vec3 accum =
-        (1-delta_x) * (1-delta_y) * glm::transform(map_transforms[position_aa.y][position_aa.x], glm::vec3(0, height, 0)) +
-        delta_x     * delta_y     * glm::transform(map_transforms[position_bb.y][position_bb.x], glm::vec3(0, height, 0)) +
-        (1-delta_x) * delta_y     * glm::transform(map_transforms[position_bb.y][position_aa.x], glm::vec3(0, height, 0)) +
-        delta_x     * (1-delta_y) * glm::transform(map_transforms[position_aa.y][position_bb.x], glm::vec3(0, height, 0));
+    const glm::mat4 accum =
+        (1-delta_x) * (1-delta_y) * glm::normalize(map_transforms[position_aa.y][position_aa.x]) +
+        delta_x     * delta_y     * glm::normalize(map_transforms[position_bb.y][position_bb.x]) +
+        (1-delta_x) * delta_y     * glm::normalize(map_transforms[position_bb.y][position_aa.x]) +
+        delta_x     * (1-delta_y) * glm::normalize(map_transforms[position_aa.y][position_bb.x]);
 
     return accum;
 }
 
-glm::mat4
-Track::getTransform(const glm::vec2& position) const
+glm::vec3
+Track::getPosition(const glm::vec2& position, const float height) const
 {
-    return glm::translate(getPosition(position, 1));
+    return glm::transform(getTransform(position), glm::vec3(0, height, 0));
 }
 
 unsigned int
