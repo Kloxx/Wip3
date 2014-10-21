@@ -48,6 +48,9 @@ struct Track
     glm::vec3
     getPosition(const glm::vec2& position, const float height) const;
 
+    glm::mat4
+    getTransform(const glm::vec2& position) const;
+
 protected:
 
     float

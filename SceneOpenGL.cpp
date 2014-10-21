@@ -116,12 +116,7 @@ void SceneOpenGL::mainLoop()
 
     const mat4 modelview_base(1);
 
-    Ship ship(shader_default, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
-    Box box(shader_default, "Textures/debug.png", 50);
-    Skybox skybox(shader_background, "Textures/skybox.png", 300);
-
     Track track(shader_track, shader_map, "Textures/road.png");
-
     track.beginBuild( Track::TrackProfile::flatProfile(30) );
     track.appendFlatWidthChange(20,40.006776); //adjust xx
     track.appendStraight(25);
@@ -146,6 +141,10 @@ void SceneOpenGL::mainLoop()
     track.appendQuarter(glm::radians(25.),25);
     track.appendTurn(glm::radians(180.),184.75,64);
     track.endBuild();
+
+    Ship ship(shader_default, "Models/ship.png", track);
+    Box box(shader_default, "Textures/debug.png", 50);
+    Skybox skybox(shader_background, "Textures/skybox.png", 300);
 
     Camera camera(12.0, 4.0, vec3(0,1,0), perspective(70.0f, static_cast<float>(m_options.width)/m_options.height, 5.f, 1000.0f));
 

@@ -1,7 +1,5 @@
 #include "Track.h"
 
-#include <glm/gtx/transform.hpp>
-#include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
 using std::cout;
@@ -58,7 +56,7 @@ Track::dichotomyLength(const float length_orig) const
     float length = length_orig;
 
     while (length >= map_positions.back()) length -= map_positions.back();
-    while (length < 0) length += map_positions.front();
+    while (length < 0) length += map_positions.back();
 
     size_t left_dichotomy_interval = 0;
     size_t right_dichotomy_interval = map_positions.size()-1;
@@ -121,6 +119,12 @@ Track::getPosition(const glm::vec2& position, const float height) const
         delta_x     * (1-delta_y) * glm::transform(map_transforms[position_aa.y][position_bb.x], glm::vec3(0, height, 0));
 
     return accum;
+}
+
+glm::mat4
+Track::getTransform(const glm::vec2& position) const
+{
+    return glm::translate(getPosition(position, 1));
 }
 
 unsigned int
