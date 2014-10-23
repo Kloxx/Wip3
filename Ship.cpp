@@ -282,9 +282,9 @@ glm::mat4 Ship::getTransform() const
 void Ship::draw(const glm::mat4& modelview)
 {
     const glm::mat4 ship_transform = getTransform();
-    cout << "hello " << m_angle << "/" << m_rotationSpeed << " ";
-    cout << glm::to_string(m_position) << "/" << glm::to_string(m_linearSpeed) << " ";
-    cout << glm::to_string(getForwardDirection()) << " " << glm::to_string(glm::transform(ship_transform, glm::vec3(0,0,0))) << endl;
+    //cout << "hello " << m_angle << "/" << m_rotationSpeed << " ";
+    //cout << glm::to_string(m_position) << "/" << glm::to_string(m_linearSpeed) << " ";
+    //cout << glm::to_string(getForwardDirection()) << " " << glm::to_string(glm::transform(ship_transform, glm::vec3(0,0,0))) << endl;
 
     glm::mat4 modelview_local = modelview;
     modelview_local *= ship_transform;
