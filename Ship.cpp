@@ -279,6 +279,7 @@ glm::mat4 Ship::getTransform() const
     return transform;
 }
 
+
 void Ship::draw(const glm::mat4& modelview)
 {
     const glm::mat4 ship_transform = getTransform();
@@ -340,19 +341,63 @@ void Ship::control(Input const& input)
 
     m_roll -= m_roll * dt/.3;
 
+    {
+        const float epsilon = 1e-4;
+        const glm::mat2 first_form = m_track.getMetric(m_position);
+        const glm::mat2 first_form_diff_x = (m_track.getMetric(m_position+glm::vec2(epsilon,0))-first_form)/epsilon;
+        const glm::mat2 first_form_diff_y = (m_track.getMetric(m_position+glm::vec2(0,epsilon))-first_form)/epsilon;
+        const glm::mat2 first_form_inv = glm::inverse(first_form);
+
+        const float christoffel_first_kind[6] = {
+            .5*first_form_diff_x[0][0],
+            .5*first_form_diff_y[0][0],
+            first_form_diff_y[0][1] - .5*first_form_diff_x[1][1],
+            first_form_diff_x[0][1] - .5*first_form_diff_y[0][0],
+            .5*first_form_diff_x[1][1],
+            .5*first_form_diff_y[1][1]
+        };
+
+        const float christoffel_second_kind[6] = {
+            first_form_inv[0][0]*christoffel_first_kind[0] + first_form_inv[0][1]*christoffel_first_kind[3],
+            first_form_inv[0][0]*christoffel_first_kind[1] + first_form_inv[0][1]*christoffel_first_kind[4],
+            first_form_inv[0][0]*christoffel_first_kind[2] + first_form_inv[0][1]*christoffel_first_kind[5],
+            first_form_inv[1][0]*christoffel_first_kind[0] + first_form_inv[1][1]*christoffel_first_kind[3],
+            first_form_inv[1][0]*christoffel_first_kind[1] + first_form_inv[1][1]*christoffel_first_kind[4],
+            first_form_inv[1][0]*christoffel_first_kind[2] + first_form_inv[1][1]*christoffel_first_kind[5]
+        };
+
+        //cout << glm::to_string(first_form) << " " << glm::to_string(first_form_inv) << " " << glm::to_string(first_form_diff_x) << " " << glm::to_string(first_form_diff_y) << endl;
+        //for (size_t kk=0; kk<6; kk++)
+        //    cout << christoffel_second_kind[kk] << endl;
+
+        const glm::vec2 curvature_correction(
+            christoffel_second_kind[0]*m_linearSpeed[0]*m_linearSpeed[0] +
+            2*christoffel_second_kind[1]*m_linearSpeed[0]*m_linearSpeed[1] +
+            christoffel_second_kind[2]*m_linearSpeed[1]*m_linearSpeed[1],
+            christoffel_second_kind[3]*m_linearSpeed[0]*m_linearSpeed[0] +
+            2*christoffel_second_kind[4]*m_linearSpeed[0]*m_linearSpeed[1] +
+            christoffel_second_kind[5]*m_linearSpeed[1]*m_linearSpeed[1]
+        );
+
+        cout << glm::to_string(curvature_correction) << " " << glm::to_string(m_linearSpeed) << endl;
+        acceleration -= curvature_correction * dt;
+    }
+
     acceleration -= frictionFactor * m_linearSpeed;
     m_linearSpeed += acceleration * dt;
     m_position += m_linearSpeed * dt;
 
-    if (m_position.x <= -1)
+    const float margin = .99;
+
+    if (m_position.x <= -margin)
     {
-        m_position.x = -1;
+        m_position.x = -margin;
         m_linearSpeed.x *= -.2;
     }
 
-    if (m_position.x >= 1)
+    if (m_position.x >= margin)
     {
-        m_position.x = 1;
+        m_position.x = margin;
         m_linearSpeed.x *= -.2;
     }
 }

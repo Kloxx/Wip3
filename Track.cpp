@@ -127,6 +127,16 @@ Track::getPosition(const glm::vec2& position, const float height) const
     return glm::transform(getTransform(position), glm::vec3(0, height, 0));
 }
 
+glm::mat2
+Track::getMetric(const glm::vec2& position) const
+{
+    const float epsilon = 1e-3;
+    const glm::vec3 ex = (getPosition(position+glm::vec2(epsilon,0),0)-getPosition(position-glm::vec2(epsilon,0),0))/(2*epsilon);
+    const glm::vec3 ey = (getPosition(position+glm::vec2(0,epsilon),0)-getPosition(position-glm::vec2(0,epsilon),0))/(2*epsilon);
+    const glm::mat2 first_form(glm::dot(ex,ex), glm::dot(ex,ey), glm::dot(ey,ex), glm::dot(ey,ey));
+    return first_form;
+}
+
 unsigned int
 Track::appendPoint(const glm::vec3& vertex, const glm::vec2& texture_coord)
 {

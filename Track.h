@@ -51,6 +51,9 @@ struct Track
     glm::mat4
     getTransform(const glm::vec2& position) const;
 
+    glm::mat2
+    getMetric(const glm::vec2& position) const;
+
 protected:
 
     float
