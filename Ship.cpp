@@ -1,11 +1,15 @@
 #include "Ship.h"
 
 #include <glm/gtx/transform.hpp>
+#include "common.h"
 
-Ship::Ship(const Shader& shader, const std::string& texture, const glm::vec3& position, float acceleration, float rotationSpeed, float mass) :
+using std::cout;
+using std::endl;
+
+Ship::Ship(const Shader& shader, const std::string& texture, const Track& track) :
     m_shader(shader), m_texture(texture),
-    m_acceleration(acceleration), m_angle(0.0), m_roll(0.0), m_linearSpeed(0,0,0), m_mass(mass),
-    m_rotationSpeed(rotationSpeed), m_position(position), m_orientation(100,0,0)
+    m_track(track),
+    m_position(0,0), m_linearSpeed(0,0), m_angle(0), m_rotationSpeed(0), m_roll(0)
 {
     float vertexTmp[] = {
          1.000000,-0.500000, 1.000000, -1.000000,-0.500000, 1.000000, -1.000000,-0.500000,-1.000000,
@@ -265,12 +269,26 @@ Ship::Ship(const Shader& shader, const std::string& texture, const glm::vec3& po
         m_coordTexture[i] = coordTextureTmp[i];
 }
 
+glm::mat4 Ship::getTransform() const
+{
+    glm::mat4 transform(1);
+    transform *= m_track.getTransform(m_position);
+    transform *= glm::translate(glm::vec3(0,1,0));
+    transform *= glm::rotate(glm::radians(m_angle), glm::vec3(0,1,0));
+    transform *= glm::rotate(glm::radians(m_roll), glm::vec3(1,0,0));
+    return transform;
+}
+
+
 void Ship::draw(const glm::mat4& modelview)
 {
+    const glm::mat4 ship_transform = getTransform();
+    //cout << "hello " << m_angle << "/" << m_rotationSpeed << " ";
+    //cout << glm::to_string(m_position) << "/" << glm::to_string(m_linearSpeed) << " ";
+    //cout << glm::to_string(getForwardDirection()) << " " << glm::to_string(glm::transform(ship_transform, glm::vec3(0,0,0))) << endl;
+
     glm::mat4 modelview_local = modelview;
-    modelview_local = glm::translate(modelview_local, m_position);
-    modelview_local = glm::rotate(modelview_local, glm::radians(m_angle), glm::vec3(0,-1,0));
-    modelview_local = glm::rotate(modelview_local, glm::radians(m_roll), glm::vec3(1,0,0));
+    modelview_local *= ship_transform;
 
     m_shader.setUniform("modelview", modelview_local);
 
@@ -294,86 +312,99 @@ void Ship::draw(const glm::mat4& modelview)
 
 void Ship::control(Input const& input)
 {
-    float acceleration(0.0);
-    float frictionFactor(m_mass / 100000.0);
-    float stabilization(0.05);
-    glm::vec3 friction(0,0,0);
+    const float dt = 1./60;
+
+    float frictionFactor = 1.;
+    glm::vec2 acceleration(0,0);
+    float rotationAcceleration(0);
 
     if(input.getKey(SDL_SCANCODE_UP)   || input.getKey(SDL_SCANCODE_W) || input.getJoystickButton(0, 0))
-        acceleration = m_acceleration;
+        acceleration += 10.f*getForwardDirection();
 
     if(input.getKey(SDL_SCANCODE_DOWN) || input.getKey(SDL_SCANCODE_S) || input.getJoystickButton(0, 1))
-        frictionFactor = m_mass / 30000.0;
+        frictionFactor = 1/.2;
 
     if(input.getKey(SDL_SCANCODE_LEFT) || input.getKey(SDL_SCANCODE_A) || input.getJoystickAxes(0, 0) < -10000)
     {
-        m_angle -= m_rotationSpeed;
+        rotationAcceleration = 180;
         m_roll -= 0.8;
     }
 
     if(input.getKey(SDL_SCANCODE_RIGHT) || input.getKey(SDL_SCANCODE_D) || input.getJoystickAxes(0, 0) > 10000)
     {
-        m_angle += m_rotationSpeed;
+        rotationAcceleration = -180;
         m_roll += 0.8;
     }
 
-    if(!(input.getKey(SDL_SCANCODE_UP) || input.getKey(SDL_SCANCODE_W)) &&
-       !(input.getKey(SDL_SCANCODE_DOWN) || input.getKey(SDL_SCANCODE_S)) &&
-       !(input.getJoystickButton(0, 0) || input.getJoystickButton(0, 1)))
-        frictionFactor = m_mass / 50000.0;
+    m_rotationSpeed += rotationAcceleration * dt - m_rotationSpeed * dt/.3;
+    m_angle += m_rotationSpeed * dt;
 
-    friction.x = -m_linearSpeed.x * frictionFactor;
-    friction.y = -m_linearSpeed.y * frictionFactor;
-    friction.z = -m_linearSpeed.z * frictionFactor;
+    m_roll -= m_roll * dt/.3;
 
-    if(m_angle < 0.0)
-        m_angle += 360.0;
-    if(m_angle > 360.0)
-        m_angle -= 360.0;
+    {
+        const float epsilon = 1e-4;
+        const glm::mat2 first_form = m_track.getMetric(m_position);
+        const glm::mat2 first_form_diff_x = (m_track.getMetric(m_position+glm::vec2(epsilon,0))-first_form)/epsilon;
+        const glm::mat2 first_form_diff_y = (m_track.getMetric(m_position+glm::vec2(0,epsilon))-first_form)/epsilon;
+        const glm::mat2 first_form_inv = glm::inverse(first_form);
 
-    m_roll = m_roll - stabilization*m_roll;
+        const float christoffel_first_kind[6] = {
+            .5*first_form_diff_x[0][0],
+            .5*first_form_diff_y[0][0],
+            first_form_diff_y[0][1] - .5*first_form_diff_x[1][1],
+            first_form_diff_x[0][1] - .5*first_form_diff_y[0][0],
+            .5*first_form_diff_x[1][1],
+            .5*first_form_diff_y[1][1]
+        };
 
-    glm::vec3 movement(Ship::movement(acceleration));
-    m_linearSpeed += movement + friction;
-    m_position += m_linearSpeed;
-    orientate();
+        const float christoffel_second_kind[6] = {
+            first_form_inv[0][0]*christoffel_first_kind[0] + first_form_inv[0][1]*christoffel_first_kind[3],
+            first_form_inv[0][0]*christoffel_first_kind[1] + first_form_inv[0][1]*christoffel_first_kind[4],
+            first_form_inv[0][0]*christoffel_first_kind[2] + first_form_inv[0][1]*christoffel_first_kind[5],
+            first_form_inv[1][0]*christoffel_first_kind[0] + first_form_inv[1][1]*christoffel_first_kind[3],
+            first_form_inv[1][0]*christoffel_first_kind[1] + first_form_inv[1][1]*christoffel_first_kind[4],
+            first_form_inv[1][0]*christoffel_first_kind[2] + first_form_inv[1][1]*christoffel_first_kind[5]
+        };
+
+        //cout << glm::to_string(first_form) << " " << glm::to_string(first_form_inv) << " " << glm::to_string(first_form_diff_x) << " " << glm::to_string(first_form_diff_y) << endl;
+        //for (size_t kk=0; kk<6; kk++)
+        //    cout << christoffel_second_kind[kk] << endl;
+
+        const glm::vec2 curvature_correction(
+            christoffel_second_kind[0]*m_linearSpeed[0]*m_linearSpeed[0] +
+            2*christoffel_second_kind[1]*m_linearSpeed[0]*m_linearSpeed[1] +
+            christoffel_second_kind[2]*m_linearSpeed[1]*m_linearSpeed[1],
+            christoffel_second_kind[3]*m_linearSpeed[0]*m_linearSpeed[0] +
+            2*christoffel_second_kind[4]*m_linearSpeed[0]*m_linearSpeed[1] +
+            christoffel_second_kind[5]*m_linearSpeed[1]*m_linearSpeed[1]
+        );
+
+        cout << glm::to_string(curvature_correction) << " " << glm::to_string(m_linearSpeed) << endl;
+        acceleration -= curvature_correction * dt;
+    }
+
+    acceleration -= frictionFactor * m_linearSpeed;
+    m_linearSpeed += acceleration * dt;
+    m_position += m_linearSpeed * dt;
+
+    const float margin = .99;
+
+    if (m_position.x <= -margin)
+    {
+        m_position.x = -margin;
+        m_linearSpeed.x *= -.2;
+    }
+
+    if (m_position.x >= margin)
+    {
+        m_position.x = margin;
+        m_linearSpeed.x *= -.2;
+    }
 }
 
-glm::vec3 Ship::movement(float acceleration) const
+glm::vec2 Ship::getForwardDirection() const
 {
     float angleRad = glm::radians(m_angle);
-    glm::vec3 movement;
-
-    movement.x = cos(angleRad) * acceleration;
-    movement.y = 0;
-    movement.z = sin(angleRad) * acceleration;
-
-    return movement;
+    return glm::vec2(-sin(angleRad), cos(angleRad));
 }
 
-void Ship::orientate()
-{
-    float angleRad = glm::radians(m_angle);
-    glm::vec3 linearSpeedNorm(glm::normalize(m_linearSpeed));
-
-    m_orientation.x = cos(angleRad) * 100;
-    m_orientation.y = 0;
-    m_orientation.z = sin(angleRad) * 100;
-
-    m_orientation += m_position;
-}
-
-glm::vec3 Ship::getPosition() const
-{
-    return m_position;
-}
-
-glm::vec3 Ship::getOrientation() const
-{
-    return m_orientation;
-}
-
-glm::vec3 Ship::getLinearSpeed() const
-{
-    return m_linearSpeed;
-}

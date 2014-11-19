@@ -2,113 +2,41 @@
 
 #include <glm/gtx/transform.hpp>
 
-/*
-CameraDoom::CameraDoom() :
-    m_position(0,1,0), m_orientation(1,0,0), m_verticalAxe(0,1,0), m_lateralAxe(0,0,1),
-    m_speed(0.5), m_rotationSpeed(0.5), m_phi(0.0)
+Camera::Camera(float distanceX, float distanceY, const glm::vec3& verticalAxe, const glm::mat4& projectionBase) :
+    m_distanceX(distanceX), m_distanceY(distanceY), m_verticalAxe(verticalAxe),
+    m_type(SHIP_VIEW), m_position(),
+    m_projectionBase(projectionBase)
 {
 }
 
-CameraDoom::CameraDoom(glm::vec3 position, glm::vec3 orientation, glm::vec3 verticalAxe, float speed, float rotationSpeed) :
-    m_position(position), m_orientation(orientation), m_verticalAxe(verticalAxe),
-    m_speed(speed), m_rotationSpeed(rotationSpeed), m_phi(0.0)
+glm::mat4 Camera::getCameraProjection(const Ship& ship, const Track& track, const float time)
 {
-    m_targetPoint = m_position + m_orientation;
-    m_lateralAxe = glm::normalize(glm::cross(m_verticalAxe, m_orientation));
-}
 
-void CameraDoom::orientate(int direction)
-{
-    m_phi += direction * m_rotationSpeed;
-    if(m_phi > 360.0)
-        m_phi -= 360.0;
-    if(m_phi < 0.0)
-        m_phi += 360.0;
-
-    float phiRad = m_phi * M_PI / 180.0;
-
-    if(m_verticalAxe.x)
+    if (m_type == REPLAY_VIEW)
     {
-        m_orientation.x = 0;
-        m_orientation.y = cos(phiRad);
-        m_orientation.z = sin(phiRad);
-    }
-    else if(m_verticalAxe.y)
-    {
-        m_orientation.x = cos(phiRad);
-        m_orientation.y = 0;
-        m_orientation.z = sin(phiRad);
-    }
-    else
-    {
-        m_orientation.x = cos(phiRad);
-        m_orientation.y = sin(phiRad);
-        m_orientation.z = 0;
+        const glm::mat4 ship_transform = ship.getTransform();
+        m_position = glm::vec3(200,50,120);
+        return m_projectionBase * glm::lookAt(m_position, glm::transform(ship_transform, glm::vec3(0,0,0)), m_verticalAxe);
     }
 
-    m_lateralAxe = glm::normalize(glm::cross(m_verticalAxe, m_orientation));
-    m_targetPoint = m_position + m_orientation;
-}
+    if (m_type == TRACK_VIEW)
+    {
+        const glm::vec3 origin = track.getPosition(glm::vec2(.2*cos(5*time), 3*time), 5);
+        const glm::vec3 to = track.getPosition(glm::vec2(.2*cos(5*time+1), 3*time+1), 5);
+        const glm::vec3 up = track.getPosition(glm::vec2(.2*cos(5*time), 3*time), 6) - origin;
+        m_position = origin;
+        return m_projectionBase * glm::lookAt(m_position, to, up);
+    }
 
-void CameraDoom::movement(Input const& input)
-{
-    if(input.getKey(SDL_SCANCODE_UP) || input.getKey(SDL_SCANCODE_W))
+    if (m_type == SHIP_VIEW)
     {
-        m_position += m_orientation * m_speed;
-        m_targetPoint = m_position + m_orientation;
+        const glm::mat4 ship_transform = ship.getTransform();
+        const glm::vec3 ship_position = glm::transform(ship_transform, glm::vec3(0,0,0));
+        const glm::vec3 ship_front = glm::transform(ship_transform, glm::vec3(m_distanceX,0,0));
+        const glm::vec3 ship_up = glm::transform(ship_transform, glm::vec3(0,1,0)) - ship_position;
+        m_position = glm::transform(ship_transform, glm::vec3(-m_distanceX,m_distanceY,0));
+        return m_projectionBase * glm::lookAt(m_position, ship_front, ship_up);
     }
-    if(input.getKey(SDL_SCANCODE_DOWN) || input.getKey(SDL_SCANCODE_S))
-    {
-        m_position -= m_orientation * m_speed;
-        m_targetPoint = m_position + m_orientation;
-    }
-    if(input.getKey(SDL_SCANCODE_LEFT) || input.getKey(SDL_SCANCODE_A))
-    {
-        orientate(-1);
-        m_targetPoint = m_position + m_orientation;
-    }
-    if(input.getKey(SDL_SCANCODE_RIGHT) || input.getKey(SDL_SCANCODE_D))
-    {
-        orientate(1);
-        m_targetPoint = m_position + m_orientation;
-    }
-    if(input.getKey(SDL_SCANCODE_Q))
-    {
-        m_position += m_lateralAxe * m_speed;
-        m_targetPoint = m_position + m_orientation;
-    }
-    if(input.getKey(SDL_SCANCODE_E))
-    {
-        m_position -= m_lateralAxe * m_speed;
-        m_targetPoint = m_position + m_orientation;
-    }
-}
 
-void CameraDoom::lookAt(glm::mat4 &modelview)
-{
-    modelview = glm::lookAt(m_position, m_targetPoint, m_verticalAxe);
-}
-*/
-
-CameraThirdPerson::CameraThirdPerson(float distanceX, float distanceY, const glm::vec3& verticalAxe) :
-    m_distanceX(distanceX), m_distanceY(distanceY), m_verticalAxe(verticalAxe), m_replayView(false), m_position()
-{
-}
-
-glm::mat4 CameraThirdPerson::getCameraProjection(const glm::mat4& projection, const Ship& ship)
-{
-    const glm::vec3 positionShip = ship.getPosition();
-    const glm::vec3 orientationShip = ship.getOrientation();
-    const glm::vec3 orientation(glm::normalize(orientationShip - positionShip));
-    const glm::vec3 distance = glm::vec3(0, m_distanceY, 0) - orientation * m_distanceX;
-
-    glm::mat4 projection_camera = projection;
-    if (m_replayView) {
-        m_position = glm::vec3(200,50,50);
-        projection_camera *= glm::lookAt(m_position, ship.getPosition(), m_verticalAxe);
-    } else {
-        m_position = positionShip + distance;
-        projection_camera *= glm::lookAt(m_position, ship.getOrientation(), m_verticalAxe);
-    }
-    return projection_camera;
+    return m_projectionBase;
 }

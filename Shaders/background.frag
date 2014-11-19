@@ -41,10 +41,8 @@ void main()
   out_Color = texture(tex, coordTexture);
 
   /***** stripes *****/
-  bool in_strip = mod(gl_FragCoord.x + gl_FragCoord.y + 100*time, stripes_size) < stripes_fraction || mod(gl_FragCoord.x - gl_FragCoord.y + 150*time, stripes_size) < stripes_fraction;
-
-  /***** horizon *****/
-  if (in_strip) out_Color = vec4(0,0,0,1);
+  //bool in_strip = mod(gl_FragCoord.x + gl_FragCoord.y + 100*time, stripes_size) < stripes_fraction || mod(gl_FragCoord.x - gl_FragCoord.y + 150*time, stripes_size) < stripes_fraction;
+  //if (in_strip) out_Color = vec4(0,0,0,1);
 
   if (dot(sun_light_direction, coordDirection) < -cos(sun_angle)) out_Color = vec4(1,1,0,1);
 

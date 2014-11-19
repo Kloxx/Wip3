@@ -60,11 +60,17 @@ bool SceneOpenGL::initWindow(const std::string& windowTitle)
 
     if(!m_GLContext)
     {
-        std::cout << SDL_GetError() << std::endl;
+        std::cout << "Error while creating context : " << SDL_GetError() << std::endl;
         SDL_DestroyWindow(m_window);
         SDL_Quit();
 
         return false;
+    }
+
+    {
+        int width, height;
+        SDL_GetWindowSize(m_window, &width, &height);
+        glViewport(0, 0, width, height);
     }
 
     return true;
@@ -97,37 +103,50 @@ void SceneOpenGL::mainLoop()
 
     Shader shader_default("Shaders/texture.vert", "Shaders/texture.frag");
     Shader shader_background("Shaders/background.vert", "Shaders/background.frag");
+    Shader shader_track("Shaders/texture.vert", "Shaders/track.frag");
+    Shader shader_map("Shaders/map.vert", "Shaders/map.frag");
 
     const unsigned int frameRate(1000/60);
 
-	if(m_useJoysticks)
+  if(m_useJoysticks)
     {
         m_input.openJoysticks();
         SDL_JoystickEventState(SDL_ENABLE);
     }
 
-    //********** For test **********
-    float verticesFloor[] = {
-        0,0,-15, 500,0,-15, 500,0,20,
-        0,0,-15, 0,0,20, 500,0,20,
-        460,0,20, 500,0,20, 500,0,500,
-        460,0,20, 460,0,500, 500,0,500
-    };
-    float textureFloor[] = {
-        0,0, 50,0, 50,5,
-        0,0, 0,5, 50,5,
-        0,0, 5,0, 5,50,
-        0,0, 0,50, 5,50
-    };
-    //********** For test **********
-
-    const mat4 projection_base(perspective(70.0, static_cast<double>(m_options.width)/m_options.height, 0.01, 600.0));
     const mat4 modelview_base(1);
 
-    Ship ship(shader_default, "Models/ship.png", vec3(0,1,0), 0.014, 2.0, 900.0);
+    Track track(shader_track, shader_map, "Textures/road.png");
+    track.beginBuild( Track::TrackProfile::flatProfile(30) );
+    track.appendFlatWidthChange(20,40.006776); //adjust xx
+    track.appendStraight(25);
+    track.appendFlatWidthChange(30,35);
+    track.appendTurn(glm::radians(60.),100);
+    track.appendPipeIn(30,10,glm::radians(45.),50);
+    track.appendTurn(glm::radians(-150.),250,32);
+    track.appendTwist(glm::radians(90.),150);
+    track.appendPipeOut(30,75);
+    track.appendPipeIn(55,0,glm::radians(-80.),175);
+    track.appendQuarter(glm::radians(90.),200);
+    track.appendTurn(glm::radians(-90.),150);
+    track.appendQuarter(glm::radians(90.),200,64);
+    track.appendPipeOut(35,150);
+    track.appendQuarter(glm::radians(90.),200,64);
+    track.appendStraight(31.745621); // adjust yy
+    track.appendQuarter(glm::radians(-90.),150,32);
+    track.appendStraight(50-18.132910); // adjust zz
+    track.appendTurn(glm::radians(90.),109.3);
+    track.appendQuarter(glm::radians(-25.),25);
+    track.appendFlatWidthChange(30,49.85);
+    track.appendQuarter(glm::radians(25.),25);
+    track.appendTurn(glm::radians(180.),184.75,64);
+    track.endBuild();
+
+    Ship ship(shader_default, "Models/ship.png", track);
     Box box(shader_default, "Textures/debug.png", 50);
     Skybox skybox(shader_background, "Textures/skybox.png", 300);
-    CameraThirdPerson camera(12.0, 4.0, vec3(0,1,0));
+
+    Camera camera(12.0, 3.0, vec3(0,1,0), perspective(70.0f, static_cast<float>(m_options.width)/m_options.height, 5.f, 1000.0f));
 
     m_input.afficherPtr(true);
     m_input.capturePtr(false);
@@ -135,6 +154,7 @@ void SceneOpenGL::mainLoop()
     Texture texture("Textures/metal029b.jpg");
 
     glClearColor(1,0,1,1);
+    glLineWidth(5.);
 
     int frames = 0;
     const unsigned int startProgram = SDL_GetTicks();
@@ -152,13 +172,20 @@ void SceneOpenGL::mainLoop()
         ship.control(m_input);
 
         { // move camera
-            camera.m_replayView = m_input.getKey(SDL_SCANCODE_TAB);
-            const mat4 projection = camera.getCameraProjection(projection_base, ship);
+            if (m_input.getKey(SDL_SCANCODE_I)) camera.m_type = Camera::SHIP_VIEW;
+            if (m_input.getKey(SDL_SCANCODE_O)) camera.m_type = Camera::REPLAY_VIEW;
+            if (m_input.getKey(SDL_SCANCODE_P)) camera.m_type = Camera::TRACK_VIEW;
+
+            const mat4 projection = camera.getCameraProjection(ship, track, startLoop/1000.);
             const mat4 projection_inv = glm::inverse(projection);
             shader_default.setUniform("projection", projection);
             shader_background.setUniform("projection", projection);
             shader_background.setUniform("time", startLoop/1000.);
             shader_background.setUniform("projection_inv", projection_inv);
+            shader_track.setUniform("projection", projection);
+            shader_track.setUniform("time", startLoop/1000.);
+            shader_map.setUniform("projection", projection);
+            shader_map.setUniform("time", startLoop/1000.);
 
             /*
             vec4 camera_pos = projection_inv * vec4(0,0,0,1);
@@ -172,31 +199,18 @@ void SceneOpenGL::mainLoop()
         { // background
             glm::mat4 modelview_local = modelview_base;
             modelview_local = glm::translate(modelview_local, camera.m_position);
-            modelview_local = glm::scale(modelview_local, vec3(1,.4,1));
             skybox.draw(modelview_local);
         }
 
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        { // track
-            shader_default.setUniform("modelview", modelview_base);
-            glUseProgram(shader_default.getProgramID());
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verticesFloor);
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, textureFloor);
-            glEnableVertexAttribArray(2);
-            glBindTexture(GL_TEXTURE_2D, texture.getID());
-            glDrawArrays(GL_TRIANGLES, 0, 12);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            glDisableVertexAttribArray(2);
-            glDisableVertexAttribArray(0);
-            glUseProgram(0);
-        }
+        // track
+        track.draw(modelview_base);
 
         { // floating box
             float angle = frames*2.;
             glm::mat4 modelview_local = modelview_base;
-            modelview_local = glm::translate(modelview_local, glm::vec3(200, 50, 200));
+            modelview_local = glm::translate(modelview_local, glm::vec3(200, 150, 200));
             modelview_local = glm::rotate(modelview_local, glm::radians(angle), glm::vec3(1,.2,-.4));
             box.draw(modelview_local);
         }

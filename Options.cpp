@@ -67,9 +67,9 @@ ConfigFile::dump(std::ostream& os) const
 Options::Options(const int argc, char* argv[])
 {
     ConfigFile config;
-    config.parseIniFile("config.ini");
-    config.parseIniFile("../config.ini");
     config.parseIniFile("../config_sample.ini");
+    config.parseIniFile("../config.ini");
+    config.parseIniFile("config.ini");
     if (argc > 1) config.parseIniFile(argv[1]);
 
     //std::cout << "********************" << std::endl;
